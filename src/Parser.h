@@ -8,7 +8,7 @@
 #include<unordered_map>
 #include<set>
 
-class Parser{
+class Parser {
 public:
     std::vector<GrammarEntry> grammar;
     std::unordered_map<Symbol, std::set<Symbol>, Symbol_hash> firstMap;
@@ -19,6 +19,7 @@ public:
     void printFirst(const std::string& filename);
     void calFirst();
     void calFollow() {};
+    std::set<Item> calClosure(const std::set<Item>& itemSet);
 };
 
 class Loader{

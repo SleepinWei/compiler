@@ -157,3 +157,7 @@ void Parser::printFirst(const std::string& filename) {
         f << '\n';
     }
 }
+
+std::set<Item> Parser::calClosure(const std::set<Item>& itemSet) {
+
+}
