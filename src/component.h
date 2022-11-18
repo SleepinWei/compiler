@@ -8,44 +8,37 @@ using std::string;
 
 class Symbol{
 public:
-    Symbol();
-    ~Symbol();
-public:
-};
-
-class Token:public Symbol{
-public:
-    Token();
-    ~Token();
-public:
-    string type; // token types: int, ....
-    string name; // actual charaters
-};
-
-class State:public Symbol{
-public:
-    State();
-    ~State();
-    bool operator==(const State& state)const {
-        return type == state.type;
+    Symbol(){};
+    Symbol(const string& type,bool isTerminal,bool isEmpty = false){
+        this->type = type;
+        this->isTerminal = isTerminal;
+        this->isEmpty = isEmpty;
     }
+    ~Symbol(){};
 public:
     string type;
+    string value;
+    bool isTerminal;
+    bool isEmpty;
 };
 
 class GrammarEntry{
 public:
-    GrammarEntry();
-    ~GrammarEntry();
+    GrammarEntry(const Symbol& state,const vector<Symbol>& symbols){
+        this->state = state;
+        this->symbols = symbols;
+    }
+    ~GrammarEntry(){};
 public:
-    string state;
+
+    Symbol state;
     vector<Symbol> symbols;
 };
 
 class Item{
 public:
-    Item();
-    ~Item();
+    Item(){entry=nullptr;dotPos = 0;};
+    ~Item(){};
 public:
     GrammarEntry* entry;
     int dotPos;
