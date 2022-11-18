@@ -49,6 +49,12 @@ public:
 public:
     GrammarEntry* entry;
     int dotPos;
+    string peek;
+    bool operator==(const Item &other) const {
+        return (entry == other.entry)
+            && (dotPos == other.dotPos)
+            && (peek == other.peek);
+    }
 };
 
 #endif // COMPONENT_H
