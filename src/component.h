@@ -40,13 +40,13 @@ public:
     Item(){entry=nullptr;dotPos = 0;};
     ~Item(){};
 public:
-    GrammarEntry* entry;
+    const GrammarEntry* entry;
     int dotPos;
-    string peek;
+    Symbol peek;
     bool operator==(const Item &other) const {
         return (entry == other.entry)
             && (dotPos == other.dotPos)
-            && (peek == other.peek);
+            && (peek.type == other.peek.type);
     }
 };
 

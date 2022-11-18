@@ -17,6 +17,7 @@ public:
 private:
     void calFirstVN();
     void calFirst();
+    std::vector<std::string> calFirst(const std::vector<Symbol> &rhs, size_t ofst, const Symbol &peek);
     void closure(std::vector<Item> &itemSet);
     void calFollow() {};
 };
