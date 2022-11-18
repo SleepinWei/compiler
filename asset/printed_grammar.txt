@@ -1,0 +1,53 @@
+Program->StatementSequence 
+StatementSequence->Statement StatementSequence 
+StatementSequence->empty 
+Statement->int ID TypeStatement 
+Statement->void ID FunctionStatement 
+TypeStatement->VariableStatement 
+TypeStatement->FunctionStatement 
+VariableStatement->; 
+FunctionStatement->( Parameter ) SentenceBlock 
+Parameter->ParameterList 
+Parameter->void 
+ParameterList->Parm 
+ParameterList->Parm , ParameterList 
+Parm->int ID 
+SentenceBlock->{ InternalStatement SentenceString } 
+InternalStatement->empty 
+InternalStatement->InternalVarStatement 
+InternalStatement->InternalVarStatement ; InternalStatement 
+InternalVarStatement->int ID 
+SentenceString->Sentence SentenceString 
+SentenceString->empty 
+Sentence->if-Sentence 
+Sentence->while-Sentence 
+Sentence->return-Sentence 
+Sentence->assign-Sentence 
+assign-Sentence->ID = Expression ; 
+return-Sentence->return 
+return-Sentence->return Expression 
+while-Sentence->while ( Expression ) SentenceBlock 
+if-Sentence->if ( Expression ) SentenceBlock 
+if-Sentence->if ( Expression ) SentenceBlock else SentenceBlock 
+Expression->add-Expression 
+Expression->add-Expression relop add-Expression 
+add-Expression->Item 
+add-Expression->Item + add-Expression 
+add-Expression->Item - add-Expression 
+Item->Factor 
+Item->Factor * Item 
+Item->Factor / Item 
+Factor->num 
+Factor->( Expression ) 
+Factor->ID FTYPE 
+FTYPE->call 
+FTYPE->empty 
+call->( ArgumentList ) 
+Argument->ArgumentList 
+Argument->empty 
+ArgumentList->Expression 
+ArgumentList->Expression , ArugmentList 
+ID->character ID-temp 
+ID-temp->character ID-temp 
+ID-temp->num ID-temp 
+ID-temp->empty 
