@@ -5,15 +5,18 @@
 #include<vector>
 #include<string>
 #include<assert.h>
+#include<unordered_map>
+#include<set>
 
 class Parser{
 public:
     std::vector<GrammarEntry> grammar;
+    std::unordered_map<Symbol, std::set<Symbol>, Symbol_hash> firstMap;
 
 public:
     void readGrammar(const std::string& filename);
     void printGrammar(const std::string& filename);
-private:
+    void printFirst(const std::string& filename);
     void calFirst();
     void calFollow() {};
 };
@@ -24,13 +27,13 @@ public:
         assert(s[0]=='<' || s[0] == '$' || s[0] == '@');
         if(s[0] == '<'){
             assert(s[s.length()-1]=='>');
-            return Symbol(s.substr(1,s.length()-2),false);
+            return Symbol(s,false);
         }
         else if (s[0] == '$'){
-            return Symbol(s.substr(1,s.length()-1),true);
+            return Symbol(s,true);
         }
         else if (s[0] == '@') {
-            return Symbol(s.substr(1, s.length() - 1), true, true);
+            return Symbol(s, true, true);
         }
         assert(0);
     }

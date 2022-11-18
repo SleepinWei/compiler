@@ -3,6 +3,7 @@
 
 #include<vector>
 #include<string>
+#include<utility>
 using std::vector;
 using std::string;
 
@@ -15,11 +16,24 @@ public:
         this->isEmpty = isEmpty;
     }
     ~Symbol(){};
+
+    bool operator==(const Symbol& s) const {
+        return type == s.type;
+    }
+    bool operator<(const Symbol& s)const {
+        return type < s.type;
+    }
 public:
     string type;
     string value;
     bool isTerminal;
     bool isEmpty;
+};
+
+struct Symbol_hash {
+    size_t operator()(const Symbol& s) const {
+        return std::hash<string>()(s.type);
+    }
 };
 
 class GrammarEntry{

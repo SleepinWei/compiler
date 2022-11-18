@@ -9,5 +9,7 @@ int main(int argc, char *argv[])
     Parser parser;
     parser.readGrammar("./asset/grammar.txt");
     parser.printGrammar("./asset/printed_grammar.txt");
+    parser.calFirst();
+    parser.printFirst("./asset/first.txt");
     return 0;
 }
