@@ -13,11 +13,13 @@ class Parser {
 public:
     std::vector<GrammarEntry> grammar;
     std::set<Symbol> grammarSymbols;
-    GrammarEntry startEntry;
+    GrammarEntry* startEntry;
     std::unordered_map<Symbol, std::set<Symbol>, Symbol_hash> firstMap;
     std::unordered_map<std::string, std::vector<std::string>> firstVN;
     std::vector<std::vector<Item>> cluster;
+    
 public:
+    void readGrammarYACC(const std::string& filename);
     void readGrammar(const std::string& filename);
     void printGrammar(const std::string& filename);
     void printFirst(const std::string& filename);
@@ -50,6 +52,16 @@ public:
             return Symbol(s, true, true);
         }
         assert(0);
+    }
+    static Symbol loadSymbolYacc(const string& s) {
+        if (s[0] >= 'A' && s[0] <= 'Z' || s[0] == '\'') {
+            // is terminal
+            return Symbol(s, true);
+        }
+        else if (s[0] >= 'a' && s[0] <= 'z') {
+            // not terminal
+            return Symbol(s, false);
+        }
     }
 };
 

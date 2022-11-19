@@ -1,9 +1,58 @@
 #include"Parser.h"
 #include<fstream>
 #include<sstream>
+#include<iostream>
 #include<assert.h>
 #include <algorithm>
 #include<ios>
+using std::string;
+void Parser::readGrammarYACC(const std::string& filename) {
+    std::ifstream f(filename);
+    while (f.peek() != EOF) {
+        // input state
+		std::string state_type;
+        f >> state_type;
+
+        Symbol state = Loader::loadSymbolYacc(state_type);
+        grammarSymbols.insert(state);
+
+        vector<Symbol> symbols;
+
+        std::string equal;
+        f >> equal;
+        assert(equal == ":");
+
+        // input the rest
+        while(true){
+            string symbol_type;
+            f >> symbol_type;
+
+            if (symbol_type == ";") {
+               GrammarEntry gEntry(state,symbols);
+               this->grammar.push_back(gEntry);
+               break;
+            }
+            else if(symbol_type == "|") {
+               // create a new entry
+               GrammarEntry gEntry(state,symbols);
+               this->grammar.push_back(gEntry);
+
+               // clear symbols
+               vector<Symbol>().swap(symbols);
+            }else{
+               // add to current entry
+                Symbol symbol = Loader::loadSymbolYacc(symbol_type);
+                symbols.push_back(symbol);
+            }
+        }
+
+        for (auto& entry : grammar) {
+            if (entry.state.type == "program") {
+                startEntry = &entry;
+            }
+        }
+    }
+}
 
 void Parser::readGrammar(const std::string& filename){
     std::ifstream f(filename);
@@ -51,10 +100,15 @@ void Parser::readGrammar(const std::string& filename){
         if(symbols.size()){
             GrammarEntry gEntry(state,symbols);
 
-            if (state.type == "<Program>") {
-                startEntry = gEntry;
-            }
+            //if (state.type == "<Program>") {
+            //    startEntry = gEntry;
+            //}
             this->grammar.push_back(gEntry);
+            for (auto& entry : grammar) {
+                if (entry.state.type == "<Program>") {
+                    startEntry = &entry;
+                }
+            }
         }
     }
 
@@ -244,9 +298,11 @@ void Parser::printVNFirst(const std::string& filename) {
 void Parser::printCluster(const std::string& filename) {
     std::ofstream f(filename);
     for (auto& itemset : cluster) {
+        f << "ItemSet {\n";
         for (auto& item : itemset) {
             item.print(f);
         }
+        f << "}\n";
     }
 }
 
@@ -351,7 +407,7 @@ std::vector<Item> Parser::GO(const std::vector<Item>& itemSet, const Symbol& X) 
     // compute closure
     closure(result);
 
-    int debug = 1;
+    int debug = 0;
     if (debug){
         std::ofstream out("./asset/go.txt");
         for (auto& item : result) {
@@ -362,10 +418,36 @@ std::vector<Item> Parser::GO(const std::vector<Item>& itemSet, const Symbol& X) 
     return result;
 }
 
+bool FoundCluster(const std::vector<std::vector<Item>>& cluster, const std::vector<Item>& goSet) {
+    for (auto& itemset : cluster) {
+        bool equal = true;
+        if (itemset.size() != goSet.size()) {
+            equal = false;
+        }
+        else {
+            for (int i = 0; i < itemset.size(); i++) {
+                equal &= (itemset[i] == goSet[i]);
+            }
+        }
+        if (equal) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void print(std::ofstream& f, const std::vector<Item>& itemSet) {
+    f << "ItemSet {\n";
+    for(auto& item : itemSet) {
+		item.print(f);
+	}
+	f << "}\n";
+}
+
 void Parser::constructCluster() {
     Item startItem;
     startItem.dotPos = 0;
-    startItem.entry = &startEntry;
+    startItem.entry = startEntry;
     startItem.peek = Symbol("#", true, false);
 
     std::vector<Item> startItemSet = { startItem };
@@ -375,12 +457,23 @@ void Parser::constructCluster() {
     //std::vector<std::vector<Item>>{startItemSet}.swap(cluster);
 
     bool change = true;
+	std::ofstream f("./asset/go.txt");
     while (change){
         change = false; 
-        for (auto& itemSet : cluster) {
+        for(int i=0;i<cluster.size();i++){
+        //for (auto& itemSet : cluster) {
+            auto& itemSet = cluster[i];
             for (auto& sym : grammarSymbols) {
                 std::vector<Item> goSet = GO(itemSet, sym);
-                if (goSet.size() && notFound(cluster, goSet)) {
+
+                if (goSet.size() && !FoundCluster(cluster, goSet)) {
+					if (0) {
+						print(f, itemSet);
+						f << "sym :" << sym.type << '\n';
+						f << "GOSET:\n";
+						print(f, goSet);
+						f << "------------------------------\n";
+					}
                     change |= true;
                     cluster.emplace_back(goSet);
                 }

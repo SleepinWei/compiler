@@ -70,8 +70,7 @@ public:
             && (peek.type == other.peek.type);
     }
 
-    void print(std::ofstream& f) {
-        f << "Itemset " <<" \n{\n";
+    void print(std::ofstream& f) const {
         f<< entry->state.type << " := "; 
         for (int i = 0; i < std::min((size_t)dotPos,entry->symbols.size()); i++) {
 			auto& e = entry->symbols[i];
@@ -82,8 +81,42 @@ public:
             auto& e = entry->symbols[i];
             f << e.type << ' ';
         }
-        f << "\n}\n";
+
+        f << "peek: " << peek.type << '\n';
     }
+};
+
+class Action {
+public:
+    Action() {};
+    Action(int state_, string s_, bool useStack_, int j_) {
+        state = state_;
+        inString = s_;
+        useStack = useStack_;
+        j = j_;
+    }
+    ~Action() {};
+
+public:
+    int state; // current state
+    std::string inString; // incoming string   
+    bool useStack; // sj or rj
+    int j; // sj or rj 
+};
+
+class Goto {
+public:
+    Goto() {};
+    Goto(int state_, string inState_, int gotoState_) {
+        state = state_;
+        inState = inState_;
+        gotoState = gotoState_;
+    }
+    ~Goto() {};
+public:
+    int state;
+    std::string inState;
+    int gotoState;
 };
 
 #endif // COMPONENT_H

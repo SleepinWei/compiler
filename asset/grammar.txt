@@ -4,8 +4,8 @@
 <TypeStatement> = <VariableStatement> | <FunctionStatement>
 <VariableStatement> = $;
 <FunctionStatement> = $( <Parameter> $) <SentenceBlock>
-<Parameter> = <ParameterList> | $void
-<ParameterList> = <Parm> | <Parm> $, <ParameterList>
+<Parameter> = <ParmList> | $void
+<ParmList> = <Parm> | <Parm> $, <ParmList>
 <Parm> = $int <ID> 
 <SentenceBlock> = ${ <InternalStatement> <SentenceString> $}
 <InternalStatement> = @empty | <InternalVarStatement> | <InternalVarStatement> $; <InternalStatement>

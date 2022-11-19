@@ -1,3 +1,4 @@
+<ParmList>: $int, 
 <Program>: @empty, $int, $void, 
 <StatementSequence>: @empty, $int, $void, 
 <FunctionStatement>: $(, 
@@ -7,7 +8,6 @@
 <Statement>: $int, $void, 
 <VariableStatement>: $;, 
 <Parameter>: $void, $int, 
-<ParameterList>: $int, 
 <Parm>: $int, 
 <SentenceBlock>: ${, 
 <InternalStatement>: @empty, $int, 
