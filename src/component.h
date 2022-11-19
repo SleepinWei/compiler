@@ -3,6 +3,7 @@
 
 #include<vector>
 #include<string>
+#include<fstream>
 #include<utility>
 using std::vector;
 using std::string;
@@ -42,6 +43,7 @@ public:
         this->state = state;
         this->symbols = symbols;
     }
+    GrammarEntry() {};
     ~GrammarEntry(){};
 public:
 
@@ -52,6 +54,11 @@ public:
 class Item{
 public:
     Item(){entry=nullptr;dotPos = 0;};
+    Item(GrammarEntry* entry_, int dotPos_, Symbol peek_) {
+        entry = entry_;
+        dotPos = dotPos_;
+        peek = peek_;
+    }
     ~Item(){};
 public:
     const GrammarEntry* entry;
@@ -61,6 +68,21 @@ public:
         return (entry == other.entry)
             && (dotPos == other.dotPos)
             && (peek.type == other.peek.type);
+    }
+
+    void print(std::ofstream& f) {
+        f << "Itemset " <<" \n{\n";
+        f<< entry->state.type << " := "; 
+        for (int i = 0; i < std::min((size_t)dotPos,entry->symbols.size()); i++) {
+			auto& e = entry->symbols[i];
+            f << e.type << ' ';
+        }
+        f << "¡£" << ' ';
+        for (int i = dotPos; i < entry->symbols.size(); i++) {
+            auto& e = entry->symbols[i];
+            f << e.type << ' ';
+        }
+        f << "\n}\n";
     }
 };
 

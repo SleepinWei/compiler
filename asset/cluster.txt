@@ -1,0 +1,112 @@
+Itemset  
+{
+<Program> := 。 <StatementSequence> 
+}
+Itemset  
+{
+<StatementSequence> := 。 <Statement> <StatementSequence> 
+}
+Itemset  
+{
+<StatementSequence> := 。 <Statement> <StatementSequence> 
+}
+Itemset  
+{
+<StatementSequence> := 。 <Statement> <StatementSequence> 
+}
+Itemset  
+{
+<StatementSequence> := 。 @empty 
+}
+Itemset  
+{
+<StatementSequence> := 。 @empty 
+}
+Itemset  
+{
+<StatementSequence> := 。 @empty 
+}
+Itemset  
+{
+<Statement> := 。 $int <ID> <TypeStatement> 
+}
+Itemset  
+{
+<Statement> := 。 $int <ID> <TypeStatement> 
+}
+Itemset  
+{
+<Statement> := 。 $void <ID> <FunctionStatement> 
+}
+Itemset  
+{
+<Statement> := 。 $void <ID> <FunctionStatement> 
+}
+Itemset  
+{
+<StatementSequence> := <Statement> 。 <StatementSequence> 
+}
+Itemset  
+{
+<StatementSequence> := <Statement> 。 <StatementSequence> 
+}
+Itemset  
+{
+<StatementSequence> := <Statement> 。 <StatementSequence> 
+}
+Itemset  
+{
+<StatementSequence> := 。 <Statement> <StatementSequence> 
+}
+Itemset  
+{
+<StatementSequence> := 。 <Statement> <StatementSequence> 
+}
+Itemset  
+{
+<StatementSequence> := 。 @empty 
+}
+Itemset  
+{
+<StatementSequence> := 。 @empty 
+}
+Itemset  
+{
+<StatementSequence> := 。 <Statement> <StatementSequence> 
+}
+Itemset  
+{
+<StatementSequence> := 。 @empty 
+}
+Itemset  
+{
+<Statement> := 。 $int <ID> <TypeStatement> 
+}
+Itemset  
+{
+<Statement> := 。 $int <ID> <TypeStatement> 
+}
+Itemset  
+{
+<Statement> := 。 $void <ID> <FunctionStatement> 
+}
+Itemset  
+{
+<Statement> := 。 $void <ID> <FunctionStatement> 
+}
+Itemset  
+{
+<Program> := <StatementSequence> 。 
+}
+Itemset  
+{
+<StatementSequence> := <Statement> <StatementSequence> 。 
+}
+Itemset  
+{
+<StatementSequence> := <Statement> <StatementSequence> 。 
+}
+Itemset  
+{
+<StatementSequence> := <Statement> <StatementSequence> 。 
+}
