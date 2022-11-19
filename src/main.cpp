@@ -1,15 +1,11 @@
-//#include <QCoreApplication>
-#include"Parser.h"
+#include <QApplication>
+#include "mainwindow.h"
 
 int main(int argc, char *argv[])
 {
-//    QCoreApplication a(argc, argv);
+    QApplication a(argc, argv);
+    MainWindow w;
+    w.show();
 
-//    return a.exec();
-    Parser parser;
-    parser.readGrammar("./asset/grammar.txt");
-    parser.printGrammar("./asset/printed_grammar.txt");
-    parser.calFirst();
-    parser.printFirst("./asset/first.txt");
-    return 0;
+    return a.exec();
 }
