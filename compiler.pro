@@ -12,7 +12,8 @@ CONFIG -= app_bundle
 SOURCES += \
         mainwindow.cpp \
         src/Parser.cpp \
-        src/main.cpp
+        src/main.cpp \
+        ui/AssetItem.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -22,7 +23,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     mainwindow.h \
     src/Parser.h \
-    src/component.h
+    src/component.h \
+    ui/AssetItem.h
 
 FORMS += \
     mainwindow.ui

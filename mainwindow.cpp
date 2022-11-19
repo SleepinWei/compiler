@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include <QFile>
 #include <QTextStream>
+#include "ui/AssetItem.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -28,17 +29,24 @@ void MainWindow::loadGrammar()
     mParser->calFirst();
     mParser->printFirst("./asset/first.txt");
 
-    ui->listWidget->clear();
-    ui->listWidget->addItem("printed_grammar");
-    ui->listWidget->addItem("first");
+    while(ui->listWidget->count()) {
+        auto itm = ui->listWidget->item(0);
+        ui->listWidget->removeItemWidget(itm);
+        delete itm;
+    }
+    ui->listWidget->addItem(new AssetItem("0.文法产生式", "./asset/printed_grammar.txt"));
+    ui->listWidget->addItem(new AssetItem("0.FIRST集", "./asset/first.txt"));
+    ui->listWidget->addItem(new AssetItem("0.源程序", "./source.txt"));
+    ui->listWidget->addItem(new AssetItem("1.词法分析结果", "./out.txt"));
 
     ui->textEdit->clear();
 }
 
 void MainWindow::loadAsset(QListWidgetItem *item)
 {
+    AssetItem *itm = (AssetItem*)item;
     ui->textEdit->clear();
-    QFile inputFile("./asset/" + item->text() + ".txt");
+    QFile inputFile(itm->fpath);
     if (!inputFile.open(QIODevice::ReadOnly))
         return;
 

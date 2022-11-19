@@ -190,7 +190,7 @@ void Parser::calFirstVN(){
             std::vector<string> &fG = firstVN[g.state.type];
             const size_t isz = fG.size();
 
-            for(; !sit->isTerminal && sit != g.symbols.cend(); sit++) {
+            for(; sit != g.symbols.cend() && !sit->isTerminal; sit++) {
                 // append(fG, firstVN[sit->type]);
                 bool noEmpty = notFound(fG, EMPTY);
                 append(fG, firstVN[sit->type]);
@@ -225,7 +225,7 @@ void Parser::printFirst(const std::string& filename) {
 std::vector<std::string> Parser::calFirst(const std::vector<Symbol> &rhs, size_t ofst, const Symbol &peek)
 {
     std::vector<std::string> result;
-    for(; !rhs[ofst].isTerminal && ofst < rhs.size(); ofst++) {
+    for(; ofst < rhs.size() && !rhs[ofst].isTerminal; ofst++) {
         append(result, firstVN[rhs[ofst].type]);
         if (!notFound(firstVN[rhs[ofst].type], EMPTY))
             std::remove(result.begin(), result.end(), EMPTY);
