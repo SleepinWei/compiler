@@ -1,4 +1,5 @@
 Symbols:
+$%
 $(
 $)
 $*
@@ -7,93 +8,118 @@ $,
 $-
 $/
 $;
+$<
 $=
+$>
+$break
+$char
+$continue
+$double
 $else
+$for
 $id
 $if
 $int
 $num
-$relop
 $return
-$void
 $while
 ${
 $}
-<Argument>
-<ArgumentList>
-<ArugmentList>
-<Expression>
-<FTYPE>
-<Factor>
-<FunctionStatement>
-<InternalStatement>
-<InternalVarStatement>
-<Item>
-<Parameter>
-<Parm>
-<ParmList>
 <Program>
-<Sentence>
-<SentenceBlock>
-<SentenceString>
-<Statement>
-<StatementSequence>
-<TypeStatement>
-<VariableStatement>
-<add-Expression>
-<assign-Sentence>
-<call>
-<if-Sentence>
-<return-Sentence>
-<while-Sentence>
+<arithmetic_expression>
+<assignment_expression>
+<assignment_expression_list>
+<assignment_expression_profix>
+<assignment_operator>
+<compound_statement>
+<constant_expression>
+<declaration>
+<declaration_assign>
+<declaration_init>
+<declaration_init_list>
+<expression>
+<expression_list>
+<expression_profix>
+<expression_statement>
+<external_declaration>
+<function>
+<function_declaration>
+<function_declaration_list>
+<function_declaration_suffix>
+<function_definition>
+<function_expression>
+<iteration_statement>
+<jump_statement>
+<operator>
+<primary_expression>
+<selection_statement>
+<start>
+<statement>
+<statement_list>
+<type_specifier>
 @empty
 --------------------------------------
-<Program>-><StatementSequence> 
-<StatementSequence>-><Statement> 
-<StatementSequence>-><StatementSequence> <Statement> 
-<Statement>->$int $id <TypeStatement> 
-<Statement>->$void $id <FunctionStatement> 
-<TypeStatement>-><VariableStatement> 
-<TypeStatement>-><FunctionStatement> 
-<VariableStatement>->$; 
-<FunctionStatement>->$( <Parameter> $) <SentenceBlock> 
-<Parameter>-><ParmList> 
-<Parameter>->$void 
-<ParmList>-><Parm> 
-<ParmList>-><Parm> $, <ParmList> 
-<Parm>->$int $id 
-<SentenceBlock>->${ <InternalStatement> <SentenceString> $} 
-<InternalStatement>->@empty 
-<InternalStatement>-><InternalVarStatement> 
-<InternalStatement>-><InternalVarStatement> $; <InternalStatement> 
-<InternalVarStatement>->$int $id 
-<SentenceString>-><Sentence> <SentenceString> 
-<SentenceString>-><Sentence> 
-<Sentence>-><if-Sentence> 
-<Sentence>-><while-Sentence> 
-<Sentence>-><return-Sentence> 
-<Sentence>-><assign-Sentence> 
-<assign-Sentence>->$id $= <Expression> $; 
-<return-Sentence>->$return 
-<return-Sentence>->$return <Expression> 
-<while-Sentence>->$while $( <Expression> $) <SentenceBlock> 
-<if-Sentence>->$if $( <Expression> $) <SentenceBlock> 
-<if-Sentence>->$if $( <Expression> $) <SentenceBlock> $else <SentenceBlock> 
-<Expression>-><add-Expression> 
-<Expression>-><add-Expression> $relop <add-Expression> 
-<add-Expression>-><Item> 
-<add-Expression>-><Item> $+ <add-Expression> 
-<add-Expression>-><Item> $- <add-Expression> 
-<Item>-><Factor> 
-<Item>-><Factor> $* <Item> 
-<Item>-><Factor> $/ <Item> 
-<Factor>->$num 
-<Factor>->$( <Expression> $) 
-<Factor>->$id <FTYPE> 
-<FTYPE>-><call> 
-<FTYPE>->@empty 
-<call>->$( <ArgumentList> $) 
-<Argument>-><ArgumentList> 
-<Argument>->@empty 
-<ArgumentList>-><Expression> 
-<ArgumentList>-><Expression> $, <ArugmentList> 
+<Program>-><start> 
+<start>-><external_declaration> <start> 
+<start>->@empty 
+<primary_expression>->$id 
+<primary_expression>->$num 
+<primary_expression>->$( <expression> $) 
+<operator>->$+ 
+<operator>->$- 
+<operator>->$* 
+<operator>->$/ 
+<operator>->$% 
+<operator>->$< 
+<operator>->$> 
+<arithmetic_expression>-><operator> 
+<arithmetic_expression>-><primary_expression> <arithmetic_expression> 
+<arithmetic_expression>-><operator> <primary_expression> <arithmetic_expression> 
+<arithmetic_expression>->@empty 
+<constant_expression>-><primary_expression> <arithmetic_expression> 
+<assignment_operator>->$= 
+<assignment_expression>->$id <assignment_operator> <expression> 
+<assignment_expression_profix>->$, <assignment_expression> <assignment_expression_profix> 
+<assignment_expression_profix>->@empty 
+<assignment_expression_list>-><assignment_expression> <assignment_expression_profix> 
+<assignment_expression_list>->@empty 
+<function_expression>-><function> $id $( <expression_list> $) 
+<expression>-><constant_expression> 
+<expression>-><function_expression> 
+<expression_profix>->$, <expression> <expression_profix> 
+<expression_profix>->@empty 
+<expression_list>-><expression> <expression_profix> 
+<expression_list>->@empty 
+<type_specifier>->$double 
+<type_specifier>->$char 
+<type_specifier>->$int 
+<declaration_assign>->$= <expression> 
+<declaration_assign>->@empty 
+<declaration_init>->$id <declaration_assign> 
+<declaration_init_list>->$, <declaration_init> <declaration_init_list> 
+<declaration_init_list>->@empty 
+<declaration>-><type_specifier> <declaration_init> <declaration_init_list> $; 
+<function_declaration>-><type_specifier> $id 
+<function_declaration_suffix>->$, <function_declaration> <function_declaration_suffix> 
+<function_declaration_suffix>->@empty 
+<function_declaration_list>-><function_declaration> <function_declaration_suffix> 
+<function_declaration_list>->@empty 
+<function_definition>-><function> <type_specifier> $id $( <function_declaration_list> $) <compound_statement> 
+<statement>-><expression_statement> 
+<statement>-><jump_statement> 
+<statement>-><selection_statement> 
+<statement>-><iteration_statement> 
+<statement>-><compound_statement> 
+<statement>-><declaration> 
+<statement_list>-><statement> <statement_list> 
+<statement_list>->@empty 
+<expression_statement>-><assignment_expression_list> $; 
+<jump_statement>->$continue $; 
+<jump_statement>->$break $; 
+<jump_statement>->$return <expression> $; 
+<selection_statement>->$if $( <expression> $) <statement> $else <statement> 
+<iteration_statement>->$while $( <expression> $) <statement> 
+<iteration_statement>->$for $( <declaration> <expression> $; <assignment_expression> $) <statement> 
+<compound_statement>->${ <statement_list> $} 
+<external_declaration>-><function_definition> 
+<external_declaration>-><declaration> 

@@ -4,6 +4,7 @@
 #include <map>
 #include<fstream>
 #include <regex>
+#include<sstream>
 #include"component.h"
 using namespace std;
 
@@ -43,7 +44,7 @@ public:
     int identifier_code = 1;
     int num_code = 2;
     //ofstream fout ("out.txt");
-    vector<Symbol> inputs;
+    vector<std::string> inputs;
     string filtered_comment;
 
     void init() {
@@ -85,11 +86,11 @@ public:
             //if(std::find(word_list.begin(),word_list.end(),token)==word_list.end())
             {
                 //fout << "$id" << "\t" << token << endl;
-                inputs.push_back(Symbol("$id", true, false));
+                inputs.push_back("$id");
             }
             else {//¹Ø¼ü×Ö
                 //fout << '$' << token << "\t" << token << endl;
-                inputs.push_back(Symbol("$" + token, true, false));
+                inputs.push_back("$" + token);
             }
             return 0;
         }
@@ -100,7 +101,7 @@ public:
                 cur_ch = s[++i];
             } while (i < len && isdigit(cur_ch));
             //fout << "$num" << "\t" << token << endl;
-            inputs.push_back(Symbol("$num", true, false));
+            inputs.push_back("$num");
             return 0;
         }
         else {
@@ -112,7 +113,7 @@ public:
                 {
                     i += 2;
                     //fout << '$' << token << "\t" << token << endl;
-                    inputs.push_back(Symbol("$" + token, true, false));
+                    inputs.push_back("$" + token);
                     return 0;
                 }
             }
@@ -120,7 +121,7 @@ public:
             {
                 i++;
                 //fout << '$' << cur_ch_str << "\t" << cur_ch_str << endl;
-                inputs.push_back(Symbol("$" + cur_ch_str,true,false));
+                inputs.push_back("$" + cur_ch_str);
                 return 0;
             }
             else
@@ -130,17 +131,19 @@ public:
     }
 
     void analyze() {
-		init();
+		//init();
 		int i = 0;
 		int len = filtered_comment.length() - 1;
+        //filtered_comment = filtered_comment.substr(10);
 		while (i < len && GetToken(filtered_comment, i) == 0)
 			;
+        inputs.push_back("#");
     }
 
     void print(const std::string& filename) {
         ofstream f(filename);
         for (auto& token : inputs) {
-            f << token.type << '\n';
+            f << token<< '\n';
         }
     }
 };

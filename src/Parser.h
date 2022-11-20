@@ -8,6 +8,7 @@
 #include<assert.h>
 #include<unordered_map>
 #include<set>
+#include<stack>
 
 class Parser {
 public:
@@ -20,7 +21,11 @@ public:
 
     std::vector<Action> actions;
     std::vector<Goto> gotos;
-    
+
+    // 
+    std::stack<int> stateStack;
+    std::stack<Symbol> symbolStack;
+    int inputPos; // inputString position
 public:
     void readGrammarYACC(const std::string& filename);
     void readGrammar(const std::string& filename);
@@ -40,6 +45,11 @@ public:
     std::vector<std::string> calFirst(const std::vector<Symbol> &rhs, size_t ofst, const Symbol &peek);
     void closure(std::vector<Item> &itemSet);
     void calFirstVN();
+
+    // analyze
+    Action* findAction(int s,std::string in);
+    Goto* findGoto(int s, std::string sym);
+    void analyze(const std::vector<std::string>& symbols);
 };
 
 class Loader{

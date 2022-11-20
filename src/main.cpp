@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 
     Parser parser;
     //parser.readGrammarYACC("./asset/grammar_yacc.txt");
-    parser.readGrammar("./asset/grammar.txt");
+    parser.readGrammar("./asset/grammar_yacc.txt");
 	parser.printGrammar("./asset/printed_grammar.txt");
 
     parser.calFirstVN();
@@ -35,6 +35,7 @@ int main(int argc, char *argv[])
     parser.printTable("./asset/table.txt");
     std::cout << "Table Done\n";
 
+    parser.analyze(lex.inputs);
 
     return 0;
 }

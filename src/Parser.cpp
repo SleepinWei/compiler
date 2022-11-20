@@ -72,22 +72,24 @@ void Parser::readGrammar(const std::string& filename){
         assert(equal == "=");
 
         // input the rest
-        string rest;
-        std::getline(f,rest);
-        std::stringstream stream(rest);
+        //string rest;
+        //std::getline(f,rest);
+        //std::stringstream stream(rest);
 
-        while(stream.peek()!=EOF){
+        while(f.peek()!=EOF){
             string symbol_type;
-            stream >> symbol_type;
+            f >> symbol_type;
             
             if (symbol_type == "") {
                 break;
             }
 
-            if(symbol_type == "|"){
+            if(symbol_type == "|" || symbol_type == ";") {
                // create a new entry
                GrammarEntry gEntry(state,symbols);
                this->grammar.push_back(gEntry);
+               if (symbol_type == ";")
+                   break;
 
                // clear symbols
                vector<Symbol>().swap(symbols);
@@ -100,19 +102,19 @@ void Parser::readGrammar(const std::string& filename){
             }
         }
 
-        if(symbols.size()){
-            GrammarEntry gEntry(state,symbols);
+        //if(symbols.size()){
+        //    GrammarEntry gEntry(state,symbols);
 
-            //if (state.type == "<Program>") {
-            //    startEntry = gEntry;
-            //}
-            this->grammar.push_back(gEntry);
+        //    //if (state.type == "<Program>") {
+        //    //    startEntry = gEntry;
+        //    //}
+        //    this->grammar.push_back(gEntry);
             for (auto& entry : grammar) {
                 if (entry.state.type == "<Program>") {
                     startEntry = &entry;
                 }
             }
-        }
+        //}
     }
 
     calFirstVN();
@@ -540,7 +542,11 @@ void Parser::constructTable() {
             if (item.dotPos < item.entry->symbols.size()) {
 				// compute GO(Ik,a)
                 // sym : a
-                string sym = item.entry->symbols[item.dotPos].type;
+                Symbol _s = item.entry->symbols[item.dotPos];
+                if (!_s.isTerminal) {
+                    continue;
+                }
+                string sym = _s.type;
 				auto goSet = GO(itemSet, sym);
                 if (goSet.size() == 0) {
                     continue;
@@ -553,7 +559,10 @@ void Parser::constructTable() {
                 action.useStack = true;
                 action.j = pos;
                 action.gen = nullptr;
-                actions.push_back(action);
+                // 
+                if (std::find(actions.begin(), actions.end(), action) == actions.end()) {
+                    actions.emplace_back(action);
+                }
             }
             else if (item.dotPos == item.entry->symbols.size()) {
                 // [A -> alpha dot, a]
@@ -565,11 +574,13 @@ void Parser::constructTable() {
                 action.gen = item.entry;
                 action.j = -1;
 
-                if (item.entry->state.type == "program" && item.dotPos == 1 && item.peek.type == "#") {
+                if (item.entry->state.type == "<Program>" && item.dotPos == 1 && item.peek.type == "#") {
                     // S' -> S dot, #
                     action.isAcc = true;
                 }
-                actions.push_back(action);
+				if (std::find(actions.begin(), actions.end(), action) == actions.end()) {
+                    actions.emplace_back(action);
+                }
             }
         }
         // GOTO table
@@ -587,7 +598,9 @@ void Parser::constructTable() {
                 g.state = citer;
                 g.inState = sym.type;
                 g.gotoState = pos;
-                gotos.emplace_back(g);
+                if (std::find(gotos.begin(), gotos.end(), g) == gotos.end()) {
+                    gotos.emplace_back(g);
+                }
             }
         }
     }
@@ -598,11 +611,91 @@ void Parser::printTable(const std::string& filename) {
 	f << "Action Table\n";
     for (auto& a : actions) {
         f << a.state << ' ' << a.inString << ' ' << (a.useStack ? "s" : "r") << a.j << ' ' << (int)a.gen 
-            << (a.isAcc ? "" : "acc") << '\n';
+            << ' ' << (a.isAcc ? "acc" : "") << '\n';
     }
     f << "----------------------\n";
 	f << "GOTO Table\n";
     for (auto& g : gotos) {
         f << g.state << ' ' << g.inState << ' ' << g.gotoState << '\n';
+    }
+}
+using namespace std;
+Action* Parser::findAction(int s,string in) {
+    for (auto& a : actions) {
+        if (a.state == s && a.inString == in) {
+            return &a;
+        }
+     }
+
+	for (auto& a : actions) { 
+        if (a.state == s && a.inString == "@empty") {
+            return &a;
+        }
+	}
+    return nullptr;
+}
+
+Goto* Parser::findGoto(int s, std::string sym) {
+    for (auto& g : gotos) {
+        if (g.state == s && g.inState == sym) {
+            return &g;
+        }
+    }
+    return nullptr;
+}
+
+void Parser::analyze(const std::vector<std::string>& inputs) {
+    inputPos = 0;
+    stateStack.push(0);
+
+    while (true) {
+        string iSym = inputs[inputPos]; // ai 
+        int topState = stateStack.top();
+
+        Action* act = findAction(topState, iSym);
+        //Goto* g = findGoto(topState, iSym);
+        if (act) {
+            if (act->isAcc) {
+                std::cout << "Done!";
+                return;
+            }
+            else if (act->useStack) {
+                // ÒÆ½ø
+                stateStack.push(act->j);
+                symbolStack.push(Symbol(iSym, true, false));
+                if(iSym != "#")
+					++inputPos; // move to next ;
+                // output 
+                std::cout << "Move: " << "read " << iSym << ", " << "push state " << act->j<< '\n';
+            }
+            else {
+                // ¹éÔ¼
+                const GrammarEntry* rule = act->gen;
+                const Symbol& A = rule->state;
+                int r = rule->symbols.size();
+                for (int i = 0; i < r; i++) {
+                    stateStack.pop();
+                }
+                int newTop = stateStack.top();
+                Goto* g = findGoto(newTop, A.type);
+                if (g) {
+                    int newS = g->gotoState;
+                    stateStack.push(newS);
+                    for (int i = 0; i < r; i++) {
+                        symbolStack.pop();
+                    }
+                    symbolStack.push(A);
+
+                    std::cout << "Conclude: " << "use rule ";
+                    rule->print(std::cout);
+                }
+                else {
+                    // error
+                }
+            }
+        }
+        else {
+            // error 
+        }
     }
 }
