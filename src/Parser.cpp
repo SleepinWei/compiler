@@ -42,6 +42,7 @@ void Parser::readGrammarYACC(const std::string& filename) {
             }else{
                // add to current entry
                 Symbol symbol = Loader::loadSymbolYacc(symbol_type);
+				grammarSymbols.insert(symbol);
                 symbols.push_back(symbol);
             }
         }
@@ -94,6 +95,8 @@ void Parser::readGrammar(const std::string& filename){
                // add to current entry
                 Symbol symbol = Loader::loadSymbol(symbol_type);
                 symbols.push_back(symbol);
+
+                grammarSymbols.insert(symbol);
             }
         }
 
@@ -117,6 +120,11 @@ void Parser::readGrammar(const std::string& filename){
 
 void Parser::printGrammar(const std::string &filename){
     std::ofstream f(filename);
+    f << "Symbols:\n";
+    for (auto iter = grammarSymbols.begin(); iter != grammarSymbols.end(); ++iter) {
+        f << iter->type<< '\n';
+    }
+    f << "--------------------------------------\n";
     for(auto iter = grammar.begin(); iter != grammar.end(); ++iter){
         f << (*iter).state.type.c_str() << "->";
         auto& vec = (*iter).symbols;
@@ -220,6 +228,9 @@ static bool notFound(const std::vector<T> &vec, const T& val)
 template<typename T>
 static void append(std::vector<T> &vec, const std::vector<T> &other)
 {
+    if (vec == other) {
+        return;
+    }
     vec.insert(vec.end(), other.cbegin(), other.cend());
 }
 
@@ -309,22 +320,34 @@ void Parser::printCluster(const std::string& filename) {
 std::vector<std::string> Parser::calFirst(const std::vector<Symbol> &rhs, size_t ofst, const Symbol &peek)
 {
     std::vector<std::string> result;
+    bool finalempty = true;
     for(; ofst < rhs.size() && !rhs[ofst].isTerminal; ofst++) {
         append(result, firstVN[rhs[ofst].type]);
-        if (!notFound(firstVN[rhs[ofst].type], EMPTY))
+        if (!notFound(firstVN[rhs[ofst].type], EMPTY)) {
+            // find empty: remove empty and continue
+            finalempty = true;
             result.erase(std::remove(result.begin(), result.end(), EMPTY));
-        else
+        }
+        else {
+            // no empty, then try returning
+            finalempty = false;
             break;
+        }
     }
 
-    if (ofst == rhs.size()) {
+    if (ofst == rhs.size() && finalempty) {
         if (peek.isEmpty)
             result.push_back(EMPTY);
         else if (peek.isTerminal)
             result.push_back(peek.type);
         else
             append(result, firstVN[peek.type]);
-    } else if (rhs[ofst].isTerminal) {
+    } 
+    else if (ofst == rhs.size()) {
+        // final symbol has no empty, then don't add peek
+        ;
+    }
+    else if (rhs[ofst].isTerminal) {
         result.push_back(rhs[ofst].type);
     }
 
@@ -346,7 +369,9 @@ void Parser::closure(std::vector<Item> &itemSet)
                 continue;
             // A-> alpha dot B beta 
             const Symbol &nxtnt = itm.entry->symbols[itm.dotPos];// B 
-			auto calResult = calFirst(itm.entry->symbols, itm.dotPos, itm.peek);
+			auto calResult = calFirst(itm.entry->symbols, itm.dotPos+1, itm.peek);
+
+            int i_ = 1;
             for (const GrammarEntry &ety : grammar) {
                 if (ety.state.type != nxtnt.type)
                     continue;
@@ -383,21 +408,26 @@ void Parser::closure(std::vector<Item> &itemSet)
 //    return result;
 //}
 
-std::vector<Item> Parser::GO(const std::vector<Item>& itemSet, const Symbol& X) {
+std::vector<Item> Parser::GO(const std::vector<Item>& itemSet, const std::string& X) {
     std::vector<Item> result;
 
     // construct J 
+    if (X == "translation_unit") {
+        ;
+    }
     for (auto item : itemSet) {
         // for all items in itemSet
         if (item.dotPos < item.entry->symbols.size()) {
             auto& symbols = item.entry->symbols;
-            if (symbols[item.dotPos] == X) {
+            if (symbols[item.dotPos].type == X) {
                 // A->alpha dot X beta 
-                Item jitem = item;
-                jitem.dotPos += 1;
+                Item jitem;
+                jitem.entry = item.entry;
+                jitem.dotPos = item.dotPos + 1;
+                jitem.peek = item.peek;
                 assert(jitem.entry != nullptr);
                 assert(jitem.dotPos >= 0 && jitem.dotPos <= item.entry->symbols.size());
-                if (notFound<Item>(result, jitem)) {
+                if (notFound(result, jitem)) {
                     result.emplace_back(jitem);
                 }
             }
@@ -418,22 +448,26 @@ std::vector<Item> Parser::GO(const std::vector<Item>& itemSet, const Symbol& X) 
     return result;
 }
 
-bool FoundCluster(const std::vector<std::vector<Item>>& cluster, const std::vector<Item>& goSet) {
-    for (auto& itemset : cluster) {
+int FoundCluster(const std::vector<std::vector<Item>>& cluster, const std::vector<Item>& goSet) {
+    
+    for (int iter = 0; iter < cluster.size();iter++) {
+        auto& itemset = cluster[iter];
         bool equal = true;
         if (itemset.size() != goSet.size()) {
-            equal = false;
+            continue;
         }
         else {
             for (int i = 0; i < itemset.size(); i++) {
                 equal &= (itemset[i] == goSet[i]);
+                if (!equal)
+                    break;
             }
         }
         if (equal) {
-            return true;
+            return iter;
         }
     }
-    return false;
+    return -1;
 }
 
 void print(std::ofstream& f, const std::vector<Item>& itemSet) {
@@ -458,26 +492,117 @@ void Parser::constructCluster() {
 
     bool change = true;
 	std::ofstream f("./asset/go.txt");
-    while (change){
-        change = false; 
-        for(int i=0;i<cluster.size();i++){
+    int startIndex = 0;
+    while (true){
+        //change = false; 
+        int nextStartIndex = cluster.size();
+        // std::cout << "iters" << '\n';
+        for(int i=startIndex;i<nextStartIndex;i++){
         //for (auto& itemSet : cluster) {
-            auto& itemSet = cluster[i];
-            for (auto& sym : grammarSymbols) {
+            //for (string sym : grammarSymbols) {
+            for(auto sym_iter = grammarSymbols.begin();sym_iter!=grammarSymbols.end();++sym_iter){
+				const auto& itemSet = cluster[i];
+                string sym = sym_iter->type;
+
                 std::vector<Item> goSet = GO(itemSet, sym);
 
-                if (goSet.size() && !FoundCluster(cluster, goSet)) {
-					if (0) {
-						print(f, itemSet);
-						f << "sym :" << sym.type << '\n';
-						f << "GOSET:\n";
-						print(f, goSet);
-						f << "------------------------------\n";
-					}
-                    change |= true;
-                    cluster.emplace_back(goSet);
+                if (goSet.size()) {
+                    int pos = FoundCluster(cluster, goSet);
+                    // std::cout << pos << '\n';
+                    if (pos ==-1) {
+                        // add goset to cluster
+                        
+                        //change |= true;
+                        cluster.emplace_back(goSet);
+                        pos = cluster.size() - 1;
+                    }
+                     
                 }
             }
         }
+		startIndex = nextStartIndex;
+        if (nextStartIndex == cluster.size()) {
+            break;
+        }
+    }
+}
+
+void Parser::constructTable() {
+    for (int citer= 0; citer< cluster.size();++citer) {
+        // cluster iter
+        // std::cout << citer << '\n';
+        auto& itemSet = cluster[citer];
+        // Action table
+        for (int iiter = 0; iiter < itemSet.size(); iiter++) {
+            // item iter
+            // std::cout << iiter << '\n';
+            auto& item = itemSet[iiter];
+            if (item.dotPos < item.entry->symbols.size()) {
+				// compute GO(Ik,a)
+                // sym : a
+                string sym = item.entry->symbols[item.dotPos].type;
+				auto goSet = GO(itemSet, sym);
+                if (goSet.size() == 0) {
+                    continue;
+                }
+                int pos = FoundCluster(cluster, goSet);
+
+                Action action;
+                action.state = citer;
+                action.inString = sym;
+                action.useStack = true;
+                action.j = pos;
+                action.gen = nullptr;
+                actions.push_back(action);
+            }
+            else if (item.dotPos == item.entry->symbols.size()) {
+                // [A -> alpha dot, a]
+
+                Action action;
+                action.state = citer;
+                action.inString = item.peek.type;
+                action.useStack = false;
+                action.gen = item.entry;
+                action.j = -1;
+
+                if (item.entry->state.type == "program" && item.dotPos == 1 && item.peek.type == "#") {
+                    // S' -> S dot, #
+                    action.isAcc = true;
+                }
+                actions.push_back(action);
+            }
+        }
+        // GOTO table
+        for (auto& sym : grammarSymbols) {
+            if (sym.isTerminal) {
+                continue;
+            }
+			auto goSet = GO(itemSet, sym.type);
+			if (goSet.size() == 0) {
+				continue;
+			}
+			int pos = FoundCluster(cluster, goSet);
+            if (pos != -1) {
+                Goto g;
+                g.state = citer;
+                g.inState = sym.type;
+                g.gotoState = pos;
+                gotos.emplace_back(g);
+            }
+        }
+    }
+}
+
+void Parser::printTable(const std::string& filename) {
+    std::ofstream f(filename);
+	f << "Action Table\n";
+    for (auto& a : actions) {
+        f << a.state << ' ' << a.inString << ' ' << (a.useStack ? "s" : "r") << a.j << ' ' << (int)a.gen 
+            << (a.isAcc ? "" : "acc") << '\n';
+    }
+    f << "----------------------\n";
+	f << "GOTO Table\n";
+    for (auto& g : gotos) {
+        f << g.state << ' ' << g.inState << ' ' << g.gotoState << '\n';
     }
 }
