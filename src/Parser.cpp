@@ -1,8 +1,58 @@
 #include"Parser.h"
 #include<fstream>
 #include<sstream>
+#include<iostream>
 #include<assert.h>
 #include <algorithm>
+#include<ios>
+using std::string;
+void Parser::readGrammarYACC(const std::string& filename) {
+    std::ifstream f(filename);
+    while (f.peek() != EOF) {
+        // input state
+		std::string state_type;
+        f >> state_type;
+
+        Symbol state = Loader::loadSymbolYacc(state_type);
+        grammarSymbols.insert(state);
+
+        vector<Symbol> symbols;
+
+        std::string equal;
+        f >> equal;
+        assert(equal == ":");
+
+        // input the rest
+        while(true){
+            string symbol_type;
+            f >> symbol_type;
+
+            if (symbol_type == ";") {
+               GrammarEntry gEntry(state,symbols);
+               this->grammar.push_back(gEntry);
+               break;
+            }
+            else if(symbol_type == "|") {
+               // create a new entry
+               GrammarEntry gEntry(state,symbols);
+               this->grammar.push_back(gEntry);
+
+               // clear symbols
+               vector<Symbol>().swap(symbols);
+            }else{
+               // add to current entry
+                Symbol symbol = Loader::loadSymbolYacc(symbol_type);
+                symbols.push_back(symbol);
+            }
+        }
+
+        for (auto& entry : grammar) {
+            if (entry.state.type == "program") {
+                startEntry = &entry;
+            }
+        }
+    }
+}
 
 void Parser::readGrammar(const std::string& filename){
     std::ifstream f(filename);
@@ -12,6 +62,8 @@ void Parser::readGrammar(const std::string& filename){
         f >> state_type;
 
         Symbol state = Loader::loadSymbol(state_type);
+        grammarSymbols.insert(state);
+
         vector<Symbol> symbols;
 
         std::string equal;
@@ -47,7 +99,16 @@ void Parser::readGrammar(const std::string& filename){
 
         if(symbols.size()){
             GrammarEntry gEntry(state,symbols);
+
+            //if (state.type == "<Program>") {
+            //    startEntry = gEntry;
+            //}
             this->grammar.push_back(gEntry);
+            for (auto& entry : grammar) {
+                if (entry.state.type == "<Program>") {
+                    startEntry = &entry;
+                }
+            }
         }
     }
 
@@ -173,11 +234,12 @@ static void removeDup(std::vector<T> &v)
     v.erase(end, v.end());
 }
 
-const std::string EMPTY("@");
+const std::string EMPTY("@empty");
 
 void Parser::calFirstVN(){
 
-    firstVN.clear();
+    std::unordered_map<std::string,std::vector<std::string>>().swap(firstVN);
+
     for (const GrammarEntry &g : grammar)
         if (firstVN.find(g.state.type) == firstVN.end())
             firstVN.insert(std::make_pair(g.state.type, std::vector<std::string>()));
@@ -186,11 +248,12 @@ void Parser::calFirstVN(){
     while(change) {
         change = false;
         for (const GrammarEntry &g : grammar) {
-            auto sit = g.symbols.cbegin();
             std::vector<string> &fG = firstVN[g.state.type];
             const size_t isz = fG.size();
 
             for(; sit != g.symbols.cend() && !sit->isTerminal; sit++) {
+            auto sit = g.symbols.begin();
+            for(; sit != g.symbols.end() && !(sit->isTerminal); sit++) {
                 // append(fG, firstVN[sit->type]);
                 bool noEmpty = notFound(fG, EMPTY);
                 append(fG, firstVN[sit->type]);
@@ -222,13 +285,35 @@ void Parser::printFirst(const std::string& filename) {
     }
 }
 
+void Parser::printVNFirst(const std::string& filename) {
+	std::ofstream f(filename);
+    for (auto iter = firstVN.begin(); iter != firstVN.end(); ++iter) {
+        f << iter->first<< ": ";
+        for (auto& sym : iter->second) {
+            f << sym << ", ";
+        }
+        f << '\n';
+    }
+}
+
+void Parser::printCluster(const std::string& filename) {
+    std::ofstream f(filename);
+    for (auto& itemset : cluster) {
+        f << "ItemSet {\n";
+        for (auto& item : itemset) {
+            item.print(f);
+        }
+        f << "}\n";
+    }
+}
+
 std::vector<std::string> Parser::calFirst(const std::vector<Symbol> &rhs, size_t ofst, const Symbol &peek)
 {
     std::vector<std::string> result;
     for(; ofst < rhs.size() && !rhs[ofst].isTerminal; ofst++) {
         append(result, firstVN[rhs[ofst].type]);
         if (!notFound(firstVN[rhs[ofst].type], EMPTY))
-            std::remove(result.begin(), result.end(), EMPTY);
+            result.erase(std::remove(result.begin(), result.end(), EMPTY));
         else
             break;
     }
@@ -252,24 +337,148 @@ void Parser::closure(std::vector<Item> &itemSet)
     bool change = true;
     while(change) {
         const size_t isz = itemSet.size();
-        for (const Item &itm : itemSet) {
+        for(size_t i=0;i<isz;i++){
+        //for (const Item &itm : itemSet) {
+            auto& itm = itemSet[i];
+            if (itm.dotPos >= itm.entry->symbols.size()) {
+                continue;
+            }
             if (itm.entry->symbols[itm.dotPos].isTerminal)
                 continue;
-            const Symbol &nxtnt = itm.entry->symbols[itm.dotPos];
+            // A-> alpha dot B beta 
+            const Symbol &nxtnt = itm.entry->symbols[itm.dotPos];// B 
+			auto calResult = calFirst(itm.entry->symbols, itm.dotPos, itm.peek);
             for (const GrammarEntry &ety : grammar) {
                 if (ety.state.type != nxtnt.type)
                     continue;
-                for (const std::string &fb : calFirst(itm.entry->symbols, itm.dotPos, itm.peek)) {
+                // find B->dot C
+                for (const std::string &fb : calResult) {
+                    // first(beta a), a = item.peek
                     Item newitm;
                     newitm.entry = &ety;
                     newitm.dotPos = 0;
                     newitm.peek.isEmpty = (fb == EMPTY);
                     newitm.peek.isTerminal = true;
                     newitm.peek.type = fb;
-                    itemSet.emplace_back(newitm);
+                    if (notFound(itemSet, newitm)) {
+                        itemSet.emplace_back(newitm);
+                    }
                 }
             }
         }
         change = (itemSet.size() > isz);
+    }
+}
+
+//std::set<Item> Parser::calClosure(const std::set<Item>& itemSet) {
+//    std::set<Item> result;
+//    for (auto& item : itemSet) {
+//        result.insert(item);
+//    }
+//
+//    bool change = true;
+//    while (change) {
+//        change = false;
+//          
+//    }
+//    return result;
+//}
+
+std::vector<Item> Parser::GO(const std::vector<Item>& itemSet, const Symbol& X) {
+    std::vector<Item> result;
+
+    // construct J 
+    for (auto item : itemSet) {
+        // for all items in itemSet
+        if (item.dotPos < item.entry->symbols.size()) {
+            auto& symbols = item.entry->symbols;
+            if (symbols[item.dotPos] == X) {
+                // A->alpha dot X beta 
+                Item jitem = item;
+                jitem.dotPos += 1;
+                assert(jitem.entry != nullptr);
+                assert(jitem.dotPos >= 0 && jitem.dotPos <= item.entry->symbols.size());
+                if (notFound<Item>(result, jitem)) {
+                    result.emplace_back(jitem);
+                }
+            }
+        }
+    }
+
+    // compute closure
+    closure(result);
+
+    int debug = 0;
+    if (debug){
+        std::ofstream out("./asset/go.txt");
+        for (auto& item : result) {
+            item.print(out);
+        }
+	}
+
+    return result;
+}
+
+bool FoundCluster(const std::vector<std::vector<Item>>& cluster, const std::vector<Item>& goSet) {
+    for (auto& itemset : cluster) {
+        bool equal = true;
+        if (itemset.size() != goSet.size()) {
+            equal = false;
+        }
+        else {
+            for (int i = 0; i < itemset.size(); i++) {
+                equal &= (itemset[i] == goSet[i]);
+            }
+        }
+        if (equal) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void print(std::ofstream& f, const std::vector<Item>& itemSet) {
+    f << "ItemSet {\n";
+    for(auto& item : itemSet) {
+		item.print(f);
+	}
+	f << "}\n";
+}
+
+void Parser::constructCluster() {
+    Item startItem;
+    startItem.dotPos = 0;
+    startItem.entry = startEntry;
+    startItem.peek = Symbol("#", true, false);
+
+    std::vector<Item> startItemSet = { startItem };
+    closure(startItemSet);
+    std::vector<std::vector<Item>>().swap(cluster);
+    cluster.emplace_back(startItemSet);
+    //std::vector<std::vector<Item>>{startItemSet}.swap(cluster);
+
+    bool change = true;
+	std::ofstream f("./asset/go.txt");
+    while (change){
+        change = false; 
+        for(int i=0;i<cluster.size();i++){
+        //for (auto& itemSet : cluster) {
+            auto& itemSet = cluster[i];
+            for (auto& sym : grammarSymbols) {
+                std::vector<Item> goSet = GO(itemSet, sym);
+
+                if (goSet.size() && !FoundCluster(cluster, goSet)) {
+					if (0) {
+						print(f, itemSet);
+						f << "sym :" << sym.type << '\n';
+						f << "GOSET:\n";
+						print(f, goSet);
+						f << "------------------------------\n";
+					}
+                    change |= true;
+                    cluster.emplace_back(goSet);
+                }
+            }
+        }
     }
 }

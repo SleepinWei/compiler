@@ -3,6 +3,7 @@
 
 #include<vector>
 #include<string>
+#include<fstream>
 #include<utility>
 using std::vector;
 using std::string;
@@ -42,6 +43,7 @@ public:
         this->state = state;
         this->symbols = symbols;
     }
+    GrammarEntry() {};
     ~GrammarEntry(){};
 public:
 
@@ -52,6 +54,11 @@ public:
 class Item{
 public:
     Item(){entry=nullptr;dotPos = 0;};
+    Item(GrammarEntry* entry_, int dotPos_, Symbol peek_) {
+        entry = entry_;
+        dotPos = dotPos_;
+        peek = peek_;
+    }
     ~Item(){};
 public:
     const GrammarEntry* entry;
@@ -62,6 +69,54 @@ public:
             && (dotPos == other.dotPos)
             && (peek.type == other.peek.type);
     }
+
+    void print(std::ofstream& f) const {
+        f<< entry->state.type << " := "; 
+        for (int i = 0; i < std::min((size_t)dotPos,entry->symbols.size()); i++) {
+			auto& e = entry->symbols[i];
+            f << e.type << ' ';
+        }
+        f << "¡£" << ' ';
+        for (int i = dotPos; i < entry->symbols.size(); i++) {
+            auto& e = entry->symbols[i];
+            f << e.type << ' ';
+        }
+
+        f << "peek: " << peek.type << '\n';
+    }
+};
+
+class Action {
+public:
+    Action() {};
+    Action(int state_, string s_, bool useStack_, int j_) {
+        state = state_;
+        inString = s_;
+        useStack = useStack_;
+        j = j_;
+    }
+    ~Action() {};
+
+public:
+    int state; // current state
+    std::string inString; // incoming string   
+    bool useStack; // sj or rj
+    int j; // sj or rj 
+};
+
+class Goto {
+public:
+    Goto() {};
+    Goto(int state_, string inState_, int gotoState_) {
+        state = state_;
+        inState = inState_;
+        gotoState = gotoState_;
+    }
+    ~Goto() {};
+public:
+    int state;
+    std::string inState;
+    int gotoState;
 };
 
 #endif // COMPONENT_H

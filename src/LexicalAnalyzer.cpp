@@ -110,17 +110,17 @@ int GetToken(string s,int& i)
 }
 
 
-int main()
-{
-    // 读入程序
-    ifstream t("source.txt");
-    string s((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
-    s=Preprocess(s);
-    init();
-    int i=0;
-    int len=s.length()-1;//不算尾零
-    while (i<len && GetToken(s,i)==0)
-        ;
-    cout<<"Lexical analyzation has done!"<<endl;
-    return 0;
-}
+//int main()
+//{
+//    // 读入程序
+//    ifstream t("source.txt");
+//    string s((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+//    s=Preprocess(s);
+//    init();
+//    int i=0;
+//    int len=s.length()-1;//不算尾零
+//    while (i<len && GetToken(s,i)==0)
+//        ;
+//    cout<<"Lexical analyzation has done!"<<endl;
+//    return 0;
+//}
