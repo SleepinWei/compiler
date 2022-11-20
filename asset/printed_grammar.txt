@@ -8,8 +8,8 @@ $-
 $/
 $;
 $=
-$character
 $else
+$id
 $if
 $int
 $num
@@ -26,8 +26,6 @@ $}
 <FTYPE>
 <Factor>
 <FunctionStatement>
-<ID-temp>
-<ID>
 <InternalStatement>
 <InternalVarStatement>
 <Item>
@@ -53,8 +51,8 @@ $}
 <Program>-><StatementSequence> 
 <StatementSequence>-><Statement> 
 <StatementSequence>-><StatementSequence> <Statement> 
-<Statement>->$int <ID> <TypeStatement> 
-<Statement>->$void <ID> <FunctionStatement> 
+<Statement>->$int $id <TypeStatement> 
+<Statement>->$void $id <FunctionStatement> 
 <TypeStatement>-><VariableStatement> 
 <TypeStatement>-><FunctionStatement> 
 <VariableStatement>->$; 
@@ -63,19 +61,19 @@ $}
 <Parameter>->$void 
 <ParmList>-><Parm> 
 <ParmList>-><Parm> $, <ParmList> 
-<Parm>->$int <ID> 
+<Parm>->$int $id 
 <SentenceBlock>->${ <InternalStatement> <SentenceString> $} 
 <InternalStatement>->@empty 
 <InternalStatement>-><InternalVarStatement> 
 <InternalStatement>-><InternalVarStatement> $; <InternalStatement> 
-<InternalVarStatement>->$int <ID> 
+<InternalVarStatement>->$int $id 
 <SentenceString>-><Sentence> <SentenceString> 
 <SentenceString>-><Sentence> 
 <Sentence>-><if-Sentence> 
 <Sentence>-><while-Sentence> 
 <Sentence>-><return-Sentence> 
 <Sentence>-><assign-Sentence> 
-<assign-Sentence>-><ID> $= <Expression> $; 
+<assign-Sentence>->$id $= <Expression> $; 
 <return-Sentence>->$return 
 <return-Sentence>->$return <Expression> 
 <while-Sentence>->$while $( <Expression> $) <SentenceBlock> 
@@ -91,7 +89,7 @@ $}
 <Item>-><Factor> $/ <Item> 
 <Factor>->$num 
 <Factor>->$( <Expression> $) 
-<Factor>-><ID> <FTYPE> 
+<Factor>->$id <FTYPE> 
 <FTYPE>-><call> 
 <FTYPE>->@empty 
 <call>->$( <ArgumentList> $) 
@@ -99,7 +97,3 @@ $}
 <Argument>->@empty 
 <ArgumentList>-><Expression> 
 <ArgumentList>-><Expression> $, <ArugmentList> 
-<ID>->$character <ID-temp> 
-<ID-temp>->$character <ID-temp> 
-<ID-temp>->$num <ID-temp> 
-<ID-temp>->@empty 
