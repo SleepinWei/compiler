@@ -1,5 +1,5 @@
 <Program> = <StatementSequence>
-<StatementSequence> = <Statement> <StatementSequence> | @empty  
+<StatementSequence> = <Statement> | <StatementSequence> <Statement>  
 <Statement> = $int <ID> <TypeStatement> | $void <ID> <FunctionStatement>
 <TypeStatement> = <VariableStatement> | <FunctionStatement>
 <VariableStatement> = $;
@@ -10,7 +10,7 @@
 <SentenceBlock> = ${ <InternalStatement> <SentenceString> $}
 <InternalStatement> = @empty | <InternalVarStatement> | <InternalVarStatement> $; <InternalStatement>
 <InternalVarStatement> = $int <ID>
-<SentenceString> = <Sentence> <SentenceString> | @empty
+<SentenceString> = <Sentence> <SentenceString> | <Sentence>
 <Sentence> = <if-Sentence> | <while-Sentence> | <return-Sentence> | <assign-Sentence>
 <assign-Sentence> = <ID> $= <Expression> $;
 <return-Sentence> = $return | $return <Expression>
