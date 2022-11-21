@@ -1,0 +1,26 @@
+<Program> = <StatementSequence>
+<StatementSequence> = <Statement> | <StatementSequence> <Statement>  
+<Statement> = $int $id <TypeStatement> | $void $id <FunctionStatement>
+<TypeStatement> = <VariableStatement> | <FunctionStatement>
+<VariableStatement> = $;
+<FunctionStatement> = $( <Parameter> $) <SentenceBlock>
+<Parameter> = <ParmList> | $void
+<ParmList> = <Parm> | <Parm> $, <ParmList>
+<Parm> = $int $id 
+<SentenceBlock> = ${ <InternalStatement> <SentenceString> $}
+<InternalStatement> = @empty | <InternalVarStatement> | <InternalVarStatement> $; <InternalStatement>
+<InternalVarStatement> = $int $id
+<SentenceString> = <Sentence> <SentenceString> | <Sentence>
+<Sentence> = <if-Sentence> | <while-Sentence> | <return-Sentence> | <assign-Sentence>
+<assign-Sentence> = $id $= <Expression> $;
+<return-Sentence> = $return | $return <Expression>
+<while-Sentence> = $while $( <Expression> $) <SentenceBlock>
+<if-Sentence> = $if $( <Expression> $) <SentenceBlock> | $if $( <Expression> $) <SentenceBlock> $else <SentenceBlock>
+<Expression> = <add-Expression> | <add-Expression> $relop <add-Expression> 
+<add-Expression> = <Item> | <Item> $+ <add-Expression> | <Item> $- <add-Expression>
+<Item> = <Factor> | <Factor> $* <Item> | <Factor> $/ <Item>
+<Factor> = $num | $( <Expression> $) | $id <FTYPE>
+<FTYPE> = <call> | @empty
+<call> = $( <ArgumentList> $)
+<Argument> = <ArgumentList> | @empty
+<ArgumentList> = <Expression> | <Expression> $, <ArugmentList>

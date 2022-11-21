@@ -4,6 +4,8 @@
 #include<vector>
 #include<string>
 #include<fstream>
+#include<iostream>
+#include<ostream>
 #include<utility>
 using std::vector;
 using std::string;
@@ -45,6 +47,21 @@ public:
     }
     GrammarEntry() {};
     ~GrammarEntry(){};
+
+    void print(std::ofstream& cout) {
+        cout << state.type << " := ";
+        for (auto& sym : symbols) {
+            cout << sym.type << ' ';
+        }
+        cout << '\n';
+    }
+    void print(std::ostream& cout) const {
+        cout << state.type << " := ";
+        for (auto& sym : symbols) {
+            cout << sym.type << ' ';
+        }
+        cout << '\n';
+    }
 public:
 
     Symbol state;
@@ -106,7 +123,7 @@ public:
     ~Action() {};
 
     bool operator==(const Action& a) {
-        return (state == a.state) && (inString == a.inString) && (useStack == a.useStack) && (j = a.j);
+        return (state == a.state) && (inString == a.inString) && (useStack == a.useStack) && (j = a.j) && isAcc == a.isAcc && gen==a.gen;
     }
 
 public:
