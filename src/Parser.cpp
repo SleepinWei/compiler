@@ -6,6 +6,8 @@
 #include <algorithm>
 #include<ios>
 using std::string;
+const std::string EMPTY("@empty");
+
 void Parser::readGrammarYACC(const std::string& filename) {
     std::ifstream f(filename);
     while (f.peek() != EOF) {
@@ -62,6 +64,8 @@ void Parser::readGrammar(const std::string& filename){
         std::string state_type;
         f >> state_type;
 
+        if (state_type == "")
+            break;
         Symbol state = Loader::loadSymbol(state_type);
         grammarSymbols.insert(state);
 
@@ -98,7 +102,9 @@ void Parser::readGrammar(const std::string& filename){
                 Symbol symbol = Loader::loadSymbol(symbol_type);
                 symbols.push_back(symbol);
 
-                grammarSymbols.insert(symbol);
+                if (symbol.type != EMPTY) {
+                    grammarSymbols.insert(symbol);
+                }
             }
         }
 
@@ -247,7 +253,6 @@ static void removeDup(std::vector<T> &v)
     v.erase(end, v.end());
 }
 
-const std::string EMPTY("@empty");
 
 void Parser::calFirstVN(){
 
@@ -310,8 +315,9 @@ void Parser::printVNFirst(const std::string& filename) {
 
 void Parser::printCluster(const std::string& filename) {
     std::ofstream f(filename);
+    int index = 0;
     for (auto& itemset : cluster) {
-        f << "ItemSet {\n";
+        f << "ItemSet " << index++<<"{\n";
         for (auto& item : itemset) {
             item.print(f);
         }
@@ -380,6 +386,8 @@ void Parser::closure(std::vector<Item> &itemSet)
                 // find B->dot C
                 for (const std::string &fb : calResult) {
                     // first(beta a), a = item.peek
+                    if (fb == EMPTY) // skip empty
+                        continue;
                     Item newitm;
                     newitm.entry = &ety;
                     newitm.dotPos = 0;
@@ -411,12 +419,10 @@ void Parser::closure(std::vector<Item> &itemSet)
 //}
 
 std::vector<Item> Parser::GO(const std::vector<Item>& itemSet, const std::string& X) {
+    assert(X != EMPTY);
     std::vector<Item> result;
 
     // construct J 
-    if (X == "translation_unit") {
-        ;
-    }
     for (auto item : itemSet) {
         // for all items in itemSet
         if (item.dotPos < item.entry->symbols.size()) {
@@ -425,7 +431,12 @@ std::vector<Item> Parser::GO(const std::vector<Item>& itemSet, const std::string
                 // A->alpha dot X beta 
                 Item jitem;
                 jitem.entry = item.entry;
-                jitem.dotPos = item.dotPos + 1;
+                //if(X != EMPTY)
+				jitem.dotPos = item.dotPos + 1;
+                //else {
+                    //assert(item.dotPos == 0);
+                    //jitem.dotPos = 0;
+                //}
                 jitem.peek = item.peek;
                 assert(jitem.entry != nullptr);
                 assert(jitem.dotPos >= 0 && jitem.dotPos <= item.entry->symbols.size());
@@ -539,7 +550,7 @@ void Parser::constructTable() {
             // item iter
             // std::cout << iiter << '\n';
             auto& item = itemSet[iiter];
-            if (item.dotPos < item.entry->symbols.size()) {
+            if (item.dotPos < item.entry->symbols.size() && item.entry->symbols[0].type != EMPTY){
 				// compute GO(Ik,a)
                 // sym : a
                 Symbol _s = item.entry->symbols[item.dotPos];
@@ -547,6 +558,9 @@ void Parser::constructTable() {
                     continue;
                 }
                 string sym = _s.type;
+                if (sym == "@empty") {
+                    continue;
+                }
 				auto goSet = GO(itemSet, sym);
                 if (goSet.size() == 0) {
                     continue;
@@ -564,7 +578,7 @@ void Parser::constructTable() {
                     actions.emplace_back(action);
                 }
             }
-            else if (item.dotPos == item.entry->symbols.size()) {
+            else if (item.dotPos == item.entry->symbols.size() || item.entry->symbols[0].type == EMPTY) {
                 // [A -> alpha dot, a]
 
                 Action action;
@@ -626,12 +640,6 @@ Action* Parser::findAction(int s,string in) {
             return &a;
         }
      }
-
-	for (auto& a : actions) { 
-        if (a.state == s && a.inString == "@empty") {
-            return &a;
-        }
-	}
     return nullptr;
 }
 
@@ -673,6 +681,9 @@ void Parser::analyze(const std::vector<std::string>& inputs) {
                 const GrammarEntry* rule = act->gen;
                 const Symbol& A = rule->state;
                 int r = rule->symbols.size();
+                if (rule->symbols[0].type == EMPTY) {
+                    r = 0;
+                }
                 for (int i = 0; i < r; i++) {
                     stateStack.pop();
                 }
@@ -696,6 +707,10 @@ void Parser::analyze(const std::vector<std::string>& inputs) {
         }
         else {
             // error 
+            std::cout << "Error" << '\n';
+            std::cout << iSym << '\n';
+            std::cout << "State: " << topState << '\n';
+            break;
         }
     }
 }
