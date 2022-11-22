@@ -1,12 +1,19 @@
+
+#include <QApplication>
+#include "mainwindow.h"
 //#include <QCoreApplication>
 #include"Parser.h"
 #include"Lexer.h"
 #include<iostream>
 #include<fstream>
 
+
 int main(int argc, char *argv[])
 {
-//    QCoreApplication a(argc, argv);
+    QApplication a(argc, argv);
+    MainWindow w;
+    w.show();
+
 
 //    return a.exec();
     // Lexer
@@ -30,6 +37,17 @@ int main(int argc, char *argv[])
 
     parser.constructCluster();
     parser.printCluster("./asset/cluster.txt");
+
+    if (0) {
+        parser.readGrammar("./asset/grammar.txt");
+        //parser.calFirst();
+        parser.calFirstVN();
+        parser.printVNFirst("./asset/firstVN.txt");
+        parser.constructCluster();
+        parser.printCluster("./asset/cluster.txt");
+    }
+    return a.exec();
+
     std::cout << "Cluster Done\n";
 
     parser.constructTable();
@@ -39,4 +57,5 @@ int main(int argc, char *argv[])
     parser.analyze(lex.inputs);
 
     return 0;
+
 }
