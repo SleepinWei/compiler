@@ -10,7 +10,8 @@
 <return-Sentence> = $return $; | $return <Expression> $; ; 
 <while-Sentence> = $while $( <Expression> $) <SentenceBlock> ;
 <if-Sentence> = $if $( <Expression> $) <SentenceBlock> | $if $( <Expression> $) <SentenceBlock> $else <SentenceBlock> ;
-<Expression> = <add-Expression> | <add-Expression> $relop <Expression> ;
+<Expression> = <add-Expression> | <add-Expression> <relop> <Expression> ;
+<relop> = $== | $> | $< | $<= | $!= | $>= ;
 <add-Expression> = <Term> | <Term> $+ <add-Expression> | <Term> $- <add-Expression> ;
 <Term> = <Element> | <Element> $* <Element> | <Element> $/ <Element> ;
 <Element> = $num | $( <Expression> $) | $id <FTYPE> ;

@@ -1,0 +1,1 @@
+dot ./asset/dfa.dot -T png -o ./asset/dfa.png

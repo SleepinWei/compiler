@@ -1,5 +1,12 @@
+
 #include <QApplication>
 #include "mainwindow.h"
+
+
+//#include <QApplication>
+//#include "mainwindow.h"
+//#include <QCoreApplication>
+
 #include"Parser.h"
 #include"Lexer.h"
 #include<iostream>
@@ -11,4 +18,5 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
     return a.exec();
+
 }

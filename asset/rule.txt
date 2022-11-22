@@ -1,3 +1,0 @@
-Parameter：形参
-Parm: 参数
-Argument 实参

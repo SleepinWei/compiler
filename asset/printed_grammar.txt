@@ -1,3 +1,4 @@
+
 Symbols:
 $!=
 $(
@@ -91,3 +92,98 @@ $}
 <Arg>->@empty 
 <ArgList>-><Expression> 
 <ArgList>-><Expression> $, <ArgList> 
+=======
+Symbols:
+$!=
+$(
+$)
+$*
+$+
+$,
+$-
+$/
+$;
+$<
+$<=
+$=
+$==
+$>
+$>=
+$else
+$id
+$if
+$int
+$num
+$return
+$void
+$while
+${
+$}
+<Arg>
+<ArgList>
+<Element>
+<Expression>
+<FTYPE>
+<InternalStatement>
+<InternalVarStatement>
+<Program>
+<Sentence>
+<SentenceBlock>
+<SentenceString>
+<Term>
+<Type>
+<add-Expression>
+<assign-Sentence>
+<call>
+<if-Sentence>
+<relop>
+<return-Sentence>
+<start>
+<while-Sentence>
+--------------------------------------
+<Program>-><start> 
+<start>-><Type> $id $( $) <SentenceBlock> 
+<Type>->$int 
+<Type>->$void 
+<SentenceBlock>->${ <InternalStatement> <SentenceString> $} 
+<InternalStatement>->@empty 
+<InternalStatement>-><InternalVarStatement> $; <InternalStatement> 
+<InternalVarStatement>->$int $id 
+<SentenceString>->@empty 
+<SentenceString>-><Sentence> 
+<SentenceString>-><Sentence> <SentenceString> 
+<Sentence>-><if-Sentence> 
+<Sentence>-><while-Sentence> 
+<Sentence>-><return-Sentence> 
+<Sentence>-><assign-Sentence> 
+<assign-Sentence>->$id $= <Expression> $; 
+<return-Sentence>->$return $; 
+<return-Sentence>->$return <Expression> $; 
+<while-Sentence>->$while $( <Expression> $) <SentenceBlock> 
+<if-Sentence>->$if $( <Expression> $) <SentenceBlock> 
+<if-Sentence>->$if $( <Expression> $) <SentenceBlock> $else <SentenceBlock> 
+<Expression>-><add-Expression> 
+<Expression>-><add-Expression> <relop> <Expression> 
+<relop>->$== 
+<relop>->$> 
+<relop>->$< 
+<relop>->$<= 
+<relop>->$!= 
+<relop>->$>= 
+<add-Expression>-><Term> 
+<add-Expression>-><Term> $+ <add-Expression> 
+<add-Expression>-><Term> $- <add-Expression> 
+<Term>-><Element> 
+<Term>-><Element> $* <Element> 
+<Term>-><Element> $/ <Element> 
+<Element>->$num 
+<Element>->$( <Expression> $) 
+<Element>->$id <FTYPE> 
+<FTYPE>-><call> 
+<FTYPE>->@empty 
+<call>->$( <ArgList> $) 
+<Arg>-><ArgList> 
+<Arg>->@empty 
+<ArgList>-><Expression> 
+<ArgList>-><Expression> $, <ArgList> 
+
