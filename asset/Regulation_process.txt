@@ -1,0 +1,78 @@
+Action Table
+Move: read $int, push state 1
+Conclude: use rule <Type> := $int 
+Move: read $id, push state 5
+Move: read $(, push state 6
+Move: read $), push state 7
+Move: read ${, push state 8
+Move: read $int, push state 10
+Move: read $id, push state 13
+Conclude: use rule <InternalVarStatement> := $int $id 
+Move: read $;, push state 24
+Conclude: use rule <InternalStatement> := @empty 
+Conclude: use rule <InternalStatement> := <InternalVarStatement> $; <InternalStatement> 
+Move: read $id, push state 14
+Move: read $=, push state 25
+Move: read $num, push state 30
+Conclude: use rule <Element> := $num 
+Conclude: use rule <Term> := <Element> 
+Conclude: use rule <add-Expression> := <Term> 
+Conclude: use rule <Expression> := <add-Expression> 
+Move: read $;, push state 64
+Conclude: use rule <assign-Sentence> := $id $= <Expression> $; 
+Conclude: use rule <Sentence> := <assign-Sentence> 
+Move: read $while, push state 17
+Move: read $(, push state 35
+Move: read $id, push state 41
+Conclude: use rule <FTYPE> := @empty 
+Conclude: use rule <Element> := $id <FTYPE> 
+Conclude: use rule <Term> := <Element> 
+Conclude: use rule <add-Expression> := <Term> 
+Move: read $<, push state 57
+Conclude: use rule <relop> := $< 
+Move: read $num, push state 42
+Conclude: use rule <Element> := $num 
+Conclude: use rule <Term> := <Element> 
+Conclude: use rule <add-Expression> := <Term> 
+Conclude: use rule <Expression> := <add-Expression> 
+Conclude: use rule <Expression> := <add-Expression> <relop> <Expression> 
+Move: read $), push state 93
+Move: read ${, push state 122
+Conclude: use rule <InternalStatement> := @empty 
+Move: read $id, push state 14
+Move: read $=, push state 25
+Move: read $id, push state 29
+Conclude: use rule <FTYPE> := @empty 
+Conclude: use rule <Element> := $id <FTYPE> 
+Conclude: use rule <Term> := <Element> 
+Move: read $+, push state 54
+Move: read $num, push state 30
+Conclude: use rule <Element> := $num 
+Conclude: use rule <Term> := <Element> 
+Conclude: use rule <add-Expression> := <Term> 
+Conclude: use rule <add-Expression> := <Term> $+ <add-Expression> 
+Conclude: use rule <Expression> := <add-Expression> 
+Move: read $;, push state 64
+Conclude: use rule <assign-Sentence> := $id $= <Expression> $; 
+Conclude: use rule <Sentence> := <assign-Sentence> 
+Conclude: use rule <SentenceString> := <Sentence> 
+Move: read $}, push state 161
+Conclude: use rule <SentenceBlock> := ${ <InternalStatement> <SentenceString> $} 
+Conclude: use rule <while-Sentence> := $while $( <Expression> $) <SentenceBlock> 
+Conclude: use rule <Sentence> := <while-Sentence> 
+Move: read $return, push state 16
+Move: read $num, push state 30
+Conclude: use rule <Element> := $num 
+Conclude: use rule <Term> := <Element> 
+Conclude: use rule <add-Expression> := <Term> 
+Conclude: use rule <Expression> := <add-Expression> 
+Move: read $;, push state 53
+Conclude: use rule <return-Sentence> := $return <Expression> $; 
+Conclude: use rule <Sentence> := <return-Sentence> 
+Conclude: use rule <SentenceString> := <Sentence> 
+Conclude: use rule <SentenceString> := <Sentence> <SentenceString> 
+Conclude: use rule <SentenceString> := <Sentence> <SentenceString> 
+Move: read $}, push state 37
+Conclude: use rule <SentenceBlock> := ${ <InternalStatement> <SentenceString> $} 
+Conclude: use rule <start> := <Type> $id $( $) <SentenceBlock> 
+Done!

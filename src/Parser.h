@@ -51,7 +51,7 @@ public:
     // analyze
     Action* findAction(int s,std::string in);
     Goto* findGoto(int s, std::string sym);
-    void analyze(const std::vector<std::string>& symbols);
+    void analyze(const std::vector<std::string>& symbols, const std::string& filename);
 };
 
 class Loader{
