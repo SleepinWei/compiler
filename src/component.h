@@ -4,6 +4,8 @@
 #include<vector>
 #include<string>
 #include<fstream>
+#include<iostream>
+#include<ostream>
 #include<utility>
 using std::vector;
 using std::string;
@@ -45,6 +47,21 @@ public:
     }
     GrammarEntry() {};
     ~GrammarEntry(){};
+
+    void print(std::ofstream& cout) {
+        cout << state.type << " := ";
+        for (auto& sym : symbols) {
+            cout << sym.type << ' ';
+        }
+        cout << '\n';
+    }
+    void print(std::ostream& cout) const {
+        cout << state.type << " := ";
+        for (auto& sym : symbols) {
+            cout << sym.type << ' ';
+        }
+        cout << '\n';
+    }
 public:
 
     Symbol state;
@@ -88,20 +105,34 @@ public:
 
 class Action {
 public:
-    Action() {};
+    Action() {
+        state = -1;
+        inString = "";
+        useStack = false;
+        j = -1;
+        isAcc = false;
+    };
     Action(int state_, string s_, bool useStack_, int j_) {
         state = state_;
         inString = s_;
         useStack = useStack_;
         j = j_;
+        gen = nullptr;
+        isAcc = false;
     }
     ~Action() {};
+
+    bool operator==(const Action& a) {
+        return (state == a.state) && (inString == a.inString) && (useStack == a.useStack) && (j = a.j) && isAcc == a.isAcc && gen==a.gen;
+    }
 
 public:
     int state; // current state
     std::string inString; // incoming string   
     bool useStack; // sj or rj
     int j; // sj or rj 
+    const GrammarEntry* gen; 
+    bool isAcc;
 };
 
 class Goto {
@@ -113,6 +144,10 @@ public:
         gotoState = gotoState_;
     }
     ~Goto() {};
+
+    bool operator==(const Goto& g) {
+        return state == g.state && inState == g.inState && gotoState == g.gotoState;
+    }
 public:
     int state;
     std::string inState;
