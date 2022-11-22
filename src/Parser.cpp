@@ -269,7 +269,6 @@ void Parser::calFirstVN(){
             std::vector<string> &fG = firstVN[g.state.type];
             const size_t isz = fG.size();
 
-            for(; sit != g.symbols.cend() && !sit->isTerminal; sit++) {
             auto sit = g.symbols.begin();
             for(; sit != g.symbols.end() && !(sit->isTerminal); sit++) {
                 // append(fG, firstVN[sit->type]);
@@ -404,20 +403,6 @@ void Parser::closure(std::vector<Item> &itemSet)
         change = (itemSet.size() > isz);
     }
 }
-
-//std::set<Item> Parser::calClosure(const std::set<Item>& itemSet) {
-//    std::set<Item> result;
-//    for (auto& item : itemSet) {
-//        result.insert(item);
-//    }
-//
-//    bool change = true;
-//    while (change) {
-//        change = false;
-//          
-//    }
-//    return result;
-//}
 
 std::vector<Item> Parser::GO(const std::vector<Item>& itemSet, const std::string& X) {
     assert(X != EMPTY);
@@ -634,7 +619,7 @@ void Parser::printTable(const std::string& filename) {
         f << g.state << ' ' << g.inState << ' ' << g.gotoState << '\n';
     }
 }
-using namespace std;
+
 Action* Parser::findAction(int s,string in) {
     for (auto& a : actions) {
         if (a.state == s && a.inString == in) {
@@ -653,10 +638,11 @@ Goto* Parser::findGoto(int s, std::string sym) {
     return nullptr;
 }
 
-void Parser::analyze(const std::vector<std::string>& inputs) {
+void Parser::analyze(const std::vector<std::string>& inputs, const std::string& filename) {
     inputPos = 0;
     stateStack.push(0);
-
+    std::ofstream f(filename);
+    f << "Action Table\n";
     while (true) {
         string iSym = inputs[inputPos]; // ai 
         int topState = stateStack.top();
@@ -665,7 +651,8 @@ void Parser::analyze(const std::vector<std::string>& inputs) {
         //Goto* g = findGoto(topState, iSym);
         if (act) {
             if (act->isAcc) {
-                std::cout << "Done!";
+                f << "Done!";
+                std::cout<<"Regulation Process Done";
                 return;
             }
             else if (act->useStack) {
@@ -675,7 +662,7 @@ void Parser::analyze(const std::vector<std::string>& inputs) {
                 if(iSym != "#")
 					++inputPos; // move to next ;
                 // output 
-                std::cout << "Move: " << "read " << iSym << ", " << "push state " << act->j<< '\n';
+                f << "Move: " << "read " << iSym << ", " << "push state " << act->j<< '\n';
             }
             else {
                 // ¹éÔ¼
@@ -698,8 +685,8 @@ void Parser::analyze(const std::vector<std::string>& inputs) {
                     }
                     symbolStack.push(A);
 
-                    std::cout << "Conclude: " << "use rule ";
-                    rule->print(std::cout);
+                    f << "Conclude: " << "use rule ";
+                    rule->print(f);
                 }
                 else {
                     // error

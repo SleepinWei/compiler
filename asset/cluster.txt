@@ -143,13 +143,28 @@ ItemSet 16{
 <return-Sentence> := $return 。 $; peek: $id
 <return-Sentence> := $return 。 <Expression> $; peek: $id
 <Expression> := 。 <add-Expression> peek: $;
-<Expression> := 。 <add-Expression> $relop <Expression> peek: $;
+<Expression> := 。 <add-Expression> <relop> <Expression> peek: $;
 <add-Expression> := 。 <Term> peek: $;
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $;
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $;
-<add-Expression> := 。 <Term> peek: $relop
-<add-Expression> := 。 <Term> $+ <add-Expression> peek: $relop
-<add-Expression> := 。 <Term> $- <add-Expression> peek: $relop
+<add-Expression> := 。 <Term> peek: $==
+<add-Expression> := 。 <Term> peek: $>
+<add-Expression> := 。 <Term> peek: $<
+<add-Expression> := 。 <Term> peek: $<=
+<add-Expression> := 。 <Term> peek: $!=
+<add-Expression> := 。 <Term> peek: $>=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>=
 <Term> := 。 <Element> peek: $;
 <Term> := 。 <Element> $* <Element> peek: $;
 <Term> := 。 <Element> $/ <Element> peek: $;
@@ -159,9 +174,24 @@ ItemSet 16{
 <Term> := 。 <Element> peek: $-
 <Term> := 。 <Element> $* <Element> peek: $-
 <Term> := 。 <Element> $/ <Element> peek: $-
-<Term> := 。 <Element> peek: $relop
-<Term> := 。 <Element> $* <Element> peek: $relop
-<Term> := 。 <Element> $/ <Element> peek: $relop
+<Term> := 。 <Element> peek: $==
+<Term> := 。 <Element> $* <Element> peek: $==
+<Term> := 。 <Element> $/ <Element> peek: $==
+<Term> := 。 <Element> peek: $>
+<Term> := 。 <Element> $* <Element> peek: $>
+<Term> := 。 <Element> $/ <Element> peek: $>
+<Term> := 。 <Element> peek: $<
+<Term> := 。 <Element> $* <Element> peek: $<
+<Term> := 。 <Element> $/ <Element> peek: $<
+<Term> := 。 <Element> peek: $<=
+<Term> := 。 <Element> $* <Element> peek: $<=
+<Term> := 。 <Element> $/ <Element> peek: $<=
+<Term> := 。 <Element> peek: $!=
+<Term> := 。 <Element> $* <Element> peek: $!=
+<Term> := 。 <Element> $/ <Element> peek: $!=
+<Term> := 。 <Element> peek: $>=
+<Term> := 。 <Element> $* <Element> peek: $>=
+<Term> := 。 <Element> $/ <Element> peek: $>=
 <Element> := 。 $num peek: $;
 <Element> := 。 $( <Expression> $) peek: $;
 <Element> := 。 $id <FTYPE> peek: $;
@@ -177,9 +207,24 @@ ItemSet 16{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 }
 ItemSet 17{
 <while-Sentence> := $while 。 $( <Expression> $) <SentenceBlock> peek: $}
@@ -301,13 +346,28 @@ ItemSet 25{
 <assign-Sentence> := $id $= 。 <Expression> $; peek: $return
 <assign-Sentence> := $id $= 。 <Expression> $; peek: $id
 <Expression> := 。 <add-Expression> peek: $;
-<Expression> := 。 <add-Expression> $relop <Expression> peek: $;
+<Expression> := 。 <add-Expression> <relop> <Expression> peek: $;
 <add-Expression> := 。 <Term> peek: $;
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $;
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $;
-<add-Expression> := 。 <Term> peek: $relop
-<add-Expression> := 。 <Term> $+ <add-Expression> peek: $relop
-<add-Expression> := 。 <Term> $- <add-Expression> peek: $relop
+<add-Expression> := 。 <Term> peek: $==
+<add-Expression> := 。 <Term> peek: $>
+<add-Expression> := 。 <Term> peek: $<
+<add-Expression> := 。 <Term> peek: $<=
+<add-Expression> := 。 <Term> peek: $!=
+<add-Expression> := 。 <Term> peek: $>=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>=
 <Term> := 。 <Element> peek: $;
 <Term> := 。 <Element> $* <Element> peek: $;
 <Term> := 。 <Element> $/ <Element> peek: $;
@@ -317,9 +377,24 @@ ItemSet 25{
 <Term> := 。 <Element> peek: $-
 <Term> := 。 <Element> $* <Element> peek: $-
 <Term> := 。 <Element> $/ <Element> peek: $-
-<Term> := 。 <Element> peek: $relop
-<Term> := 。 <Element> $* <Element> peek: $relop
-<Term> := 。 <Element> $/ <Element> peek: $relop
+<Term> := 。 <Element> peek: $==
+<Term> := 。 <Element> $* <Element> peek: $==
+<Term> := 。 <Element> $/ <Element> peek: $==
+<Term> := 。 <Element> peek: $>
+<Term> := 。 <Element> $* <Element> peek: $>
+<Term> := 。 <Element> $/ <Element> peek: $>
+<Term> := 。 <Element> peek: $<
+<Term> := 。 <Element> $* <Element> peek: $<
+<Term> := 。 <Element> $/ <Element> peek: $<
+<Term> := 。 <Element> peek: $<=
+<Term> := 。 <Element> $* <Element> peek: $<=
+<Term> := 。 <Element> $/ <Element> peek: $<=
+<Term> := 。 <Element> peek: $!=
+<Term> := 。 <Element> $* <Element> peek: $!=
+<Term> := 。 <Element> $/ <Element> peek: $!=
+<Term> := 。 <Element> peek: $>=
+<Term> := 。 <Element> $* <Element> peek: $>=
+<Term> := 。 <Element> $/ <Element> peek: $>=
 <Element> := 。 $num peek: $;
 <Element> := 。 $( <Expression> $) peek: $;
 <Element> := 。 $id <FTYPE> peek: $;
@@ -335,9 +410,24 @@ ItemSet 25{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 }
 ItemSet 26{
 <if-Sentence> := $if $( 。 <Expression> $) <SentenceBlock> peek: $}
@@ -351,13 +441,28 @@ ItemSet 26{
 <if-Sentence> := $if $( 。 <Expression> $) <SentenceBlock> peek: $id
 <if-Sentence> := $if $( 。 <Expression> $) <SentenceBlock> $else <SentenceBlock> peek: $id
 <Expression> := 。 <add-Expression> peek: $)
-<Expression> := 。 <add-Expression> $relop <Expression> peek: $)
+<Expression> := 。 <add-Expression> <relop> <Expression> peek: $)
 <add-Expression> := 。 <Term> peek: $)
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $)
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $)
-<add-Expression> := 。 <Term> peek: $relop
-<add-Expression> := 。 <Term> $+ <add-Expression> peek: $relop
-<add-Expression> := 。 <Term> $- <add-Expression> peek: $relop
+<add-Expression> := 。 <Term> peek: $==
+<add-Expression> := 。 <Term> peek: $>
+<add-Expression> := 。 <Term> peek: $<
+<add-Expression> := 。 <Term> peek: $<=
+<add-Expression> := 。 <Term> peek: $!=
+<add-Expression> := 。 <Term> peek: $>=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>=
 <Term> := 。 <Element> peek: $)
 <Term> := 。 <Element> $* <Element> peek: $)
 <Term> := 。 <Element> $/ <Element> peek: $)
@@ -367,9 +472,24 @@ ItemSet 26{
 <Term> := 。 <Element> peek: $-
 <Term> := 。 <Element> $* <Element> peek: $-
 <Term> := 。 <Element> $/ <Element> peek: $-
-<Term> := 。 <Element> peek: $relop
-<Term> := 。 <Element> $* <Element> peek: $relop
-<Term> := 。 <Element> $/ <Element> peek: $relop
+<Term> := 。 <Element> peek: $==
+<Term> := 。 <Element> $* <Element> peek: $==
+<Term> := 。 <Element> $/ <Element> peek: $==
+<Term> := 。 <Element> peek: $>
+<Term> := 。 <Element> $* <Element> peek: $>
+<Term> := 。 <Element> $/ <Element> peek: $>
+<Term> := 。 <Element> peek: $<
+<Term> := 。 <Element> $* <Element> peek: $<
+<Term> := 。 <Element> $/ <Element> peek: $<
+<Term> := 。 <Element> peek: $<=
+<Term> := 。 <Element> $* <Element> peek: $<=
+<Term> := 。 <Element> $/ <Element> peek: $<=
+<Term> := 。 <Element> peek: $!=
+<Term> := 。 <Element> $* <Element> peek: $!=
+<Term> := 。 <Element> $/ <Element> peek: $!=
+<Term> := 。 <Element> peek: $>=
+<Term> := 。 <Element> $* <Element> peek: $>=
+<Term> := 。 <Element> $/ <Element> peek: $>=
 <Element> := 。 $num peek: $)
 <Element> := 。 $( <Expression> $) peek: $)
 <Element> := 。 $id <FTYPE> peek: $)
@@ -385,9 +505,24 @@ ItemSet 26{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 }
 ItemSet 27{
 <Element> := $( 。 <Expression> $) peek: $;
@@ -395,15 +530,35 @@ ItemSet 27{
 <Element> := $( 。 <Expression> $) peek: $/
 <Element> := $( 。 <Expression> $) peek: $+
 <Element> := $( 。 <Expression> $) peek: $-
-<Element> := $( 。 <Expression> $) peek: $relop
+<Element> := $( 。 <Expression> $) peek: $==
+<Element> := $( 。 <Expression> $) peek: $>
+<Element> := $( 。 <Expression> $) peek: $<
+<Element> := $( 。 <Expression> $) peek: $<=
+<Element> := $( 。 <Expression> $) peek: $!=
+<Element> := $( 。 <Expression> $) peek: $>=
 <Expression> := 。 <add-Expression> peek: $)
-<Expression> := 。 <add-Expression> $relop <Expression> peek: $)
+<Expression> := 。 <add-Expression> <relop> <Expression> peek: $)
 <add-Expression> := 。 <Term> peek: $)
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $)
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $)
-<add-Expression> := 。 <Term> peek: $relop
-<add-Expression> := 。 <Term> $+ <add-Expression> peek: $relop
-<add-Expression> := 。 <Term> $- <add-Expression> peek: $relop
+<add-Expression> := 。 <Term> peek: $==
+<add-Expression> := 。 <Term> peek: $>
+<add-Expression> := 。 <Term> peek: $<
+<add-Expression> := 。 <Term> peek: $<=
+<add-Expression> := 。 <Term> peek: $!=
+<add-Expression> := 。 <Term> peek: $>=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>=
 <Term> := 。 <Element> peek: $)
 <Term> := 。 <Element> $* <Element> peek: $)
 <Term> := 。 <Element> $/ <Element> peek: $)
@@ -413,9 +568,24 @@ ItemSet 27{
 <Term> := 。 <Element> peek: $-
 <Term> := 。 <Element> $* <Element> peek: $-
 <Term> := 。 <Element> $/ <Element> peek: $-
-<Term> := 。 <Element> peek: $relop
-<Term> := 。 <Element> $* <Element> peek: $relop
-<Term> := 。 <Element> $/ <Element> peek: $relop
+<Term> := 。 <Element> peek: $==
+<Term> := 。 <Element> $* <Element> peek: $==
+<Term> := 。 <Element> $/ <Element> peek: $==
+<Term> := 。 <Element> peek: $>
+<Term> := 。 <Element> $* <Element> peek: $>
+<Term> := 。 <Element> $/ <Element> peek: $>
+<Term> := 。 <Element> peek: $<
+<Term> := 。 <Element> $* <Element> peek: $<
+<Term> := 。 <Element> $/ <Element> peek: $<
+<Term> := 。 <Element> peek: $<=
+<Term> := 。 <Element> $* <Element> peek: $<=
+<Term> := 。 <Element> $/ <Element> peek: $<=
+<Term> := 。 <Element> peek: $!=
+<Term> := 。 <Element> $* <Element> peek: $!=
+<Term> := 。 <Element> $/ <Element> peek: $!=
+<Term> := 。 <Element> peek: $>=
+<Term> := 。 <Element> $* <Element> peek: $>=
+<Term> := 。 <Element> $/ <Element> peek: $>=
 <Element> := 。 $num peek: $)
 <Element> := 。 $( <Expression> $) peek: $)
 <Element> := 。 $id <FTYPE> peek: $)
@@ -431,9 +601,24 @@ ItemSet 27{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 }
 ItemSet 28{
 <return-Sentence> := $return $; 。 peek: $}
@@ -448,7 +633,12 @@ ItemSet 29{
 <Element> := $id 。 <FTYPE> peek: $/
 <Element> := $id 。 <FTYPE> peek: $+
 <Element> := $id 。 <FTYPE> peek: $-
-<Element> := $id 。 <FTYPE> peek: $relop
+<Element> := $id 。 <FTYPE> peek: $==
+<Element> := $id 。 <FTYPE> peek: $>
+<Element> := $id 。 <FTYPE> peek: $<
+<Element> := $id 。 <FTYPE> peek: $<=
+<Element> := $id 。 <FTYPE> peek: $!=
+<Element> := $id 。 <FTYPE> peek: $>=
 <FTYPE> := 。 <call> peek: $;
 <FTYPE> := 。 @empty peek: $;
 <FTYPE> := 。 <call> peek: $*
@@ -459,14 +649,29 @@ ItemSet 29{
 <FTYPE> := 。 @empty peek: $+
 <FTYPE> := 。 <call> peek: $-
 <FTYPE> := 。 @empty peek: $-
-<FTYPE> := 。 <call> peek: $relop
-<FTYPE> := 。 @empty peek: $relop
+<FTYPE> := 。 <call> peek: $==
+<FTYPE> := 。 @empty peek: $==
+<FTYPE> := 。 <call> peek: $>
+<FTYPE> := 。 @empty peek: $>
+<FTYPE> := 。 <call> peek: $<
+<FTYPE> := 。 @empty peek: $<
+<FTYPE> := 。 <call> peek: $<=
+<FTYPE> := 。 @empty peek: $<=
+<FTYPE> := 。 <call> peek: $!=
+<FTYPE> := 。 @empty peek: $!=
+<FTYPE> := 。 <call> peek: $>=
+<FTYPE> := 。 @empty peek: $>=
 <call> := 。 $( <ArgList> $) peek: $;
 <call> := 。 $( <ArgList> $) peek: $*
 <call> := 。 $( <ArgList> $) peek: $/
 <call> := 。 $( <ArgList> $) peek: $+
 <call> := 。 $( <ArgList> $) peek: $-
-<call> := 。 $( <ArgList> $) peek: $relop
+<call> := 。 $( <ArgList> $) peek: $==
+<call> := 。 $( <ArgList> $) peek: $>
+<call> := 。 $( <ArgList> $) peek: $<
+<call> := 。 $( <ArgList> $) peek: $<=
+<call> := 。 $( <ArgList> $) peek: $!=
+<call> := 。 $( <ArgList> $) peek: $>=
 }
 ItemSet 30{
 <Element> := $num 。 peek: $;
@@ -474,7 +679,12 @@ ItemSet 30{
 <Element> := $num 。 peek: $/
 <Element> := $num 。 peek: $+
 <Element> := $num 。 peek: $-
-<Element> := $num 。 peek: $relop
+<Element> := $num 。 peek: $==
+<Element> := $num 。 peek: $>
+<Element> := $num 。 peek: $<
+<Element> := $num 。 peek: $<=
+<Element> := $num 。 peek: $!=
+<Element> := $num 。 peek: $>=
 }
 ItemSet 31{
 <Term> := <Element> 。 peek: $;
@@ -486,9 +696,24 @@ ItemSet 31{
 <Term> := <Element> 。 peek: $-
 <Term> := <Element> 。 $* <Element> peek: $-
 <Term> := <Element> 。 $/ <Element> peek: $-
-<Term> := <Element> 。 peek: $relop
-<Term> := <Element> 。 $* <Element> peek: $relop
-<Term> := <Element> 。 $/ <Element> peek: $relop
+<Term> := <Element> 。 peek: $==
+<Term> := <Element> 。 $* <Element> peek: $==
+<Term> := <Element> 。 $/ <Element> peek: $==
+<Term> := <Element> 。 peek: $>
+<Term> := <Element> 。 $* <Element> peek: $>
+<Term> := <Element> 。 $/ <Element> peek: $>
+<Term> := <Element> 。 peek: $<
+<Term> := <Element> 。 $* <Element> peek: $<
+<Term> := <Element> 。 $/ <Element> peek: $<
+<Term> := <Element> 。 peek: $<=
+<Term> := <Element> 。 $* <Element> peek: $<=
+<Term> := <Element> 。 $/ <Element> peek: $<=
+<Term> := <Element> 。 peek: $!=
+<Term> := <Element> 。 $* <Element> peek: $!=
+<Term> := <Element> 。 $/ <Element> peek: $!=
+<Term> := <Element> 。 peek: $>=
+<Term> := <Element> 。 $* <Element> peek: $>=
+<Term> := <Element> 。 $/ <Element> peek: $>=
 }
 ItemSet 32{
 <return-Sentence> := $return <Expression> 。 $; peek: $}
@@ -501,13 +726,46 @@ ItemSet 33{
 <add-Expression> := <Term> 。 peek: $;
 <add-Expression> := <Term> 。 $+ <add-Expression> peek: $;
 <add-Expression> := <Term> 。 $- <add-Expression> peek: $;
-<add-Expression> := <Term> 。 peek: $relop
-<add-Expression> := <Term> 。 $+ <add-Expression> peek: $relop
-<add-Expression> := <Term> 。 $- <add-Expression> peek: $relop
+<add-Expression> := <Term> 。 peek: $==
+<add-Expression> := <Term> 。 peek: $>
+<add-Expression> := <Term> 。 peek: $<
+<add-Expression> := <Term> 。 peek: $<=
+<add-Expression> := <Term> 。 peek: $!=
+<add-Expression> := <Term> 。 peek: $>=
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $==
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $>
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $<
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $<=
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $!=
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $>=
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $==
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $>
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $<
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $<=
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $!=
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $>=
 }
 ItemSet 34{
 <Expression> := <add-Expression> 。 peek: $;
-<Expression> := <add-Expression> 。 $relop <Expression> peek: $;
+<Expression> := <add-Expression> 。 <relop> <Expression> peek: $;
+<relop> := 。 $== peek: $num
+<relop> := 。 $== peek: $(
+<relop> := 。 $== peek: $id
+<relop> := 。 $> peek: $num
+<relop> := 。 $> peek: $(
+<relop> := 。 $> peek: $id
+<relop> := 。 $< peek: $num
+<relop> := 。 $< peek: $(
+<relop> := 。 $< peek: $id
+<relop> := 。 $<= peek: $num
+<relop> := 。 $<= peek: $(
+<relop> := 。 $<= peek: $id
+<relop> := 。 $!= peek: $num
+<relop> := 。 $!= peek: $(
+<relop> := 。 $!= peek: $id
+<relop> := 。 $>= peek: $num
+<relop> := 。 $>= peek: $(
+<relop> := 。 $>= peek: $id
 }
 ItemSet 35{
 <while-Sentence> := $while $( 。 <Expression> $) <SentenceBlock> peek: $}
@@ -516,13 +774,28 @@ ItemSet 35{
 <while-Sentence> := $while $( 。 <Expression> $) <SentenceBlock> peek: $return
 <while-Sentence> := $while $( 。 <Expression> $) <SentenceBlock> peek: $id
 <Expression> := 。 <add-Expression> peek: $)
-<Expression> := 。 <add-Expression> $relop <Expression> peek: $)
+<Expression> := 。 <add-Expression> <relop> <Expression> peek: $)
 <add-Expression> := 。 <Term> peek: $)
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $)
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $)
-<add-Expression> := 。 <Term> peek: $relop
-<add-Expression> := 。 <Term> $+ <add-Expression> peek: $relop
-<add-Expression> := 。 <Term> $- <add-Expression> peek: $relop
+<add-Expression> := 。 <Term> peek: $==
+<add-Expression> := 。 <Term> peek: $>
+<add-Expression> := 。 <Term> peek: $<
+<add-Expression> := 。 <Term> peek: $<=
+<add-Expression> := 。 <Term> peek: $!=
+<add-Expression> := 。 <Term> peek: $>=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>=
 <Term> := 。 <Element> peek: $)
 <Term> := 。 <Element> $* <Element> peek: $)
 <Term> := 。 <Element> $/ <Element> peek: $)
@@ -532,9 +805,24 @@ ItemSet 35{
 <Term> := 。 <Element> peek: $-
 <Term> := 。 <Element> $* <Element> peek: $-
 <Term> := 。 <Element> $/ <Element> peek: $-
-<Term> := 。 <Element> peek: $relop
-<Term> := 。 <Element> $* <Element> peek: $relop
-<Term> := 。 <Element> $/ <Element> peek: $relop
+<Term> := 。 <Element> peek: $==
+<Term> := 。 <Element> $* <Element> peek: $==
+<Term> := 。 <Element> $/ <Element> peek: $==
+<Term> := 。 <Element> peek: $>
+<Term> := 。 <Element> $* <Element> peek: $>
+<Term> := 。 <Element> $/ <Element> peek: $>
+<Term> := 。 <Element> peek: $<
+<Term> := 。 <Element> $* <Element> peek: $<
+<Term> := 。 <Element> $/ <Element> peek: $<
+<Term> := 。 <Element> peek: $<=
+<Term> := 。 <Element> $* <Element> peek: $<=
+<Term> := 。 <Element> $/ <Element> peek: $<=
+<Term> := 。 <Element> peek: $!=
+<Term> := 。 <Element> $* <Element> peek: $!=
+<Term> := 。 <Element> $/ <Element> peek: $!=
+<Term> := 。 <Element> peek: $>=
+<Term> := 。 <Element> $* <Element> peek: $>=
+<Term> := 。 <Element> $/ <Element> peek: $>=
 <Element> := 。 $num peek: $)
 <Element> := 。 $( <Expression> $) peek: $)
 <Element> := 。 $id <FTYPE> peek: $)
@@ -550,9 +838,24 @@ ItemSet 35{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 }
 ItemSet 36{
 <SentenceString> := <Sentence> <SentenceString> 。 peek: $}
@@ -580,15 +883,35 @@ ItemSet 40{
 <Element> := $( 。 <Expression> $) peek: $/
 <Element> := $( 。 <Expression> $) peek: $+
 <Element> := $( 。 <Expression> $) peek: $-
-<Element> := $( 。 <Expression> $) peek: $relop
+<Element> := $( 。 <Expression> $) peek: $==
+<Element> := $( 。 <Expression> $) peek: $>
+<Element> := $( 。 <Expression> $) peek: $<
+<Element> := $( 。 <Expression> $) peek: $<=
+<Element> := $( 。 <Expression> $) peek: $!=
+<Element> := $( 。 <Expression> $) peek: $>=
 <Expression> := 。 <add-Expression> peek: $)
-<Expression> := 。 <add-Expression> $relop <Expression> peek: $)
+<Expression> := 。 <add-Expression> <relop> <Expression> peek: $)
 <add-Expression> := 。 <Term> peek: $)
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $)
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $)
-<add-Expression> := 。 <Term> peek: $relop
-<add-Expression> := 。 <Term> $+ <add-Expression> peek: $relop
-<add-Expression> := 。 <Term> $- <add-Expression> peek: $relop
+<add-Expression> := 。 <Term> peek: $==
+<add-Expression> := 。 <Term> peek: $>
+<add-Expression> := 。 <Term> peek: $<
+<add-Expression> := 。 <Term> peek: $<=
+<add-Expression> := 。 <Term> peek: $!=
+<add-Expression> := 。 <Term> peek: $>=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>=
 <Term> := 。 <Element> peek: $)
 <Term> := 。 <Element> $* <Element> peek: $)
 <Term> := 。 <Element> $/ <Element> peek: $)
@@ -598,9 +921,24 @@ ItemSet 40{
 <Term> := 。 <Element> peek: $-
 <Term> := 。 <Element> $* <Element> peek: $-
 <Term> := 。 <Element> $/ <Element> peek: $-
-<Term> := 。 <Element> peek: $relop
-<Term> := 。 <Element> $* <Element> peek: $relop
-<Term> := 。 <Element> $/ <Element> peek: $relop
+<Term> := 。 <Element> peek: $==
+<Term> := 。 <Element> $* <Element> peek: $==
+<Term> := 。 <Element> $/ <Element> peek: $==
+<Term> := 。 <Element> peek: $>
+<Term> := 。 <Element> $* <Element> peek: $>
+<Term> := 。 <Element> $/ <Element> peek: $>
+<Term> := 。 <Element> peek: $<
+<Term> := 。 <Element> $* <Element> peek: $<
+<Term> := 。 <Element> $/ <Element> peek: $<
+<Term> := 。 <Element> peek: $<=
+<Term> := 。 <Element> $* <Element> peek: $<=
+<Term> := 。 <Element> $/ <Element> peek: $<=
+<Term> := 。 <Element> peek: $!=
+<Term> := 。 <Element> $* <Element> peek: $!=
+<Term> := 。 <Element> $/ <Element> peek: $!=
+<Term> := 。 <Element> peek: $>=
+<Term> := 。 <Element> $* <Element> peek: $>=
+<Term> := 。 <Element> $/ <Element> peek: $>=
 <Element> := 。 $num peek: $)
 <Element> := 。 $( <Expression> $) peek: $)
 <Element> := 。 $id <FTYPE> peek: $)
@@ -616,9 +954,24 @@ ItemSet 40{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 }
 ItemSet 41{
 <Element> := $id 。 <FTYPE> peek: $)
@@ -626,7 +979,12 @@ ItemSet 41{
 <Element> := $id 。 <FTYPE> peek: $/
 <Element> := $id 。 <FTYPE> peek: $+
 <Element> := $id 。 <FTYPE> peek: $-
-<Element> := $id 。 <FTYPE> peek: $relop
+<Element> := $id 。 <FTYPE> peek: $==
+<Element> := $id 。 <FTYPE> peek: $>
+<Element> := $id 。 <FTYPE> peek: $<
+<Element> := $id 。 <FTYPE> peek: $<=
+<Element> := $id 。 <FTYPE> peek: $!=
+<Element> := $id 。 <FTYPE> peek: $>=
 <FTYPE> := 。 <call> peek: $)
 <FTYPE> := 。 @empty peek: $)
 <FTYPE> := 。 <call> peek: $*
@@ -637,14 +995,29 @@ ItemSet 41{
 <FTYPE> := 。 @empty peek: $+
 <FTYPE> := 。 <call> peek: $-
 <FTYPE> := 。 @empty peek: $-
-<FTYPE> := 。 <call> peek: $relop
-<FTYPE> := 。 @empty peek: $relop
+<FTYPE> := 。 <call> peek: $==
+<FTYPE> := 。 @empty peek: $==
+<FTYPE> := 。 <call> peek: $>
+<FTYPE> := 。 @empty peek: $>
+<FTYPE> := 。 <call> peek: $<
+<FTYPE> := 。 @empty peek: $<
+<FTYPE> := 。 <call> peek: $<=
+<FTYPE> := 。 @empty peek: $<=
+<FTYPE> := 。 <call> peek: $!=
+<FTYPE> := 。 @empty peek: $!=
+<FTYPE> := 。 <call> peek: $>=
+<FTYPE> := 。 @empty peek: $>=
 <call> := 。 $( <ArgList> $) peek: $)
 <call> := 。 $( <ArgList> $) peek: $*
 <call> := 。 $( <ArgList> $) peek: $/
 <call> := 。 $( <ArgList> $) peek: $+
 <call> := 。 $( <ArgList> $) peek: $-
-<call> := 。 $( <ArgList> $) peek: $relop
+<call> := 。 $( <ArgList> $) peek: $==
+<call> := 。 $( <ArgList> $) peek: $>
+<call> := 。 $( <ArgList> $) peek: $<
+<call> := 。 $( <ArgList> $) peek: $<=
+<call> := 。 $( <ArgList> $) peek: $!=
+<call> := 。 $( <ArgList> $) peek: $>=
 }
 ItemSet 42{
 <Element> := $num 。 peek: $)
@@ -652,7 +1025,12 @@ ItemSet 42{
 <Element> := $num 。 peek: $/
 <Element> := $num 。 peek: $+
 <Element> := $num 。 peek: $-
-<Element> := $num 。 peek: $relop
+<Element> := $num 。 peek: $==
+<Element> := $num 。 peek: $>
+<Element> := $num 。 peek: $<
+<Element> := $num 。 peek: $<=
+<Element> := $num 。 peek: $!=
+<Element> := $num 。 peek: $>=
 }
 ItemSet 43{
 <Term> := <Element> 。 peek: $)
@@ -664,9 +1042,24 @@ ItemSet 43{
 <Term> := <Element> 。 peek: $-
 <Term> := <Element> 。 $* <Element> peek: $-
 <Term> := <Element> 。 $/ <Element> peek: $-
-<Term> := <Element> 。 peek: $relop
-<Term> := <Element> 。 $* <Element> peek: $relop
-<Term> := <Element> 。 $/ <Element> peek: $relop
+<Term> := <Element> 。 peek: $==
+<Term> := <Element> 。 $* <Element> peek: $==
+<Term> := <Element> 。 $/ <Element> peek: $==
+<Term> := <Element> 。 peek: $>
+<Term> := <Element> 。 $* <Element> peek: $>
+<Term> := <Element> 。 $/ <Element> peek: $>
+<Term> := <Element> 。 peek: $<
+<Term> := <Element> 。 $* <Element> peek: $<
+<Term> := <Element> 。 $/ <Element> peek: $<
+<Term> := <Element> 。 peek: $<=
+<Term> := <Element> 。 $* <Element> peek: $<=
+<Term> := <Element> 。 $/ <Element> peek: $<=
+<Term> := <Element> 。 peek: $!=
+<Term> := <Element> 。 $* <Element> peek: $!=
+<Term> := <Element> 。 $/ <Element> peek: $!=
+<Term> := <Element> 。 peek: $>=
+<Term> := <Element> 。 $* <Element> peek: $>=
+<Term> := <Element> 。 $/ <Element> peek: $>=
 }
 ItemSet 44{
 <if-Sentence> := $if $( <Expression> 。 $) <SentenceBlock> peek: $}
@@ -684,13 +1077,46 @@ ItemSet 45{
 <add-Expression> := <Term> 。 peek: $)
 <add-Expression> := <Term> 。 $+ <add-Expression> peek: $)
 <add-Expression> := <Term> 。 $- <add-Expression> peek: $)
-<add-Expression> := <Term> 。 peek: $relop
-<add-Expression> := <Term> 。 $+ <add-Expression> peek: $relop
-<add-Expression> := <Term> 。 $- <add-Expression> peek: $relop
+<add-Expression> := <Term> 。 peek: $==
+<add-Expression> := <Term> 。 peek: $>
+<add-Expression> := <Term> 。 peek: $<
+<add-Expression> := <Term> 。 peek: $<=
+<add-Expression> := <Term> 。 peek: $!=
+<add-Expression> := <Term> 。 peek: $>=
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $==
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $>
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $<
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $<=
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $!=
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $>=
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $==
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $>
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $<
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $<=
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $!=
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $>=
 }
 ItemSet 46{
 <Expression> := <add-Expression> 。 peek: $)
-<Expression> := <add-Expression> 。 $relop <Expression> peek: $)
+<Expression> := <add-Expression> 。 <relop> <Expression> peek: $)
+<relop> := 。 $== peek: $num
+<relop> := 。 $== peek: $(
+<relop> := 。 $== peek: $id
+<relop> := 。 $> peek: $num
+<relop> := 。 $> peek: $(
+<relop> := 。 $> peek: $id
+<relop> := 。 $< peek: $num
+<relop> := 。 $< peek: $(
+<relop> := 。 $< peek: $id
+<relop> := 。 $<= peek: $num
+<relop> := 。 $<= peek: $(
+<relop> := 。 $<= peek: $id
+<relop> := 。 $!= peek: $num
+<relop> := 。 $!= peek: $(
+<relop> := 。 $!= peek: $id
+<relop> := 。 $>= peek: $num
+<relop> := 。 $>= peek: $(
+<relop> := 。 $>= peek: $id
 }
 ItemSet 47{
 <Element> := $( <Expression> 。 $) peek: $;
@@ -698,7 +1124,12 @@ ItemSet 47{
 <Element> := $( <Expression> 。 $) peek: $/
 <Element> := $( <Expression> 。 $) peek: $+
 <Element> := $( <Expression> 。 $) peek: $-
-<Element> := $( <Expression> 。 $) peek: $relop
+<Element> := $( <Expression> 。 $) peek: $==
+<Element> := $( <Expression> 。 $) peek: $>
+<Element> := $( <Expression> 。 $) peek: $<
+<Element> := $( <Expression> 。 $) peek: $<=
+<Element> := $( <Expression> 。 $) peek: $!=
+<Element> := $( <Expression> 。 $) peek: $>=
 }
 ItemSet 48{
 <call> := $( 。 <ArgList> $) peek: $;
@@ -706,19 +1137,39 @@ ItemSet 48{
 <call> := $( 。 <ArgList> $) peek: $/
 <call> := $( 。 <ArgList> $) peek: $+
 <call> := $( 。 <ArgList> $) peek: $-
-<call> := $( 。 <ArgList> $) peek: $relop
+<call> := $( 。 <ArgList> $) peek: $==
+<call> := $( 。 <ArgList> $) peek: $>
+<call> := $( 。 <ArgList> $) peek: $<
+<call> := $( 。 <ArgList> $) peek: $<=
+<call> := $( 。 <ArgList> $) peek: $!=
+<call> := $( 。 <ArgList> $) peek: $>=
 <ArgList> := 。 <Expression> peek: $)
 <ArgList> := 。 <Expression> $, <ArgList> peek: $)
 <Expression> := 。 <add-Expression> peek: $)
-<Expression> := 。 <add-Expression> $relop <Expression> peek: $)
+<Expression> := 。 <add-Expression> <relop> <Expression> peek: $)
 <Expression> := 。 <add-Expression> peek: $,
-<Expression> := 。 <add-Expression> $relop <Expression> peek: $,
+<Expression> := 。 <add-Expression> <relop> <Expression> peek: $,
 <add-Expression> := 。 <Term> peek: $)
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $)
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $)
-<add-Expression> := 。 <Term> peek: $relop
-<add-Expression> := 。 <Term> $+ <add-Expression> peek: $relop
-<add-Expression> := 。 <Term> $- <add-Expression> peek: $relop
+<add-Expression> := 。 <Term> peek: $==
+<add-Expression> := 。 <Term> peek: $>
+<add-Expression> := 。 <Term> peek: $<
+<add-Expression> := 。 <Term> peek: $<=
+<add-Expression> := 。 <Term> peek: $!=
+<add-Expression> := 。 <Term> peek: $>=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>=
 <add-Expression> := 。 <Term> peek: $,
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $,
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $,
@@ -731,9 +1182,24 @@ ItemSet 48{
 <Term> := 。 <Element> peek: $-
 <Term> := 。 <Element> $* <Element> peek: $-
 <Term> := 。 <Element> $/ <Element> peek: $-
-<Term> := 。 <Element> peek: $relop
-<Term> := 。 <Element> $* <Element> peek: $relop
-<Term> := 。 <Element> $/ <Element> peek: $relop
+<Term> := 。 <Element> peek: $==
+<Term> := 。 <Element> $* <Element> peek: $==
+<Term> := 。 <Element> $/ <Element> peek: $==
+<Term> := 。 <Element> peek: $>
+<Term> := 。 <Element> $* <Element> peek: $>
+<Term> := 。 <Element> $/ <Element> peek: $>
+<Term> := 。 <Element> peek: $<
+<Term> := 。 <Element> $* <Element> peek: $<
+<Term> := 。 <Element> $/ <Element> peek: $<
+<Term> := 。 <Element> peek: $<=
+<Term> := 。 <Element> $* <Element> peek: $<=
+<Term> := 。 <Element> $/ <Element> peek: $<=
+<Term> := 。 <Element> peek: $!=
+<Term> := 。 <Element> $* <Element> peek: $!=
+<Term> := 。 <Element> $/ <Element> peek: $!=
+<Term> := 。 <Element> peek: $>=
+<Term> := 。 <Element> $* <Element> peek: $>=
+<Term> := 。 <Element> $/ <Element> peek: $>=
 <Term> := 。 <Element> peek: $,
 <Term> := 。 <Element> $* <Element> peek: $,
 <Term> := 。 <Element> $/ <Element> peek: $,
@@ -752,9 +1218,24 @@ ItemSet 48{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 <Element> := 。 $num peek: $,
 <Element> := 。 $( <Expression> $) peek: $,
 <Element> := 。 $id <FTYPE> peek: $,
@@ -765,7 +1246,12 @@ ItemSet 49{
 <Element> := $id <FTYPE> 。 peek: $/
 <Element> := $id <FTYPE> 。 peek: $+
 <Element> := $id <FTYPE> 。 peek: $-
-<Element> := $id <FTYPE> 。 peek: $relop
+<Element> := $id <FTYPE> 。 peek: $==
+<Element> := $id <FTYPE> 。 peek: $>
+<Element> := $id <FTYPE> 。 peek: $<
+<Element> := $id <FTYPE> 。 peek: $<=
+<Element> := $id <FTYPE> 。 peek: $!=
+<Element> := $id <FTYPE> 。 peek: $>=
 }
 ItemSet 50{
 <FTYPE> := <call> 。 peek: $;
@@ -773,13 +1259,23 @@ ItemSet 50{
 <FTYPE> := <call> 。 peek: $/
 <FTYPE> := <call> 。 peek: $+
 <FTYPE> := <call> 。 peek: $-
-<FTYPE> := <call> 。 peek: $relop
+<FTYPE> := <call> 。 peek: $==
+<FTYPE> := <call> 。 peek: $>
+<FTYPE> := <call> 。 peek: $<
+<FTYPE> := <call> 。 peek: $<=
+<FTYPE> := <call> 。 peek: $!=
+<FTYPE> := <call> 。 peek: $>=
 }
 ItemSet 51{
 <Term> := <Element> $* 。 <Element> peek: $;
 <Term> := <Element> $* 。 <Element> peek: $+
 <Term> := <Element> $* 。 <Element> peek: $-
-<Term> := <Element> $* 。 <Element> peek: $relop
+<Term> := <Element> $* 。 <Element> peek: $==
+<Term> := <Element> $* 。 <Element> peek: $>
+<Term> := <Element> $* 。 <Element> peek: $<
+<Term> := <Element> $* 。 <Element> peek: $<=
+<Term> := <Element> $* 。 <Element> peek: $!=
+<Term> := <Element> $* 。 <Element> peek: $>=
 <Element> := 。 $num peek: $;
 <Element> := 。 $( <Expression> $) peek: $;
 <Element> := 。 $id <FTYPE> peek: $;
@@ -789,15 +1285,35 @@ ItemSet 51{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 }
 ItemSet 52{
 <Term> := <Element> $/ 。 <Element> peek: $;
 <Term> := <Element> $/ 。 <Element> peek: $+
 <Term> := <Element> $/ 。 <Element> peek: $-
-<Term> := <Element> $/ 。 <Element> peek: $relop
+<Term> := <Element> $/ 。 <Element> peek: $==
+<Term> := <Element> $/ 。 <Element> peek: $>
+<Term> := <Element> $/ 。 <Element> peek: $<
+<Term> := <Element> $/ 。 <Element> peek: $<=
+<Term> := <Element> $/ 。 <Element> peek: $!=
+<Term> := <Element> $/ 。 <Element> peek: $>=
 <Element> := 。 $num peek: $;
 <Element> := 。 $( <Expression> $) peek: $;
 <Element> := 。 $id <FTYPE> peek: $;
@@ -807,9 +1323,24 @@ ItemSet 52{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 }
 ItemSet 53{
 <return-Sentence> := $return <Expression> $; 。 peek: $}
@@ -820,13 +1351,33 @@ ItemSet 53{
 }
 ItemSet 54{
 <add-Expression> := <Term> $+ 。 <add-Expression> peek: $;
-<add-Expression> := <Term> $+ 。 <add-Expression> peek: $relop
+<add-Expression> := <Term> $+ 。 <add-Expression> peek: $==
+<add-Expression> := <Term> $+ 。 <add-Expression> peek: $>
+<add-Expression> := <Term> $+ 。 <add-Expression> peek: $<
+<add-Expression> := <Term> $+ 。 <add-Expression> peek: $<=
+<add-Expression> := <Term> $+ 。 <add-Expression> peek: $!=
+<add-Expression> := <Term> $+ 。 <add-Expression> peek: $>=
 <add-Expression> := 。 <Term> peek: $;
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $;
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $;
-<add-Expression> := 。 <Term> peek: $relop
-<add-Expression> := 。 <Term> $+ <add-Expression> peek: $relop
-<add-Expression> := 。 <Term> $- <add-Expression> peek: $relop
+<add-Expression> := 。 <Term> peek: $==
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $==
+<add-Expression> := 。 <Term> peek: $>
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>
+<add-Expression> := 。 <Term> peek: $<
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<
+<add-Expression> := 。 <Term> peek: $<=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> peek: $!=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> peek: $>=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>=
 <Term> := 。 <Element> peek: $;
 <Term> := 。 <Element> $* <Element> peek: $;
 <Term> := 。 <Element> $/ <Element> peek: $;
@@ -836,9 +1387,24 @@ ItemSet 54{
 <Term> := 。 <Element> peek: $-
 <Term> := 。 <Element> $* <Element> peek: $-
 <Term> := 。 <Element> $/ <Element> peek: $-
-<Term> := 。 <Element> peek: $relop
-<Term> := 。 <Element> $* <Element> peek: $relop
-<Term> := 。 <Element> $/ <Element> peek: $relop
+<Term> := 。 <Element> peek: $==
+<Term> := 。 <Element> $* <Element> peek: $==
+<Term> := 。 <Element> $/ <Element> peek: $==
+<Term> := 。 <Element> peek: $>
+<Term> := 。 <Element> $* <Element> peek: $>
+<Term> := 。 <Element> $/ <Element> peek: $>
+<Term> := 。 <Element> peek: $<
+<Term> := 。 <Element> $* <Element> peek: $<
+<Term> := 。 <Element> $/ <Element> peek: $<
+<Term> := 。 <Element> peek: $<=
+<Term> := 。 <Element> $* <Element> peek: $<=
+<Term> := 。 <Element> $/ <Element> peek: $<=
+<Term> := 。 <Element> peek: $!=
+<Term> := 。 <Element> $* <Element> peek: $!=
+<Term> := 。 <Element> $/ <Element> peek: $!=
+<Term> := 。 <Element> peek: $>=
+<Term> := 。 <Element> $* <Element> peek: $>=
+<Term> := 。 <Element> $/ <Element> peek: $>=
 <Element> := 。 $num peek: $;
 <Element> := 。 $( <Expression> $) peek: $;
 <Element> := 。 $id <FTYPE> peek: $;
@@ -854,19 +1420,54 @@ ItemSet 54{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 }
 ItemSet 55{
 <add-Expression> := <Term> $- 。 <add-Expression> peek: $;
-<add-Expression> := <Term> $- 。 <add-Expression> peek: $relop
+<add-Expression> := <Term> $- 。 <add-Expression> peek: $==
+<add-Expression> := <Term> $- 。 <add-Expression> peek: $>
+<add-Expression> := <Term> $- 。 <add-Expression> peek: $<
+<add-Expression> := <Term> $- 。 <add-Expression> peek: $<=
+<add-Expression> := <Term> $- 。 <add-Expression> peek: $!=
+<add-Expression> := <Term> $- 。 <add-Expression> peek: $>=
 <add-Expression> := 。 <Term> peek: $;
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $;
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $;
-<add-Expression> := 。 <Term> peek: $relop
-<add-Expression> := 。 <Term> $+ <add-Expression> peek: $relop
-<add-Expression> := 。 <Term> $- <add-Expression> peek: $relop
+<add-Expression> := 。 <Term> peek: $==
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $==
+<add-Expression> := 。 <Term> peek: $>
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>
+<add-Expression> := 。 <Term> peek: $<
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<
+<add-Expression> := 。 <Term> peek: $<=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> peek: $!=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> peek: $>=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>=
 <Term> := 。 <Element> peek: $;
 <Term> := 。 <Element> $* <Element> peek: $;
 <Term> := 。 <Element> $/ <Element> peek: $;
@@ -876,9 +1477,24 @@ ItemSet 55{
 <Term> := 。 <Element> peek: $-
 <Term> := 。 <Element> $* <Element> peek: $-
 <Term> := 。 <Element> $/ <Element> peek: $-
-<Term> := 。 <Element> peek: $relop
-<Term> := 。 <Element> $* <Element> peek: $relop
-<Term> := 。 <Element> $/ <Element> peek: $relop
+<Term> := 。 <Element> peek: $==
+<Term> := 。 <Element> $* <Element> peek: $==
+<Term> := 。 <Element> $/ <Element> peek: $==
+<Term> := 。 <Element> peek: $>
+<Term> := 。 <Element> $* <Element> peek: $>
+<Term> := 。 <Element> $/ <Element> peek: $>
+<Term> := 。 <Element> peek: $<
+<Term> := 。 <Element> $* <Element> peek: $<
+<Term> := 。 <Element> $/ <Element> peek: $<
+<Term> := 。 <Element> peek: $<=
+<Term> := 。 <Element> $* <Element> peek: $<=
+<Term> := 。 <Element> $/ <Element> peek: $<=
+<Term> := 。 <Element> peek: $!=
+<Term> := 。 <Element> $* <Element> peek: $!=
+<Term> := 。 <Element> $/ <Element> peek: $!=
+<Term> := 。 <Element> peek: $>=
+<Term> := 。 <Element> $* <Element> peek: $>=
+<Term> := 。 <Element> $/ <Element> peek: $>=
 <Element> := 。 $num peek: $;
 <Element> := 。 $( <Expression> $) peek: $;
 <Element> := 。 $id <FTYPE> peek: $;
@@ -894,20 +1510,80 @@ ItemSet 55{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 }
 ItemSet 56{
-<Expression> := <add-Expression> $relop 。 <Expression> peek: $;
+<relop> := $!= 。 peek: $num
+<relop> := $!= 。 peek: $(
+<relop> := $!= 。 peek: $id
+}
+ItemSet 57{
+<relop> := $< 。 peek: $num
+<relop> := $< 。 peek: $(
+<relop> := $< 。 peek: $id
+}
+ItemSet 58{
+<relop> := $<= 。 peek: $num
+<relop> := $<= 。 peek: $(
+<relop> := $<= 。 peek: $id
+}
+ItemSet 59{
+<relop> := $== 。 peek: $num
+<relop> := $== 。 peek: $(
+<relop> := $== 。 peek: $id
+}
+ItemSet 60{
+<relop> := $> 。 peek: $num
+<relop> := $> 。 peek: $(
+<relop> := $> 。 peek: $id
+}
+ItemSet 61{
+<relop> := $>= 。 peek: $num
+<relop> := $>= 。 peek: $(
+<relop> := $>= 。 peek: $id
+}
+ItemSet 62{
+<Expression> := <add-Expression> <relop> 。 <Expression> peek: $;
 <Expression> := 。 <add-Expression> peek: $;
-<Expression> := 。 <add-Expression> $relop <Expression> peek: $;
+<Expression> := 。 <add-Expression> <relop> <Expression> peek: $;
 <add-Expression> := 。 <Term> peek: $;
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $;
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $;
-<add-Expression> := 。 <Term> peek: $relop
-<add-Expression> := 。 <Term> $+ <add-Expression> peek: $relop
-<add-Expression> := 。 <Term> $- <add-Expression> peek: $relop
+<add-Expression> := 。 <Term> peek: $==
+<add-Expression> := 。 <Term> peek: $>
+<add-Expression> := 。 <Term> peek: $<
+<add-Expression> := 。 <Term> peek: $<=
+<add-Expression> := 。 <Term> peek: $!=
+<add-Expression> := 。 <Term> peek: $>=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>=
 <Term> := 。 <Element> peek: $;
 <Term> := 。 <Element> $* <Element> peek: $;
 <Term> := 。 <Element> $/ <Element> peek: $;
@@ -917,9 +1593,24 @@ ItemSet 56{
 <Term> := 。 <Element> peek: $-
 <Term> := 。 <Element> $* <Element> peek: $-
 <Term> := 。 <Element> $/ <Element> peek: $-
-<Term> := 。 <Element> peek: $relop
-<Term> := 。 <Element> $* <Element> peek: $relop
-<Term> := 。 <Element> $/ <Element> peek: $relop
+<Term> := 。 <Element> peek: $==
+<Term> := 。 <Element> $* <Element> peek: $==
+<Term> := 。 <Element> $/ <Element> peek: $==
+<Term> := 。 <Element> peek: $>
+<Term> := 。 <Element> $* <Element> peek: $>
+<Term> := 。 <Element> $/ <Element> peek: $>
+<Term> := 。 <Element> peek: $<
+<Term> := 。 <Element> $* <Element> peek: $<
+<Term> := 。 <Element> $/ <Element> peek: $<
+<Term> := 。 <Element> peek: $<=
+<Term> := 。 <Element> $* <Element> peek: $<=
+<Term> := 。 <Element> $/ <Element> peek: $<=
+<Term> := 。 <Element> peek: $!=
+<Term> := 。 <Element> $* <Element> peek: $!=
+<Term> := 。 <Element> $/ <Element> peek: $!=
+<Term> := 。 <Element> peek: $>=
+<Term> := 。 <Element> $* <Element> peek: $>=
+<Term> := 。 <Element> $/ <Element> peek: $>=
 <Element> := 。 $num peek: $;
 <Element> := 。 $( <Expression> $) peek: $;
 <Element> := 。 $id <FTYPE> peek: $;
@@ -935,51 +1626,91 @@ ItemSet 56{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 }
-ItemSet 57{
+ItemSet 63{
 <while-Sentence> := $while $( <Expression> 。 $) <SentenceBlock> peek: $}
 <while-Sentence> := $while $( <Expression> 。 $) <SentenceBlock> peek: $if
 <while-Sentence> := $while $( <Expression> 。 $) <SentenceBlock> peek: $while
 <while-Sentence> := $while $( <Expression> 。 $) <SentenceBlock> peek: $return
 <while-Sentence> := $while $( <Expression> 。 $) <SentenceBlock> peek: $id
 }
-ItemSet 58{
+ItemSet 64{
 <assign-Sentence> := $id $= <Expression> $; 。 peek: $}
 <assign-Sentence> := $id $= <Expression> $; 。 peek: $if
 <assign-Sentence> := $id $= <Expression> $; 。 peek: $while
 <assign-Sentence> := $id $= <Expression> $; 。 peek: $return
 <assign-Sentence> := $id $= <Expression> $; 。 peek: $id
 }
-ItemSet 59{
+ItemSet 65{
 <Element> := $( <Expression> 。 $) peek: $)
 <Element> := $( <Expression> 。 $) peek: $*
 <Element> := $( <Expression> 。 $) peek: $/
 <Element> := $( <Expression> 。 $) peek: $+
 <Element> := $( <Expression> 。 $) peek: $-
-<Element> := $( <Expression> 。 $) peek: $relop
+<Element> := $( <Expression> 。 $) peek: $==
+<Element> := $( <Expression> 。 $) peek: $>
+<Element> := $( <Expression> 。 $) peek: $<
+<Element> := $( <Expression> 。 $) peek: $<=
+<Element> := $( <Expression> 。 $) peek: $!=
+<Element> := $( <Expression> 。 $) peek: $>=
 }
-ItemSet 60{
+ItemSet 66{
 <call> := $( 。 <ArgList> $) peek: $)
 <call> := $( 。 <ArgList> $) peek: $*
 <call> := $( 。 <ArgList> $) peek: $/
 <call> := $( 。 <ArgList> $) peek: $+
 <call> := $( 。 <ArgList> $) peek: $-
-<call> := $( 。 <ArgList> $) peek: $relop
+<call> := $( 。 <ArgList> $) peek: $==
+<call> := $( 。 <ArgList> $) peek: $>
+<call> := $( 。 <ArgList> $) peek: $<
+<call> := $( 。 <ArgList> $) peek: $<=
+<call> := $( 。 <ArgList> $) peek: $!=
+<call> := $( 。 <ArgList> $) peek: $>=
 <ArgList> := 。 <Expression> peek: $)
 <ArgList> := 。 <Expression> $, <ArgList> peek: $)
 <Expression> := 。 <add-Expression> peek: $)
-<Expression> := 。 <add-Expression> $relop <Expression> peek: $)
+<Expression> := 。 <add-Expression> <relop> <Expression> peek: $)
 <Expression> := 。 <add-Expression> peek: $,
-<Expression> := 。 <add-Expression> $relop <Expression> peek: $,
+<Expression> := 。 <add-Expression> <relop> <Expression> peek: $,
 <add-Expression> := 。 <Term> peek: $)
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $)
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $)
-<add-Expression> := 。 <Term> peek: $relop
-<add-Expression> := 。 <Term> $+ <add-Expression> peek: $relop
-<add-Expression> := 。 <Term> $- <add-Expression> peek: $relop
+<add-Expression> := 。 <Term> peek: $==
+<add-Expression> := 。 <Term> peek: $>
+<add-Expression> := 。 <Term> peek: $<
+<add-Expression> := 。 <Term> peek: $<=
+<add-Expression> := 。 <Term> peek: $!=
+<add-Expression> := 。 <Term> peek: $>=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>=
 <add-Expression> := 。 <Term> peek: $,
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $,
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $,
@@ -992,9 +1723,24 @@ ItemSet 60{
 <Term> := 。 <Element> peek: $-
 <Term> := 。 <Element> $* <Element> peek: $-
 <Term> := 。 <Element> $/ <Element> peek: $-
-<Term> := 。 <Element> peek: $relop
-<Term> := 。 <Element> $* <Element> peek: $relop
-<Term> := 。 <Element> $/ <Element> peek: $relop
+<Term> := 。 <Element> peek: $==
+<Term> := 。 <Element> $* <Element> peek: $==
+<Term> := 。 <Element> $/ <Element> peek: $==
+<Term> := 。 <Element> peek: $>
+<Term> := 。 <Element> $* <Element> peek: $>
+<Term> := 。 <Element> $/ <Element> peek: $>
+<Term> := 。 <Element> peek: $<
+<Term> := 。 <Element> $* <Element> peek: $<
+<Term> := 。 <Element> $/ <Element> peek: $<
+<Term> := 。 <Element> peek: $<=
+<Term> := 。 <Element> $* <Element> peek: $<=
+<Term> := 。 <Element> $/ <Element> peek: $<=
+<Term> := 。 <Element> peek: $!=
+<Term> := 。 <Element> $* <Element> peek: $!=
+<Term> := 。 <Element> $/ <Element> peek: $!=
+<Term> := 。 <Element> peek: $>=
+<Term> := 。 <Element> $* <Element> peek: $>=
+<Term> := 。 <Element> $/ <Element> peek: $>=
 <Term> := 。 <Element> peek: $,
 <Term> := 。 <Element> $* <Element> peek: $,
 <Term> := 。 <Element> $/ <Element> peek: $,
@@ -1013,34 +1759,64 @@ ItemSet 60{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 <Element> := 。 $num peek: $,
 <Element> := 。 $( <Expression> $) peek: $,
 <Element> := 。 $id <FTYPE> peek: $,
 }
-ItemSet 61{
+ItemSet 67{
 <Element> := $id <FTYPE> 。 peek: $)
 <Element> := $id <FTYPE> 。 peek: $*
 <Element> := $id <FTYPE> 。 peek: $/
 <Element> := $id <FTYPE> 。 peek: $+
 <Element> := $id <FTYPE> 。 peek: $-
-<Element> := $id <FTYPE> 。 peek: $relop
+<Element> := $id <FTYPE> 。 peek: $==
+<Element> := $id <FTYPE> 。 peek: $>
+<Element> := $id <FTYPE> 。 peek: $<
+<Element> := $id <FTYPE> 。 peek: $<=
+<Element> := $id <FTYPE> 。 peek: $!=
+<Element> := $id <FTYPE> 。 peek: $>=
 }
-ItemSet 62{
+ItemSet 68{
 <FTYPE> := <call> 。 peek: $)
 <FTYPE> := <call> 。 peek: $*
 <FTYPE> := <call> 。 peek: $/
 <FTYPE> := <call> 。 peek: $+
 <FTYPE> := <call> 。 peek: $-
-<FTYPE> := <call> 。 peek: $relop
+<FTYPE> := <call> 。 peek: $==
+<FTYPE> := <call> 。 peek: $>
+<FTYPE> := <call> 。 peek: $<
+<FTYPE> := <call> 。 peek: $<=
+<FTYPE> := <call> 。 peek: $!=
+<FTYPE> := <call> 。 peek: $>=
 }
-ItemSet 63{
+ItemSet 69{
 <Term> := <Element> $* 。 <Element> peek: $)
 <Term> := <Element> $* 。 <Element> peek: $+
 <Term> := <Element> $* 。 <Element> peek: $-
-<Term> := <Element> $* 。 <Element> peek: $relop
+<Term> := <Element> $* 。 <Element> peek: $==
+<Term> := <Element> $* 。 <Element> peek: $>
+<Term> := <Element> $* 。 <Element> peek: $<
+<Term> := <Element> $* 。 <Element> peek: $<=
+<Term> := <Element> $* 。 <Element> peek: $!=
+<Term> := <Element> $* 。 <Element> peek: $>=
 <Element> := 。 $num peek: $)
 <Element> := 。 $( <Expression> $) peek: $)
 <Element> := 。 $id <FTYPE> peek: $)
@@ -1050,15 +1826,35 @@ ItemSet 63{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 }
-ItemSet 64{
+ItemSet 70{
 <Term> := <Element> $/ 。 <Element> peek: $)
 <Term> := <Element> $/ 。 <Element> peek: $+
 <Term> := <Element> $/ 。 <Element> peek: $-
-<Term> := <Element> $/ 。 <Element> peek: $relop
+<Term> := <Element> $/ 。 <Element> peek: $==
+<Term> := <Element> $/ 。 <Element> peek: $>
+<Term> := <Element> $/ 。 <Element> peek: $<
+<Term> := <Element> $/ 。 <Element> peek: $<=
+<Term> := <Element> $/ 。 <Element> peek: $!=
+<Term> := <Element> $/ 。 <Element> peek: $>=
 <Element> := 。 $num peek: $)
 <Element> := 。 $( <Expression> $) peek: $)
 <Element> := 。 $id <FTYPE> peek: $)
@@ -1068,11 +1864,26 @@ ItemSet 64{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 }
-ItemSet 65{
+ItemSet 71{
 <if-Sentence> := $if $( <Expression> $) 。 <SentenceBlock> peek: $}
 <if-Sentence> := $if $( <Expression> $) 。 <SentenceBlock> $else <SentenceBlock> peek: $}
 <if-Sentence> := $if $( <Expression> $) 。 <SentenceBlock> peek: $if
@@ -1090,15 +1901,35 @@ ItemSet 65{
 <SentenceBlock> := 。 ${ <InternalStatement> <SentenceString> $} peek: $return
 <SentenceBlock> := 。 ${ <InternalStatement> <SentenceString> $} peek: $id
 }
-ItemSet 66{
+ItemSet 72{
 <add-Expression> := <Term> $+ 。 <add-Expression> peek: $)
-<add-Expression> := <Term> $+ 。 <add-Expression> peek: $relop
+<add-Expression> := <Term> $+ 。 <add-Expression> peek: $==
+<add-Expression> := <Term> $+ 。 <add-Expression> peek: $>
+<add-Expression> := <Term> $+ 。 <add-Expression> peek: $<
+<add-Expression> := <Term> $+ 。 <add-Expression> peek: $<=
+<add-Expression> := <Term> $+ 。 <add-Expression> peek: $!=
+<add-Expression> := <Term> $+ 。 <add-Expression> peek: $>=
 <add-Expression> := 。 <Term> peek: $)
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $)
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $)
-<add-Expression> := 。 <Term> peek: $relop
-<add-Expression> := 。 <Term> $+ <add-Expression> peek: $relop
-<add-Expression> := 。 <Term> $- <add-Expression> peek: $relop
+<add-Expression> := 。 <Term> peek: $==
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $==
+<add-Expression> := 。 <Term> peek: $>
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>
+<add-Expression> := 。 <Term> peek: $<
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<
+<add-Expression> := 。 <Term> peek: $<=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> peek: $!=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> peek: $>=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>=
 <Term> := 。 <Element> peek: $)
 <Term> := 。 <Element> $* <Element> peek: $)
 <Term> := 。 <Element> $/ <Element> peek: $)
@@ -1108,9 +1939,24 @@ ItemSet 66{
 <Term> := 。 <Element> peek: $-
 <Term> := 。 <Element> $* <Element> peek: $-
 <Term> := 。 <Element> $/ <Element> peek: $-
-<Term> := 。 <Element> peek: $relop
-<Term> := 。 <Element> $* <Element> peek: $relop
-<Term> := 。 <Element> $/ <Element> peek: $relop
+<Term> := 。 <Element> peek: $==
+<Term> := 。 <Element> $* <Element> peek: $==
+<Term> := 。 <Element> $/ <Element> peek: $==
+<Term> := 。 <Element> peek: $>
+<Term> := 。 <Element> $* <Element> peek: $>
+<Term> := 。 <Element> $/ <Element> peek: $>
+<Term> := 。 <Element> peek: $<
+<Term> := 。 <Element> $* <Element> peek: $<
+<Term> := 。 <Element> $/ <Element> peek: $<
+<Term> := 。 <Element> peek: $<=
+<Term> := 。 <Element> $* <Element> peek: $<=
+<Term> := 。 <Element> $/ <Element> peek: $<=
+<Term> := 。 <Element> peek: $!=
+<Term> := 。 <Element> $* <Element> peek: $!=
+<Term> := 。 <Element> $/ <Element> peek: $!=
+<Term> := 。 <Element> peek: $>=
+<Term> := 。 <Element> $* <Element> peek: $>=
+<Term> := 。 <Element> $/ <Element> peek: $>=
 <Element> := 。 $num peek: $)
 <Element> := 。 $( <Expression> $) peek: $)
 <Element> := 。 $id <FTYPE> peek: $)
@@ -1126,19 +1972,54 @@ ItemSet 66{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 }
-ItemSet 67{
+ItemSet 73{
 <add-Expression> := <Term> $- 。 <add-Expression> peek: $)
-<add-Expression> := <Term> $- 。 <add-Expression> peek: $relop
+<add-Expression> := <Term> $- 。 <add-Expression> peek: $==
+<add-Expression> := <Term> $- 。 <add-Expression> peek: $>
+<add-Expression> := <Term> $- 。 <add-Expression> peek: $<
+<add-Expression> := <Term> $- 。 <add-Expression> peek: $<=
+<add-Expression> := <Term> $- 。 <add-Expression> peek: $!=
+<add-Expression> := <Term> $- 。 <add-Expression> peek: $>=
 <add-Expression> := 。 <Term> peek: $)
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $)
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $)
-<add-Expression> := 。 <Term> peek: $relop
-<add-Expression> := 。 <Term> $+ <add-Expression> peek: $relop
-<add-Expression> := 。 <Term> $- <add-Expression> peek: $relop
+<add-Expression> := 。 <Term> peek: $==
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $==
+<add-Expression> := 。 <Term> peek: $>
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>
+<add-Expression> := 。 <Term> peek: $<
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<
+<add-Expression> := 。 <Term> peek: $<=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> peek: $!=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> peek: $>=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>=
 <Term> := 。 <Element> peek: $)
 <Term> := 。 <Element> $* <Element> peek: $)
 <Term> := 。 <Element> $/ <Element> peek: $)
@@ -1148,9 +2029,24 @@ ItemSet 67{
 <Term> := 。 <Element> peek: $-
 <Term> := 。 <Element> $* <Element> peek: $-
 <Term> := 。 <Element> $/ <Element> peek: $-
-<Term> := 。 <Element> peek: $relop
-<Term> := 。 <Element> $* <Element> peek: $relop
-<Term> := 。 <Element> $/ <Element> peek: $relop
+<Term> := 。 <Element> peek: $==
+<Term> := 。 <Element> $* <Element> peek: $==
+<Term> := 。 <Element> $/ <Element> peek: $==
+<Term> := 。 <Element> peek: $>
+<Term> := 。 <Element> $* <Element> peek: $>
+<Term> := 。 <Element> $/ <Element> peek: $>
+<Term> := 。 <Element> peek: $<
+<Term> := 。 <Element> $* <Element> peek: $<
+<Term> := 。 <Element> $/ <Element> peek: $<
+<Term> := 。 <Element> peek: $<=
+<Term> := 。 <Element> $* <Element> peek: $<=
+<Term> := 。 <Element> $/ <Element> peek: $<=
+<Term> := 。 <Element> peek: $!=
+<Term> := 。 <Element> $* <Element> peek: $!=
+<Term> := 。 <Element> $/ <Element> peek: $!=
+<Term> := 。 <Element> peek: $>=
+<Term> := 。 <Element> $* <Element> peek: $>=
+<Term> := 。 <Element> $/ <Element> peek: $>=
 <Element> := 。 $num peek: $)
 <Element> := 。 $( <Expression> $) peek: $)
 <Element> := 。 $id <FTYPE> peek: $)
@@ -1166,20 +2062,50 @@ ItemSet 67{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 }
-ItemSet 68{
-<Expression> := <add-Expression> $relop 。 <Expression> peek: $)
+ItemSet 74{
+<Expression> := <add-Expression> <relop> 。 <Expression> peek: $)
 <Expression> := 。 <add-Expression> peek: $)
-<Expression> := 。 <add-Expression> $relop <Expression> peek: $)
+<Expression> := 。 <add-Expression> <relop> <Expression> peek: $)
 <add-Expression> := 。 <Term> peek: $)
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $)
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $)
-<add-Expression> := 。 <Term> peek: $relop
-<add-Expression> := 。 <Term> $+ <add-Expression> peek: $relop
-<add-Expression> := 。 <Term> $- <add-Expression> peek: $relop
+<add-Expression> := 。 <Term> peek: $==
+<add-Expression> := 。 <Term> peek: $>
+<add-Expression> := 。 <Term> peek: $<
+<add-Expression> := 。 <Term> peek: $<=
+<add-Expression> := 。 <Term> peek: $!=
+<add-Expression> := 。 <Term> peek: $>=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>=
 <Term> := 。 <Element> peek: $)
 <Term> := 。 <Element> $* <Element> peek: $)
 <Term> := 。 <Element> $/ <Element> peek: $)
@@ -1189,9 +2115,24 @@ ItemSet 68{
 <Term> := 。 <Element> peek: $-
 <Term> := 。 <Element> $* <Element> peek: $-
 <Term> := 。 <Element> $/ <Element> peek: $-
-<Term> := 。 <Element> peek: $relop
-<Term> := 。 <Element> $* <Element> peek: $relop
-<Term> := 。 <Element> $/ <Element> peek: $relop
+<Term> := 。 <Element> peek: $==
+<Term> := 。 <Element> $* <Element> peek: $==
+<Term> := 。 <Element> $/ <Element> peek: $==
+<Term> := 。 <Element> peek: $>
+<Term> := 。 <Element> $* <Element> peek: $>
+<Term> := 。 <Element> $/ <Element> peek: $>
+<Term> := 。 <Element> peek: $<
+<Term> := 。 <Element> $* <Element> peek: $<
+<Term> := 。 <Element> $/ <Element> peek: $<
+<Term> := 。 <Element> peek: $<=
+<Term> := 。 <Element> $* <Element> peek: $<=
+<Term> := 。 <Element> $/ <Element> peek: $<=
+<Term> := 。 <Element> peek: $!=
+<Term> := 。 <Element> $* <Element> peek: $!=
+<Term> := 。 <Element> $/ <Element> peek: $!=
+<Term> := 。 <Element> peek: $>=
+<Term> := 。 <Element> $* <Element> peek: $>=
+<Term> := 。 <Element> $/ <Element> peek: $>=
 <Element> := 。 $num peek: $)
 <Element> := 。 $( <Expression> $) peek: $)
 <Element> := 。 $id <FTYPE> peek: $)
@@ -1207,34 +2148,74 @@ ItemSet 68{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 }
-ItemSet 69{
+ItemSet 75{
 <Element> := $( <Expression> $) 。 peek: $;
 <Element> := $( <Expression> $) 。 peek: $*
 <Element> := $( <Expression> $) 。 peek: $/
 <Element> := $( <Expression> $) 。 peek: $+
 <Element> := $( <Expression> $) 。 peek: $-
-<Element> := $( <Expression> $) 。 peek: $relop
+<Element> := $( <Expression> $) 。 peek: $==
+<Element> := $( <Expression> $) 。 peek: $>
+<Element> := $( <Expression> $) 。 peek: $<
+<Element> := $( <Expression> $) 。 peek: $<=
+<Element> := $( <Expression> $) 。 peek: $!=
+<Element> := $( <Expression> $) 。 peek: $>=
 }
-ItemSet 70{
+ItemSet 76{
 <Element> := $( 。 <Expression> $) peek: $)
 <Element> := $( 。 <Expression> $) peek: $*
 <Element> := $( 。 <Expression> $) peek: $/
 <Element> := $( 。 <Expression> $) peek: $+
 <Element> := $( 。 <Expression> $) peek: $-
-<Element> := $( 。 <Expression> $) peek: $relop
+<Element> := $( 。 <Expression> $) peek: $==
+<Element> := $( 。 <Expression> $) peek: $>
+<Element> := $( 。 <Expression> $) peek: $<
+<Element> := $( 。 <Expression> $) peek: $<=
+<Element> := $( 。 <Expression> $) peek: $!=
+<Element> := $( 。 <Expression> $) peek: $>=
 <Element> := $( 。 <Expression> $) peek: $,
 <Expression> := 。 <add-Expression> peek: $)
-<Expression> := 。 <add-Expression> $relop <Expression> peek: $)
+<Expression> := 。 <add-Expression> <relop> <Expression> peek: $)
 <add-Expression> := 。 <Term> peek: $)
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $)
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $)
-<add-Expression> := 。 <Term> peek: $relop
-<add-Expression> := 。 <Term> $+ <add-Expression> peek: $relop
-<add-Expression> := 。 <Term> $- <add-Expression> peek: $relop
+<add-Expression> := 。 <Term> peek: $==
+<add-Expression> := 。 <Term> peek: $>
+<add-Expression> := 。 <Term> peek: $<
+<add-Expression> := 。 <Term> peek: $<=
+<add-Expression> := 。 <Term> peek: $!=
+<add-Expression> := 。 <Term> peek: $>=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>=
 <Term> := 。 <Element> peek: $)
 <Term> := 。 <Element> $* <Element> peek: $)
 <Term> := 。 <Element> $/ <Element> peek: $)
@@ -1244,9 +2225,24 @@ ItemSet 70{
 <Term> := 。 <Element> peek: $-
 <Term> := 。 <Element> $* <Element> peek: $-
 <Term> := 。 <Element> $/ <Element> peek: $-
-<Term> := 。 <Element> peek: $relop
-<Term> := 。 <Element> $* <Element> peek: $relop
-<Term> := 。 <Element> $/ <Element> peek: $relop
+<Term> := 。 <Element> peek: $==
+<Term> := 。 <Element> $* <Element> peek: $==
+<Term> := 。 <Element> $/ <Element> peek: $==
+<Term> := 。 <Element> peek: $>
+<Term> := 。 <Element> $* <Element> peek: $>
+<Term> := 。 <Element> $/ <Element> peek: $>
+<Term> := 。 <Element> peek: $<
+<Term> := 。 <Element> $* <Element> peek: $<
+<Term> := 。 <Element> $/ <Element> peek: $<
+<Term> := 。 <Element> peek: $<=
+<Term> := 。 <Element> $* <Element> peek: $<=
+<Term> := 。 <Element> $/ <Element> peek: $<=
+<Term> := 。 <Element> peek: $!=
+<Term> := 。 <Element> $* <Element> peek: $!=
+<Term> := 。 <Element> $/ <Element> peek: $!=
+<Term> := 。 <Element> peek: $>=
+<Term> := 。 <Element> $* <Element> peek: $>=
+<Term> := 。 <Element> $/ <Element> peek: $>=
 <Element> := 。 $num peek: $)
 <Element> := 。 $( <Expression> $) peek: $)
 <Element> := 。 $id <FTYPE> peek: $)
@@ -1262,17 +2258,37 @@ ItemSet 70{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 }
-ItemSet 71{
+ItemSet 77{
 <Element> := $id 。 <FTYPE> peek: $)
 <Element> := $id 。 <FTYPE> peek: $*
 <Element> := $id 。 <FTYPE> peek: $/
 <Element> := $id 。 <FTYPE> peek: $+
 <Element> := $id 。 <FTYPE> peek: $-
-<Element> := $id 。 <FTYPE> peek: $relop
+<Element> := $id 。 <FTYPE> peek: $==
+<Element> := $id 。 <FTYPE> peek: $>
+<Element> := $id 。 <FTYPE> peek: $<
+<Element> := $id 。 <FTYPE> peek: $<=
+<Element> := $id 。 <FTYPE> peek: $!=
+<Element> := $id 。 <FTYPE> peek: $>=
 <Element> := $id 。 <FTYPE> peek: $,
 <FTYPE> := 。 <call> peek: $)
 <FTYPE> := 。 @empty peek: $)
@@ -1284,8 +2300,18 @@ ItemSet 71{
 <FTYPE> := 。 @empty peek: $+
 <FTYPE> := 。 <call> peek: $-
 <FTYPE> := 。 @empty peek: $-
-<FTYPE> := 。 <call> peek: $relop
-<FTYPE> := 。 @empty peek: $relop
+<FTYPE> := 。 <call> peek: $==
+<FTYPE> := 。 @empty peek: $==
+<FTYPE> := 。 <call> peek: $>
+<FTYPE> := 。 @empty peek: $>
+<FTYPE> := 。 <call> peek: $<
+<FTYPE> := 。 @empty peek: $<
+<FTYPE> := 。 <call> peek: $<=
+<FTYPE> := 。 @empty peek: $<=
+<FTYPE> := 。 <call> peek: $!=
+<FTYPE> := 。 @empty peek: $!=
+<FTYPE> := 。 <call> peek: $>=
+<FTYPE> := 。 @empty peek: $>=
 <FTYPE> := 。 <call> peek: $,
 <FTYPE> := 。 @empty peek: $,
 <call> := 。 $( <ArgList> $) peek: $)
@@ -1293,27 +2319,42 @@ ItemSet 71{
 <call> := 。 $( <ArgList> $) peek: $/
 <call> := 。 $( <ArgList> $) peek: $+
 <call> := 。 $( <ArgList> $) peek: $-
-<call> := 。 $( <ArgList> $) peek: $relop
+<call> := 。 $( <ArgList> $) peek: $==
+<call> := 。 $( <ArgList> $) peek: $>
+<call> := 。 $( <ArgList> $) peek: $<
+<call> := 。 $( <ArgList> $) peek: $<=
+<call> := 。 $( <ArgList> $) peek: $!=
+<call> := 。 $( <ArgList> $) peek: $>=
 <call> := 。 $( <ArgList> $) peek: $,
 }
-ItemSet 72{
+ItemSet 78{
 <Element> := $num 。 peek: $)
 <Element> := $num 。 peek: $*
 <Element> := $num 。 peek: $/
 <Element> := $num 。 peek: $+
 <Element> := $num 。 peek: $-
-<Element> := $num 。 peek: $relop
+<Element> := $num 。 peek: $==
+<Element> := $num 。 peek: $>
+<Element> := $num 。 peek: $<
+<Element> := $num 。 peek: $<=
+<Element> := $num 。 peek: $!=
+<Element> := $num 。 peek: $>=
 <Element> := $num 。 peek: $,
 }
-ItemSet 73{
+ItemSet 79{
 <call> := $( <ArgList> 。 $) peek: $;
 <call> := $( <ArgList> 。 $) peek: $*
 <call> := $( <ArgList> 。 $) peek: $/
 <call> := $( <ArgList> 。 $) peek: $+
 <call> := $( <ArgList> 。 $) peek: $-
-<call> := $( <ArgList> 。 $) peek: $relop
+<call> := $( <ArgList> 。 $) peek: $==
+<call> := $( <ArgList> 。 $) peek: $>
+<call> := $( <ArgList> 。 $) peek: $<
+<call> := $( <ArgList> 。 $) peek: $<=
+<call> := $( <ArgList> 。 $) peek: $!=
+<call> := $( <ArgList> 。 $) peek: $>=
 }
-ItemSet 74{
+ItemSet 80{
 <Term> := <Element> 。 peek: $)
 <Term> := <Element> 。 $* <Element> peek: $)
 <Term> := <Element> 。 $/ <Element> peek: $)
@@ -1323,47 +2364,115 @@ ItemSet 74{
 <Term> := <Element> 。 peek: $-
 <Term> := <Element> 。 $* <Element> peek: $-
 <Term> := <Element> 。 $/ <Element> peek: $-
-<Term> := <Element> 。 peek: $relop
-<Term> := <Element> 。 $* <Element> peek: $relop
-<Term> := <Element> 。 $/ <Element> peek: $relop
+<Term> := <Element> 。 peek: $==
+<Term> := <Element> 。 $* <Element> peek: $==
+<Term> := <Element> 。 $/ <Element> peek: $==
+<Term> := <Element> 。 peek: $>
+<Term> := <Element> 。 $* <Element> peek: $>
+<Term> := <Element> 。 $/ <Element> peek: $>
+<Term> := <Element> 。 peek: $<
+<Term> := <Element> 。 $* <Element> peek: $<
+<Term> := <Element> 。 $/ <Element> peek: $<
+<Term> := <Element> 。 peek: $<=
+<Term> := <Element> 。 $* <Element> peek: $<=
+<Term> := <Element> 。 $/ <Element> peek: $<=
+<Term> := <Element> 。 peek: $!=
+<Term> := <Element> 。 $* <Element> peek: $!=
+<Term> := <Element> 。 $/ <Element> peek: $!=
+<Term> := <Element> 。 peek: $>=
+<Term> := <Element> 。 $* <Element> peek: $>=
+<Term> := <Element> 。 $/ <Element> peek: $>=
 <Term> := <Element> 。 peek: $,
 <Term> := <Element> 。 $* <Element> peek: $,
 <Term> := <Element> 。 $/ <Element> peek: $,
 }
-ItemSet 75{
+ItemSet 81{
 <ArgList> := <Expression> 。 peek: $)
 <ArgList> := <Expression> 。 $, <ArgList> peek: $)
 }
-ItemSet 76{
+ItemSet 82{
 <add-Expression> := <Term> 。 peek: $)
 <add-Expression> := <Term> 。 $+ <add-Expression> peek: $)
 <add-Expression> := <Term> 。 $- <add-Expression> peek: $)
-<add-Expression> := <Term> 。 peek: $relop
-<add-Expression> := <Term> 。 $+ <add-Expression> peek: $relop
-<add-Expression> := <Term> 。 $- <add-Expression> peek: $relop
+<add-Expression> := <Term> 。 peek: $==
+<add-Expression> := <Term> 。 peek: $>
+<add-Expression> := <Term> 。 peek: $<
+<add-Expression> := <Term> 。 peek: $<=
+<add-Expression> := <Term> 。 peek: $!=
+<add-Expression> := <Term> 。 peek: $>=
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $==
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $>
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $<
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $<=
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $!=
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $>=
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $==
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $>
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $<
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $<=
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $!=
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $>=
 <add-Expression> := <Term> 。 peek: $,
 <add-Expression> := <Term> 。 $+ <add-Expression> peek: $,
 <add-Expression> := <Term> 。 $- <add-Expression> peek: $,
 }
-ItemSet 77{
+ItemSet 83{
 <Expression> := <add-Expression> 。 peek: $)
-<Expression> := <add-Expression> 。 $relop <Expression> peek: $)
+<Expression> := <add-Expression> 。 <relop> <Expression> peek: $)
 <Expression> := <add-Expression> 。 peek: $,
-<Expression> := <add-Expression> 。 $relop <Expression> peek: $,
+<Expression> := <add-Expression> 。 <relop> <Expression> peek: $,
+<relop> := 。 $== peek: $num
+<relop> := 。 $== peek: $(
+<relop> := 。 $== peek: $id
+<relop> := 。 $> peek: $num
+<relop> := 。 $> peek: $(
+<relop> := 。 $> peek: $id
+<relop> := 。 $< peek: $num
+<relop> := 。 $< peek: $(
+<relop> := 。 $< peek: $id
+<relop> := 。 $<= peek: $num
+<relop> := 。 $<= peek: $(
+<relop> := 。 $<= peek: $id
+<relop> := 。 $!= peek: $num
+<relop> := 。 $!= peek: $(
+<relop> := 。 $!= peek: $id
+<relop> := 。 $>= peek: $num
+<relop> := 。 $>= peek: $(
+<relop> := 。 $>= peek: $id
 }
-ItemSet 78{
+ItemSet 84{
 <Element> := $( 。 <Expression> $) peek: $;
 <Element> := $( 。 <Expression> $) peek: $+
 <Element> := $( 。 <Expression> $) peek: $-
-<Element> := $( 。 <Expression> $) peek: $relop
+<Element> := $( 。 <Expression> $) peek: $==
+<Element> := $( 。 <Expression> $) peek: $>
+<Element> := $( 。 <Expression> $) peek: $<
+<Element> := $( 。 <Expression> $) peek: $<=
+<Element> := $( 。 <Expression> $) peek: $!=
+<Element> := $( 。 <Expression> $) peek: $>=
 <Expression> := 。 <add-Expression> peek: $)
-<Expression> := 。 <add-Expression> $relop <Expression> peek: $)
+<Expression> := 。 <add-Expression> <relop> <Expression> peek: $)
 <add-Expression> := 。 <Term> peek: $)
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $)
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $)
-<add-Expression> := 。 <Term> peek: $relop
-<add-Expression> := 。 <Term> $+ <add-Expression> peek: $relop
-<add-Expression> := 。 <Term> $- <add-Expression> peek: $relop
+<add-Expression> := 。 <Term> peek: $==
+<add-Expression> := 。 <Term> peek: $>
+<add-Expression> := 。 <Term> peek: $<
+<add-Expression> := 。 <Term> peek: $<=
+<add-Expression> := 。 <Term> peek: $!=
+<add-Expression> := 。 <Term> peek: $>=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>=
 <Term> := 。 <Element> peek: $)
 <Term> := 。 <Element> $* <Element> peek: $)
 <Term> := 。 <Element> $/ <Element> peek: $)
@@ -1373,9 +2482,24 @@ ItemSet 78{
 <Term> := 。 <Element> peek: $-
 <Term> := 。 <Element> $* <Element> peek: $-
 <Term> := 。 <Element> $/ <Element> peek: $-
-<Term> := 。 <Element> peek: $relop
-<Term> := 。 <Element> $* <Element> peek: $relop
-<Term> := 。 <Element> $/ <Element> peek: $relop
+<Term> := 。 <Element> peek: $==
+<Term> := 。 <Element> $* <Element> peek: $==
+<Term> := 。 <Element> $/ <Element> peek: $==
+<Term> := 。 <Element> peek: $>
+<Term> := 。 <Element> $* <Element> peek: $>
+<Term> := 。 <Element> $/ <Element> peek: $>
+<Term> := 。 <Element> peek: $<
+<Term> := 。 <Element> $* <Element> peek: $<
+<Term> := 。 <Element> $/ <Element> peek: $<
+<Term> := 。 <Element> peek: $<=
+<Term> := 。 <Element> $* <Element> peek: $<=
+<Term> := 。 <Element> $/ <Element> peek: $<=
+<Term> := 。 <Element> peek: $!=
+<Term> := 。 <Element> $* <Element> peek: $!=
+<Term> := 。 <Element> $/ <Element> peek: $!=
+<Term> := 。 <Element> peek: $>=
+<Term> := 。 <Element> $* <Element> peek: $>=
+<Term> := 。 <Element> $/ <Element> peek: $>=
 <Element> := 。 $num peek: $)
 <Element> := 。 $( <Expression> $) peek: $)
 <Element> := 。 $id <FTYPE> peek: $)
@@ -1391,58 +2515,141 @@ ItemSet 78{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 }
-ItemSet 79{
+ItemSet 85{
 <Element> := $id 。 <FTYPE> peek: $;
 <Element> := $id 。 <FTYPE> peek: $+
 <Element> := $id 。 <FTYPE> peek: $-
-<Element> := $id 。 <FTYPE> peek: $relop
+<Element> := $id 。 <FTYPE> peek: $==
+<Element> := $id 。 <FTYPE> peek: $>
+<Element> := $id 。 <FTYPE> peek: $<
+<Element> := $id 。 <FTYPE> peek: $<=
+<Element> := $id 。 <FTYPE> peek: $!=
+<Element> := $id 。 <FTYPE> peek: $>=
 <FTYPE> := 。 <call> peek: $;
 <FTYPE> := 。 @empty peek: $;
 <FTYPE> := 。 <call> peek: $+
 <FTYPE> := 。 @empty peek: $+
 <FTYPE> := 。 <call> peek: $-
 <FTYPE> := 。 @empty peek: $-
-<FTYPE> := 。 <call> peek: $relop
-<FTYPE> := 。 @empty peek: $relop
+<FTYPE> := 。 <call> peek: $==
+<FTYPE> := 。 @empty peek: $==
+<FTYPE> := 。 <call> peek: $>
+<FTYPE> := 。 @empty peek: $>
+<FTYPE> := 。 <call> peek: $<
+<FTYPE> := 。 @empty peek: $<
+<FTYPE> := 。 <call> peek: $<=
+<FTYPE> := 。 @empty peek: $<=
+<FTYPE> := 。 <call> peek: $!=
+<FTYPE> := 。 @empty peek: $!=
+<FTYPE> := 。 <call> peek: $>=
+<FTYPE> := 。 @empty peek: $>=
 <call> := 。 $( <ArgList> $) peek: $;
 <call> := 。 $( <ArgList> $) peek: $+
 <call> := 。 $( <ArgList> $) peek: $-
-<call> := 。 $( <ArgList> $) peek: $relop
+<call> := 。 $( <ArgList> $) peek: $==
+<call> := 。 $( <ArgList> $) peek: $>
+<call> := 。 $( <ArgList> $) peek: $<
+<call> := 。 $( <ArgList> $) peek: $<=
+<call> := 。 $( <ArgList> $) peek: $!=
+<call> := 。 $( <ArgList> $) peek: $>=
 }
-ItemSet 80{
+ItemSet 86{
 <Element> := $num 。 peek: $;
 <Element> := $num 。 peek: $+
 <Element> := $num 。 peek: $-
-<Element> := $num 。 peek: $relop
+<Element> := $num 。 peek: $==
+<Element> := $num 。 peek: $>
+<Element> := $num 。 peek: $<
+<Element> := $num 。 peek: $<=
+<Element> := $num 。 peek: $!=
+<Element> := $num 。 peek: $>=
 }
-ItemSet 81{
+ItemSet 87{
 <Term> := <Element> $* <Element> 。 peek: $;
 <Term> := <Element> $* <Element> 。 peek: $+
 <Term> := <Element> $* <Element> 。 peek: $-
-<Term> := <Element> $* <Element> 。 peek: $relop
+<Term> := <Element> $* <Element> 。 peek: $==
+<Term> := <Element> $* <Element> 。 peek: $>
+<Term> := <Element> $* <Element> 。 peek: $<
+<Term> := <Element> $* <Element> 。 peek: $<=
+<Term> := <Element> $* <Element> 。 peek: $!=
+<Term> := <Element> $* <Element> 。 peek: $>=
 }
-ItemSet 82{
+ItemSet 88{
 <Term> := <Element> $/ <Element> 。 peek: $;
 <Term> := <Element> $/ <Element> 。 peek: $+
 <Term> := <Element> $/ <Element> 。 peek: $-
-<Term> := <Element> $/ <Element> 。 peek: $relop
+<Term> := <Element> $/ <Element> 。 peek: $==
+<Term> := <Element> $/ <Element> 。 peek: $>
+<Term> := <Element> $/ <Element> 。 peek: $<
+<Term> := <Element> $/ <Element> 。 peek: $<=
+<Term> := <Element> $/ <Element> 。 peek: $!=
+<Term> := <Element> $/ <Element> 。 peek: $>=
 }
-ItemSet 83{
+ItemSet 89{
+<add-Expression> := <Term> 。 peek: $;
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $;
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $;
+<add-Expression> := <Term> 。 peek: $==
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $==
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $==
+<add-Expression> := <Term> 。 peek: $>
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $>
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $>
+<add-Expression> := <Term> 。 peek: $<
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $<
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $<
+<add-Expression> := <Term> 。 peek: $<=
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $<=
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $<=
+<add-Expression> := <Term> 。 peek: $!=
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $!=
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $!=
+<add-Expression> := <Term> 。 peek: $>=
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $>=
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $>=
+}
+ItemSet 90{
 <add-Expression> := <Term> $+ <add-Expression> 。 peek: $;
-<add-Expression> := <Term> $+ <add-Expression> 。 peek: $relop
+<add-Expression> := <Term> $+ <add-Expression> 。 peek: $==
+<add-Expression> := <Term> $+ <add-Expression> 。 peek: $>
+<add-Expression> := <Term> $+ <add-Expression> 。 peek: $<
+<add-Expression> := <Term> $+ <add-Expression> 。 peek: $<=
+<add-Expression> := <Term> $+ <add-Expression> 。 peek: $!=
+<add-Expression> := <Term> $+ <add-Expression> 。 peek: $>=
 }
-ItemSet 84{
+ItemSet 91{
 <add-Expression> := <Term> $- <add-Expression> 。 peek: $;
-<add-Expression> := <Term> $- <add-Expression> 。 peek: $relop
+<add-Expression> := <Term> $- <add-Expression> 。 peek: $==
+<add-Expression> := <Term> $- <add-Expression> 。 peek: $>
+<add-Expression> := <Term> $- <add-Expression> 。 peek: $<
+<add-Expression> := <Term> $- <add-Expression> 。 peek: $<=
+<add-Expression> := <Term> $- <add-Expression> 。 peek: $!=
+<add-Expression> := <Term> $- <add-Expression> 。 peek: $>=
 }
-ItemSet 85{
-<Expression> := <add-Expression> $relop <Expression> 。 peek: $;
+ItemSet 92{
+<Expression> := <add-Expression> <relop> <Expression> 。 peek: $;
 }
-ItemSet 86{
+ItemSet 93{
 <while-Sentence> := $while $( <Expression> $) 。 <SentenceBlock> peek: $}
 <while-Sentence> := $while $( <Expression> $) 。 <SentenceBlock> peek: $if
 <while-Sentence> := $while $( <Expression> $) 。 <SentenceBlock> peek: $while
@@ -1454,35 +2661,65 @@ ItemSet 86{
 <SentenceBlock> := 。 ${ <InternalStatement> <SentenceString> $} peek: $return
 <SentenceBlock> := 。 ${ <InternalStatement> <SentenceString> $} peek: $id
 }
-ItemSet 87{
+ItemSet 94{
 <Element> := $( <Expression> $) 。 peek: $)
 <Element> := $( <Expression> $) 。 peek: $*
 <Element> := $( <Expression> $) 。 peek: $/
 <Element> := $( <Expression> $) 。 peek: $+
 <Element> := $( <Expression> $) 。 peek: $-
-<Element> := $( <Expression> $) 。 peek: $relop
+<Element> := $( <Expression> $) 。 peek: $==
+<Element> := $( <Expression> $) 。 peek: $>
+<Element> := $( <Expression> $) 。 peek: $<
+<Element> := $( <Expression> $) 。 peek: $<=
+<Element> := $( <Expression> $) 。 peek: $!=
+<Element> := $( <Expression> $) 。 peek: $>=
 }
-ItemSet 88{
+ItemSet 95{
 <call> := $( <ArgList> 。 $) peek: $)
 <call> := $( <ArgList> 。 $) peek: $*
 <call> := $( <ArgList> 。 $) peek: $/
 <call> := $( <ArgList> 。 $) peek: $+
 <call> := $( <ArgList> 。 $) peek: $-
-<call> := $( <ArgList> 。 $) peek: $relop
+<call> := $( <ArgList> 。 $) peek: $==
+<call> := $( <ArgList> 。 $) peek: $>
+<call> := $( <ArgList> 。 $) peek: $<
+<call> := $( <ArgList> 。 $) peek: $<=
+<call> := $( <ArgList> 。 $) peek: $!=
+<call> := $( <ArgList> 。 $) peek: $>=
 }
-ItemSet 89{
+ItemSet 96{
 <Element> := $( 。 <Expression> $) peek: $)
 <Element> := $( 。 <Expression> $) peek: $+
 <Element> := $( 。 <Expression> $) peek: $-
-<Element> := $( 。 <Expression> $) peek: $relop
+<Element> := $( 。 <Expression> $) peek: $==
+<Element> := $( 。 <Expression> $) peek: $>
+<Element> := $( 。 <Expression> $) peek: $<
+<Element> := $( 。 <Expression> $) peek: $<=
+<Element> := $( 。 <Expression> $) peek: $!=
+<Element> := $( 。 <Expression> $) peek: $>=
 <Expression> := 。 <add-Expression> peek: $)
-<Expression> := 。 <add-Expression> $relop <Expression> peek: $)
+<Expression> := 。 <add-Expression> <relop> <Expression> peek: $)
 <add-Expression> := 。 <Term> peek: $)
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $)
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $)
-<add-Expression> := 。 <Term> peek: $relop
-<add-Expression> := 。 <Term> $+ <add-Expression> peek: $relop
-<add-Expression> := 。 <Term> $- <add-Expression> peek: $relop
+<add-Expression> := 。 <Term> peek: $==
+<add-Expression> := 。 <Term> peek: $>
+<add-Expression> := 。 <Term> peek: $<
+<add-Expression> := 。 <Term> peek: $<=
+<add-Expression> := 。 <Term> peek: $!=
+<add-Expression> := 。 <Term> peek: $>=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>=
 <Term> := 。 <Element> peek: $)
 <Term> := 。 <Element> $* <Element> peek: $)
 <Term> := 。 <Element> $/ <Element> peek: $)
@@ -1492,9 +2729,24 @@ ItemSet 89{
 <Term> := 。 <Element> peek: $-
 <Term> := 。 <Element> $* <Element> peek: $-
 <Term> := 。 <Element> $/ <Element> peek: $-
-<Term> := 。 <Element> peek: $relop
-<Term> := 。 <Element> $* <Element> peek: $relop
-<Term> := 。 <Element> $/ <Element> peek: $relop
+<Term> := 。 <Element> peek: $==
+<Term> := 。 <Element> $* <Element> peek: $==
+<Term> := 。 <Element> $/ <Element> peek: $==
+<Term> := 。 <Element> peek: $>
+<Term> := 。 <Element> $* <Element> peek: $>
+<Term> := 。 <Element> $/ <Element> peek: $>
+<Term> := 。 <Element> peek: $<
+<Term> := 。 <Element> $* <Element> peek: $<
+<Term> := 。 <Element> $/ <Element> peek: $<
+<Term> := 。 <Element> peek: $<=
+<Term> := 。 <Element> $* <Element> peek: $<=
+<Term> := 。 <Element> $/ <Element> peek: $<=
+<Term> := 。 <Element> peek: $!=
+<Term> := 。 <Element> $* <Element> peek: $!=
+<Term> := 。 <Element> $/ <Element> peek: $!=
+<Term> := 。 <Element> peek: $>=
+<Term> := 。 <Element> $* <Element> peek: $>=
+<Term> := 。 <Element> $/ <Element> peek: $>=
 <Element> := 。 $num peek: $)
 <Element> := 。 $( <Expression> $) peek: $)
 <Element> := 。 $id <FTYPE> peek: $)
@@ -1510,47 +2762,97 @@ ItemSet 89{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 }
-ItemSet 90{
+ItemSet 97{
 <Element> := $id 。 <FTYPE> peek: $)
 <Element> := $id 。 <FTYPE> peek: $+
 <Element> := $id 。 <FTYPE> peek: $-
-<Element> := $id 。 <FTYPE> peek: $relop
+<Element> := $id 。 <FTYPE> peek: $==
+<Element> := $id 。 <FTYPE> peek: $>
+<Element> := $id 。 <FTYPE> peek: $<
+<Element> := $id 。 <FTYPE> peek: $<=
+<Element> := $id 。 <FTYPE> peek: $!=
+<Element> := $id 。 <FTYPE> peek: $>=
 <FTYPE> := 。 <call> peek: $)
 <FTYPE> := 。 @empty peek: $)
 <FTYPE> := 。 <call> peek: $+
 <FTYPE> := 。 @empty peek: $+
 <FTYPE> := 。 <call> peek: $-
 <FTYPE> := 。 @empty peek: $-
-<FTYPE> := 。 <call> peek: $relop
-<FTYPE> := 。 @empty peek: $relop
+<FTYPE> := 。 <call> peek: $==
+<FTYPE> := 。 @empty peek: $==
+<FTYPE> := 。 <call> peek: $>
+<FTYPE> := 。 @empty peek: $>
+<FTYPE> := 。 <call> peek: $<
+<FTYPE> := 。 @empty peek: $<
+<FTYPE> := 。 <call> peek: $<=
+<FTYPE> := 。 @empty peek: $<=
+<FTYPE> := 。 <call> peek: $!=
+<FTYPE> := 。 @empty peek: $!=
+<FTYPE> := 。 <call> peek: $>=
+<FTYPE> := 。 @empty peek: $>=
 <call> := 。 $( <ArgList> $) peek: $)
 <call> := 。 $( <ArgList> $) peek: $+
 <call> := 。 $( <ArgList> $) peek: $-
-<call> := 。 $( <ArgList> $) peek: $relop
+<call> := 。 $( <ArgList> $) peek: $==
+<call> := 。 $( <ArgList> $) peek: $>
+<call> := 。 $( <ArgList> $) peek: $<
+<call> := 。 $( <ArgList> $) peek: $<=
+<call> := 。 $( <ArgList> $) peek: $!=
+<call> := 。 $( <ArgList> $) peek: $>=
 }
-ItemSet 91{
+ItemSet 98{
 <Element> := $num 。 peek: $)
 <Element> := $num 。 peek: $+
 <Element> := $num 。 peek: $-
-<Element> := $num 。 peek: $relop
+<Element> := $num 。 peek: $==
+<Element> := $num 。 peek: $>
+<Element> := $num 。 peek: $<
+<Element> := $num 。 peek: $<=
+<Element> := $num 。 peek: $!=
+<Element> := $num 。 peek: $>=
 }
-ItemSet 92{
+ItemSet 99{
 <Term> := <Element> $* <Element> 。 peek: $)
 <Term> := <Element> $* <Element> 。 peek: $+
 <Term> := <Element> $* <Element> 。 peek: $-
-<Term> := <Element> $* <Element> 。 peek: $relop
+<Term> := <Element> $* <Element> 。 peek: $==
+<Term> := <Element> $* <Element> 。 peek: $>
+<Term> := <Element> $* <Element> 。 peek: $<
+<Term> := <Element> $* <Element> 。 peek: $<=
+<Term> := <Element> $* <Element> 。 peek: $!=
+<Term> := <Element> $* <Element> 。 peek: $>=
 }
-ItemSet 93{
+ItemSet 100{
 <Term> := <Element> $/ <Element> 。 peek: $)
 <Term> := <Element> $/ <Element> 。 peek: $+
 <Term> := <Element> $/ <Element> 。 peek: $-
-<Term> := <Element> $/ <Element> 。 peek: $relop
+<Term> := <Element> $/ <Element> 。 peek: $==
+<Term> := <Element> $/ <Element> 。 peek: $>
+<Term> := <Element> $/ <Element> 。 peek: $<
+<Term> := <Element> $/ <Element> 。 peek: $<=
+<Term> := <Element> $/ <Element> 。 peek: $!=
+<Term> := <Element> $/ <Element> 。 peek: $>=
 }
-ItemSet 94{
+ItemSet 101{
 <SentenceBlock> := ${ 。 <InternalStatement> <SentenceString> $} peek: $}
 <SentenceBlock> := ${ 。 <InternalStatement> <SentenceString> $} peek: $else
 <SentenceBlock> := ${ 。 <InternalStatement> <SentenceString> $} peek: $if
@@ -1569,7 +2871,7 @@ ItemSet 94{
 <InternalStatement> := 。 <InternalVarStatement> $; <InternalStatement> peek: $}
 <InternalVarStatement> := 。 $int $id peek: $;
 }
-ItemSet 95{
+ItemSet 102{
 <if-Sentence> := $if $( <Expression> $) <SentenceBlock> 。 peek: $}
 <if-Sentence> := $if $( <Expression> $) <SentenceBlock> 。 $else <SentenceBlock> peek: $}
 <if-Sentence> := $if $( <Expression> $) <SentenceBlock> 。 peek: $if
@@ -1581,46 +2883,104 @@ ItemSet 95{
 <if-Sentence> := $if $( <Expression> $) <SentenceBlock> 。 peek: $id
 <if-Sentence> := $if $( <Expression> $) <SentenceBlock> 。 $else <SentenceBlock> peek: $id
 }
-ItemSet 96{
+ItemSet 103{
+<add-Expression> := <Term> 。 peek: $)
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $)
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $)
+<add-Expression> := <Term> 。 peek: $==
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $==
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $==
+<add-Expression> := <Term> 。 peek: $>
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $>
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $>
+<add-Expression> := <Term> 。 peek: $<
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $<
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $<
+<add-Expression> := <Term> 。 peek: $<=
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $<=
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $<=
+<add-Expression> := <Term> 。 peek: $!=
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $!=
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $!=
+<add-Expression> := <Term> 。 peek: $>=
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $>=
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $>=
+}
+ItemSet 104{
 <add-Expression> := <Term> $+ <add-Expression> 。 peek: $)
-<add-Expression> := <Term> $+ <add-Expression> 。 peek: $relop
+<add-Expression> := <Term> $+ <add-Expression> 。 peek: $==
+<add-Expression> := <Term> $+ <add-Expression> 。 peek: $>
+<add-Expression> := <Term> $+ <add-Expression> 。 peek: $<
+<add-Expression> := <Term> $+ <add-Expression> 。 peek: $<=
+<add-Expression> := <Term> $+ <add-Expression> 。 peek: $!=
+<add-Expression> := <Term> $+ <add-Expression> 。 peek: $>=
 }
-ItemSet 97{
+ItemSet 105{
 <add-Expression> := <Term> $- <add-Expression> 。 peek: $)
-<add-Expression> := <Term> $- <add-Expression> 。 peek: $relop
+<add-Expression> := <Term> $- <add-Expression> 。 peek: $==
+<add-Expression> := <Term> $- <add-Expression> 。 peek: $>
+<add-Expression> := <Term> $- <add-Expression> 。 peek: $<
+<add-Expression> := <Term> $- <add-Expression> 。 peek: $<=
+<add-Expression> := <Term> $- <add-Expression> 。 peek: $!=
+<add-Expression> := <Term> $- <add-Expression> 。 peek: $>=
 }
-ItemSet 98{
-<Expression> := <add-Expression> $relop <Expression> 。 peek: $)
+ItemSet 106{
+<Expression> := <add-Expression> <relop> <Expression> 。 peek: $)
 }
-ItemSet 99{
+ItemSet 107{
 <Element> := $( <Expression> 。 $) peek: $)
 <Element> := $( <Expression> 。 $) peek: $*
 <Element> := $( <Expression> 。 $) peek: $/
 <Element> := $( <Expression> 。 $) peek: $+
 <Element> := $( <Expression> 。 $) peek: $-
-<Element> := $( <Expression> 。 $) peek: $relop
+<Element> := $( <Expression> 。 $) peek: $==
+<Element> := $( <Expression> 。 $) peek: $>
+<Element> := $( <Expression> 。 $) peek: $<
+<Element> := $( <Expression> 。 $) peek: $<=
+<Element> := $( <Expression> 。 $) peek: $!=
+<Element> := $( <Expression> 。 $) peek: $>=
 <Element> := $( <Expression> 。 $) peek: $,
 }
-ItemSet 100{
+ItemSet 108{
 <call> := $( 。 <ArgList> $) peek: $)
 <call> := $( 。 <ArgList> $) peek: $*
 <call> := $( 。 <ArgList> $) peek: $/
 <call> := $( 。 <ArgList> $) peek: $+
 <call> := $( 。 <ArgList> $) peek: $-
-<call> := $( 。 <ArgList> $) peek: $relop
+<call> := $( 。 <ArgList> $) peek: $==
+<call> := $( 。 <ArgList> $) peek: $>
+<call> := $( 。 <ArgList> $) peek: $<
+<call> := $( 。 <ArgList> $) peek: $<=
+<call> := $( 。 <ArgList> $) peek: $!=
+<call> := $( 。 <ArgList> $) peek: $>=
 <call> := $( 。 <ArgList> $) peek: $,
 <ArgList> := 。 <Expression> peek: $)
 <ArgList> := 。 <Expression> $, <ArgList> peek: $)
 <Expression> := 。 <add-Expression> peek: $)
-<Expression> := 。 <add-Expression> $relop <Expression> peek: $)
+<Expression> := 。 <add-Expression> <relop> <Expression> peek: $)
 <Expression> := 。 <add-Expression> peek: $,
-<Expression> := 。 <add-Expression> $relop <Expression> peek: $,
+<Expression> := 。 <add-Expression> <relop> <Expression> peek: $,
 <add-Expression> := 。 <Term> peek: $)
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $)
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $)
-<add-Expression> := 。 <Term> peek: $relop
-<add-Expression> := 。 <Term> $+ <add-Expression> peek: $relop
-<add-Expression> := 。 <Term> $- <add-Expression> peek: $relop
+<add-Expression> := 。 <Term> peek: $==
+<add-Expression> := 。 <Term> peek: $>
+<add-Expression> := 。 <Term> peek: $<
+<add-Expression> := 。 <Term> peek: $<=
+<add-Expression> := 。 <Term> peek: $!=
+<add-Expression> := 。 <Term> peek: $>=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>=
 <add-Expression> := 。 <Term> peek: $,
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $,
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $,
@@ -1633,9 +2993,24 @@ ItemSet 100{
 <Term> := 。 <Element> peek: $-
 <Term> := 。 <Element> $* <Element> peek: $-
 <Term> := 。 <Element> $/ <Element> peek: $-
-<Term> := 。 <Element> peek: $relop
-<Term> := 。 <Element> $* <Element> peek: $relop
-<Term> := 。 <Element> $/ <Element> peek: $relop
+<Term> := 。 <Element> peek: $==
+<Term> := 。 <Element> $* <Element> peek: $==
+<Term> := 。 <Element> $/ <Element> peek: $==
+<Term> := 。 <Element> peek: $>
+<Term> := 。 <Element> $* <Element> peek: $>
+<Term> := 。 <Element> $/ <Element> peek: $>
+<Term> := 。 <Element> peek: $<
+<Term> := 。 <Element> $* <Element> peek: $<
+<Term> := 。 <Element> $/ <Element> peek: $<
+<Term> := 。 <Element> peek: $<=
+<Term> := 。 <Element> $* <Element> peek: $<=
+<Term> := 。 <Element> $/ <Element> peek: $<=
+<Term> := 。 <Element> peek: $!=
+<Term> := 。 <Element> $* <Element> peek: $!=
+<Term> := 。 <Element> $/ <Element> peek: $!=
+<Term> := 。 <Element> peek: $>=
+<Term> := 。 <Element> $* <Element> peek: $>=
+<Term> := 。 <Element> $/ <Element> peek: $>=
 <Term> := 。 <Element> peek: $,
 <Term> := 。 <Element> $* <Element> peek: $,
 <Term> := 。 <Element> $/ <Element> peek: $,
@@ -1654,44 +3029,79 @@ ItemSet 100{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 <Element> := 。 $num peek: $,
 <Element> := 。 $( <Expression> $) peek: $,
 <Element> := 。 $id <FTYPE> peek: $,
 }
-ItemSet 101{
+ItemSet 109{
 <Element> := $id <FTYPE> 。 peek: $)
 <Element> := $id <FTYPE> 。 peek: $*
 <Element> := $id <FTYPE> 。 peek: $/
 <Element> := $id <FTYPE> 。 peek: $+
 <Element> := $id <FTYPE> 。 peek: $-
-<Element> := $id <FTYPE> 。 peek: $relop
+<Element> := $id <FTYPE> 。 peek: $==
+<Element> := $id <FTYPE> 。 peek: $>
+<Element> := $id <FTYPE> 。 peek: $<
+<Element> := $id <FTYPE> 。 peek: $<=
+<Element> := $id <FTYPE> 。 peek: $!=
+<Element> := $id <FTYPE> 。 peek: $>=
 <Element> := $id <FTYPE> 。 peek: $,
 }
-ItemSet 102{
+ItemSet 110{
 <FTYPE> := <call> 。 peek: $)
 <FTYPE> := <call> 。 peek: $*
 <FTYPE> := <call> 。 peek: $/
 <FTYPE> := <call> 。 peek: $+
 <FTYPE> := <call> 。 peek: $-
-<FTYPE> := <call> 。 peek: $relop
+<FTYPE> := <call> 。 peek: $==
+<FTYPE> := <call> 。 peek: $>
+<FTYPE> := <call> 。 peek: $<
+<FTYPE> := <call> 。 peek: $<=
+<FTYPE> := <call> 。 peek: $!=
+<FTYPE> := <call> 。 peek: $>=
 <FTYPE> := <call> 。 peek: $,
 }
-ItemSet 103{
+ItemSet 111{
 <call> := $( <ArgList> $) 。 peek: $;
 <call> := $( <ArgList> $) 。 peek: $*
 <call> := $( <ArgList> $) 。 peek: $/
 <call> := $( <ArgList> $) 。 peek: $+
 <call> := $( <ArgList> $) 。 peek: $-
-<call> := $( <ArgList> $) 。 peek: $relop
+<call> := $( <ArgList> $) 。 peek: $==
+<call> := $( <ArgList> $) 。 peek: $>
+<call> := $( <ArgList> $) 。 peek: $<
+<call> := $( <ArgList> $) 。 peek: $<=
+<call> := $( <ArgList> $) 。 peek: $!=
+<call> := $( <ArgList> $) 。 peek: $>=
 }
-ItemSet 104{
+ItemSet 112{
 <Term> := <Element> $* 。 <Element> peek: $)
 <Term> := <Element> $* 。 <Element> peek: $+
 <Term> := <Element> $* 。 <Element> peek: $-
-<Term> := <Element> $* 。 <Element> peek: $relop
+<Term> := <Element> $* 。 <Element> peek: $==
+<Term> := <Element> $* 。 <Element> peek: $>
+<Term> := <Element> $* 。 <Element> peek: $<
+<Term> := <Element> $* 。 <Element> peek: $<=
+<Term> := <Element> $* 。 <Element> peek: $!=
+<Term> := <Element> $* 。 <Element> peek: $>=
 <Term> := <Element> $* 。 <Element> peek: $,
 <Element> := 。 $num peek: $)
 <Element> := 。 $( <Expression> $) peek: $)
@@ -1702,18 +3112,38 @@ ItemSet 104{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 <Element> := 。 $num peek: $,
 <Element> := 。 $( <Expression> $) peek: $,
 <Element> := 。 $id <FTYPE> peek: $,
 }
-ItemSet 105{
+ItemSet 113{
 <Term> := <Element> $/ 。 <Element> peek: $)
 <Term> := <Element> $/ 。 <Element> peek: $+
 <Term> := <Element> $/ 。 <Element> peek: $-
-<Term> := <Element> $/ 。 <Element> peek: $relop
+<Term> := <Element> $/ 。 <Element> peek: $==
+<Term> := <Element> $/ 。 <Element> peek: $>
+<Term> := <Element> $/ 。 <Element> peek: $<
+<Term> := <Element> $/ 。 <Element> peek: $<=
+<Term> := <Element> $/ 。 <Element> peek: $!=
+<Term> := <Element> $/ 。 <Element> peek: $>=
 <Term> := <Element> $/ 。 <Element> peek: $,
 <Element> := 。 $num peek: $)
 <Element> := 。 $( <Expression> $) peek: $)
@@ -1724,27 +3154,57 @@ ItemSet 105{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 <Element> := 。 $num peek: $,
 <Element> := 。 $( <Expression> $) peek: $,
 <Element> := 。 $id <FTYPE> peek: $,
 }
-ItemSet 106{
+ItemSet 114{
 <ArgList> := <Expression> $, 。 <ArgList> peek: $)
 <ArgList> := 。 <Expression> peek: $)
 <ArgList> := 。 <Expression> $, <ArgList> peek: $)
 <Expression> := 。 <add-Expression> peek: $)
-<Expression> := 。 <add-Expression> $relop <Expression> peek: $)
+<Expression> := 。 <add-Expression> <relop> <Expression> peek: $)
 <Expression> := 。 <add-Expression> peek: $,
-<Expression> := 。 <add-Expression> $relop <Expression> peek: $,
+<Expression> := 。 <add-Expression> <relop> <Expression> peek: $,
 <add-Expression> := 。 <Term> peek: $)
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $)
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $)
-<add-Expression> := 。 <Term> peek: $relop
-<add-Expression> := 。 <Term> $+ <add-Expression> peek: $relop
-<add-Expression> := 。 <Term> $- <add-Expression> peek: $relop
+<add-Expression> := 。 <Term> peek: $==
+<add-Expression> := 。 <Term> peek: $>
+<add-Expression> := 。 <Term> peek: $<
+<add-Expression> := 。 <Term> peek: $<=
+<add-Expression> := 。 <Term> peek: $!=
+<add-Expression> := 。 <Term> peek: $>=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>=
 <add-Expression> := 。 <Term> peek: $,
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $,
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $,
@@ -1757,9 +3217,24 @@ ItemSet 106{
 <Term> := 。 <Element> peek: $-
 <Term> := 。 <Element> $* <Element> peek: $-
 <Term> := 。 <Element> $/ <Element> peek: $-
-<Term> := 。 <Element> peek: $relop
-<Term> := 。 <Element> $* <Element> peek: $relop
-<Term> := 。 <Element> $/ <Element> peek: $relop
+<Term> := 。 <Element> peek: $==
+<Term> := 。 <Element> $* <Element> peek: $==
+<Term> := 。 <Element> $/ <Element> peek: $==
+<Term> := 。 <Element> peek: $>
+<Term> := 。 <Element> $* <Element> peek: $>
+<Term> := 。 <Element> $/ <Element> peek: $>
+<Term> := 。 <Element> peek: $<
+<Term> := 。 <Element> $* <Element> peek: $<
+<Term> := 。 <Element> $/ <Element> peek: $<
+<Term> := 。 <Element> peek: $<=
+<Term> := 。 <Element> $* <Element> peek: $<=
+<Term> := 。 <Element> $/ <Element> peek: $<=
+<Term> := 。 <Element> peek: $!=
+<Term> := 。 <Element> $* <Element> peek: $!=
+<Term> := 。 <Element> $/ <Element> peek: $!=
+<Term> := 。 <Element> peek: $>=
+<Term> := 。 <Element> $* <Element> peek: $>=
+<Term> := 。 <Element> $/ <Element> peek: $>=
 <Term> := 。 <Element> peek: $,
 <Term> := 。 <Element> $* <Element> peek: $,
 <Term> := 。 <Element> $/ <Element> peek: $,
@@ -1778,23 +3253,58 @@ ItemSet 106{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 <Element> := 。 $num peek: $,
 <Element> := 。 $( <Expression> $) peek: $,
 <Element> := 。 $id <FTYPE> peek: $,
 }
-ItemSet 107{
+ItemSet 115{
 <add-Expression> := <Term> $+ 。 <add-Expression> peek: $)
-<add-Expression> := <Term> $+ 。 <add-Expression> peek: $relop
+<add-Expression> := <Term> $+ 。 <add-Expression> peek: $==
+<add-Expression> := <Term> $+ 。 <add-Expression> peek: $>
+<add-Expression> := <Term> $+ 。 <add-Expression> peek: $<
+<add-Expression> := <Term> $+ 。 <add-Expression> peek: $<=
+<add-Expression> := <Term> $+ 。 <add-Expression> peek: $!=
+<add-Expression> := <Term> $+ 。 <add-Expression> peek: $>=
 <add-Expression> := <Term> $+ 。 <add-Expression> peek: $,
 <add-Expression> := 。 <Term> peek: $)
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $)
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $)
-<add-Expression> := 。 <Term> peek: $relop
-<add-Expression> := 。 <Term> $+ <add-Expression> peek: $relop
-<add-Expression> := 。 <Term> $- <add-Expression> peek: $relop
+<add-Expression> := 。 <Term> peek: $==
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $==
+<add-Expression> := 。 <Term> peek: $>
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>
+<add-Expression> := 。 <Term> peek: $<
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<
+<add-Expression> := 。 <Term> peek: $<=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> peek: $!=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> peek: $>=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>=
 <add-Expression> := 。 <Term> peek: $,
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $,
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $,
@@ -1807,9 +3317,24 @@ ItemSet 107{
 <Term> := 。 <Element> peek: $-
 <Term> := 。 <Element> $* <Element> peek: $-
 <Term> := 。 <Element> $/ <Element> peek: $-
-<Term> := 。 <Element> peek: $relop
-<Term> := 。 <Element> $* <Element> peek: $relop
-<Term> := 。 <Element> $/ <Element> peek: $relop
+<Term> := 。 <Element> peek: $==
+<Term> := 。 <Element> $* <Element> peek: $==
+<Term> := 。 <Element> $/ <Element> peek: $==
+<Term> := 。 <Element> peek: $>
+<Term> := 。 <Element> $* <Element> peek: $>
+<Term> := 。 <Element> $/ <Element> peek: $>
+<Term> := 。 <Element> peek: $<
+<Term> := 。 <Element> $* <Element> peek: $<
+<Term> := 。 <Element> $/ <Element> peek: $<
+<Term> := 。 <Element> peek: $<=
+<Term> := 。 <Element> $* <Element> peek: $<=
+<Term> := 。 <Element> $/ <Element> peek: $<=
+<Term> := 。 <Element> peek: $!=
+<Term> := 。 <Element> $* <Element> peek: $!=
+<Term> := 。 <Element> $/ <Element> peek: $!=
+<Term> := 。 <Element> peek: $>=
+<Term> := 。 <Element> $* <Element> peek: $>=
+<Term> := 。 <Element> $/ <Element> peek: $>=
 <Term> := 。 <Element> peek: $,
 <Term> := 。 <Element> $* <Element> peek: $,
 <Term> := 。 <Element> $/ <Element> peek: $,
@@ -1828,23 +3353,58 @@ ItemSet 107{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 <Element> := 。 $num peek: $,
 <Element> := 。 $( <Expression> $) peek: $,
 <Element> := 。 $id <FTYPE> peek: $,
 }
-ItemSet 108{
+ItemSet 116{
 <add-Expression> := <Term> $- 。 <add-Expression> peek: $)
-<add-Expression> := <Term> $- 。 <add-Expression> peek: $relop
+<add-Expression> := <Term> $- 。 <add-Expression> peek: $==
+<add-Expression> := <Term> $- 。 <add-Expression> peek: $>
+<add-Expression> := <Term> $- 。 <add-Expression> peek: $<
+<add-Expression> := <Term> $- 。 <add-Expression> peek: $<=
+<add-Expression> := <Term> $- 。 <add-Expression> peek: $!=
+<add-Expression> := <Term> $- 。 <add-Expression> peek: $>=
 <add-Expression> := <Term> $- 。 <add-Expression> peek: $,
 <add-Expression> := 。 <Term> peek: $)
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $)
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $)
-<add-Expression> := 。 <Term> peek: $relop
-<add-Expression> := 。 <Term> $+ <add-Expression> peek: $relop
-<add-Expression> := 。 <Term> $- <add-Expression> peek: $relop
+<add-Expression> := 。 <Term> peek: $==
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $==
+<add-Expression> := 。 <Term> peek: $>
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>
+<add-Expression> := 。 <Term> peek: $<
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<
+<add-Expression> := 。 <Term> peek: $<=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> peek: $!=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> peek: $>=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>=
 <add-Expression> := 。 <Term> peek: $,
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $,
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $,
@@ -1857,9 +3417,24 @@ ItemSet 108{
 <Term> := 。 <Element> peek: $-
 <Term> := 。 <Element> $* <Element> peek: $-
 <Term> := 。 <Element> $/ <Element> peek: $-
-<Term> := 。 <Element> peek: $relop
-<Term> := 。 <Element> $* <Element> peek: $relop
-<Term> := 。 <Element> $/ <Element> peek: $relop
+<Term> := 。 <Element> peek: $==
+<Term> := 。 <Element> $* <Element> peek: $==
+<Term> := 。 <Element> $/ <Element> peek: $==
+<Term> := 。 <Element> peek: $>
+<Term> := 。 <Element> $* <Element> peek: $>
+<Term> := 。 <Element> $/ <Element> peek: $>
+<Term> := 。 <Element> peek: $<
+<Term> := 。 <Element> $* <Element> peek: $<
+<Term> := 。 <Element> $/ <Element> peek: $<
+<Term> := 。 <Element> peek: $<=
+<Term> := 。 <Element> $* <Element> peek: $<=
+<Term> := 。 <Element> $/ <Element> peek: $<=
+<Term> := 。 <Element> peek: $!=
+<Term> := 。 <Element> $* <Element> peek: $!=
+<Term> := 。 <Element> $/ <Element> peek: $!=
+<Term> := 。 <Element> peek: $>=
+<Term> := 。 <Element> $* <Element> peek: $>=
+<Term> := 。 <Element> $/ <Element> peek: $>=
 <Term> := 。 <Element> peek: $,
 <Term> := 。 <Element> $* <Element> peek: $,
 <Term> := 。 <Element> $/ <Element> peek: $,
@@ -1878,26 +3453,56 @@ ItemSet 108{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 <Element> := 。 $num peek: $,
 <Element> := 。 $( <Expression> $) peek: $,
 <Element> := 。 $id <FTYPE> peek: $,
 }
-ItemSet 109{
-<Expression> := <add-Expression> $relop 。 <Expression> peek: $)
-<Expression> := <add-Expression> $relop 。 <Expression> peek: $,
+ItemSet 117{
+<Expression> := <add-Expression> <relop> 。 <Expression> peek: $)
+<Expression> := <add-Expression> <relop> 。 <Expression> peek: $,
 <Expression> := 。 <add-Expression> peek: $)
-<Expression> := 。 <add-Expression> $relop <Expression> peek: $)
+<Expression> := 。 <add-Expression> <relop> <Expression> peek: $)
 <Expression> := 。 <add-Expression> peek: $,
-<Expression> := 。 <add-Expression> $relop <Expression> peek: $,
+<Expression> := 。 <add-Expression> <relop> <Expression> peek: $,
 <add-Expression> := 。 <Term> peek: $)
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $)
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $)
-<add-Expression> := 。 <Term> peek: $relop
-<add-Expression> := 。 <Term> $+ <add-Expression> peek: $relop
-<add-Expression> := 。 <Term> $- <add-Expression> peek: $relop
+<add-Expression> := 。 <Term> peek: $==
+<add-Expression> := 。 <Term> peek: $>
+<add-Expression> := 。 <Term> peek: $<
+<add-Expression> := 。 <Term> peek: $<=
+<add-Expression> := 。 <Term> peek: $!=
+<add-Expression> := 。 <Term> peek: $>=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>=
 <add-Expression> := 。 <Term> peek: $,
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $,
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $,
@@ -1910,9 +3515,24 @@ ItemSet 109{
 <Term> := 。 <Element> peek: $-
 <Term> := 。 <Element> $* <Element> peek: $-
 <Term> := 。 <Element> $/ <Element> peek: $-
-<Term> := 。 <Element> peek: $relop
-<Term> := 。 <Element> $* <Element> peek: $relop
-<Term> := 。 <Element> $/ <Element> peek: $relop
+<Term> := 。 <Element> peek: $==
+<Term> := 。 <Element> $* <Element> peek: $==
+<Term> := 。 <Element> $/ <Element> peek: $==
+<Term> := 。 <Element> peek: $>
+<Term> := 。 <Element> $* <Element> peek: $>
+<Term> := 。 <Element> $/ <Element> peek: $>
+<Term> := 。 <Element> peek: $<
+<Term> := 。 <Element> $* <Element> peek: $<
+<Term> := 。 <Element> $/ <Element> peek: $<
+<Term> := 。 <Element> peek: $<=
+<Term> := 。 <Element> $* <Element> peek: $<=
+<Term> := 。 <Element> $/ <Element> peek: $<=
+<Term> := 。 <Element> peek: $!=
+<Term> := 。 <Element> $* <Element> peek: $!=
+<Term> := 。 <Element> $/ <Element> peek: $!=
+<Term> := 。 <Element> peek: $>=
+<Term> := 。 <Element> $* <Element> peek: $>=
+<Term> := 。 <Element> $/ <Element> peek: $>=
 <Term> := 。 <Element> peek: $,
 <Term> := 。 <Element> $* <Element> peek: $,
 <Term> := 。 <Element> $/ <Element> peek: $,
@@ -1931,36 +3551,76 @@ ItemSet 109{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 <Element> := 。 $num peek: $,
 <Element> := 。 $( <Expression> $) peek: $,
 <Element> := 。 $id <FTYPE> peek: $,
 }
-ItemSet 110{
+ItemSet 118{
 <Element> := $( <Expression> 。 $) peek: $;
 <Element> := $( <Expression> 。 $) peek: $+
 <Element> := $( <Expression> 。 $) peek: $-
-<Element> := $( <Expression> 。 $) peek: $relop
+<Element> := $( <Expression> 。 $) peek: $==
+<Element> := $( <Expression> 。 $) peek: $>
+<Element> := $( <Expression> 。 $) peek: $<
+<Element> := $( <Expression> 。 $) peek: $<=
+<Element> := $( <Expression> 。 $) peek: $!=
+<Element> := $( <Expression> 。 $) peek: $>=
 }
-ItemSet 111{
+ItemSet 119{
 <call> := $( 。 <ArgList> $) peek: $;
 <call> := $( 。 <ArgList> $) peek: $+
 <call> := $( 。 <ArgList> $) peek: $-
-<call> := $( 。 <ArgList> $) peek: $relop
+<call> := $( 。 <ArgList> $) peek: $==
+<call> := $( 。 <ArgList> $) peek: $>
+<call> := $( 。 <ArgList> $) peek: $<
+<call> := $( 。 <ArgList> $) peek: $<=
+<call> := $( 。 <ArgList> $) peek: $!=
+<call> := $( 。 <ArgList> $) peek: $>=
 <ArgList> := 。 <Expression> peek: $)
 <ArgList> := 。 <Expression> $, <ArgList> peek: $)
 <Expression> := 。 <add-Expression> peek: $)
-<Expression> := 。 <add-Expression> $relop <Expression> peek: $)
+<Expression> := 。 <add-Expression> <relop> <Expression> peek: $)
 <Expression> := 。 <add-Expression> peek: $,
-<Expression> := 。 <add-Expression> $relop <Expression> peek: $,
+<Expression> := 。 <add-Expression> <relop> <Expression> peek: $,
 <add-Expression> := 。 <Term> peek: $)
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $)
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $)
-<add-Expression> := 。 <Term> peek: $relop
-<add-Expression> := 。 <Term> $+ <add-Expression> peek: $relop
-<add-Expression> := 。 <Term> $- <add-Expression> peek: $relop
+<add-Expression> := 。 <Term> peek: $==
+<add-Expression> := 。 <Term> peek: $>
+<add-Expression> := 。 <Term> peek: $<
+<add-Expression> := 。 <Term> peek: $<=
+<add-Expression> := 。 <Term> peek: $!=
+<add-Expression> := 。 <Term> peek: $>=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>=
 <add-Expression> := 。 <Term> peek: $,
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $,
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $,
@@ -1973,9 +3633,24 @@ ItemSet 111{
 <Term> := 。 <Element> peek: $-
 <Term> := 。 <Element> $* <Element> peek: $-
 <Term> := 。 <Element> $/ <Element> peek: $-
-<Term> := 。 <Element> peek: $relop
-<Term> := 。 <Element> $* <Element> peek: $relop
-<Term> := 。 <Element> $/ <Element> peek: $relop
+<Term> := 。 <Element> peek: $==
+<Term> := 。 <Element> $* <Element> peek: $==
+<Term> := 。 <Element> $/ <Element> peek: $==
+<Term> := 。 <Element> peek: $>
+<Term> := 。 <Element> $* <Element> peek: $>
+<Term> := 。 <Element> $/ <Element> peek: $>
+<Term> := 。 <Element> peek: $<
+<Term> := 。 <Element> $* <Element> peek: $<
+<Term> := 。 <Element> $/ <Element> peek: $<
+<Term> := 。 <Element> peek: $<=
+<Term> := 。 <Element> $* <Element> peek: $<=
+<Term> := 。 <Element> $/ <Element> peek: $<=
+<Term> := 。 <Element> peek: $!=
+<Term> := 。 <Element> $* <Element> peek: $!=
+<Term> := 。 <Element> $/ <Element> peek: $!=
+<Term> := 。 <Element> peek: $>=
+<Term> := 。 <Element> $* <Element> peek: $>=
+<Term> := 。 <Element> $/ <Element> peek: $>=
 <Term> := 。 <Element> peek: $,
 <Term> := 。 <Element> $* <Element> peek: $,
 <Term> := 。 <Element> $/ <Element> peek: $,
@@ -1994,26 +3669,51 @@ ItemSet 111{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 <Element> := 。 $num peek: $,
 <Element> := 。 $( <Expression> $) peek: $,
 <Element> := 。 $id <FTYPE> peek: $,
 }
-ItemSet 112{
+ItemSet 120{
 <Element> := $id <FTYPE> 。 peek: $;
 <Element> := $id <FTYPE> 。 peek: $+
 <Element> := $id <FTYPE> 。 peek: $-
-<Element> := $id <FTYPE> 。 peek: $relop
+<Element> := $id <FTYPE> 。 peek: $==
+<Element> := $id <FTYPE> 。 peek: $>
+<Element> := $id <FTYPE> 。 peek: $<
+<Element> := $id <FTYPE> 。 peek: $<=
+<Element> := $id <FTYPE> 。 peek: $!=
+<Element> := $id <FTYPE> 。 peek: $>=
 }
-ItemSet 113{
+ItemSet 121{
 <FTYPE> := <call> 。 peek: $;
 <FTYPE> := <call> 。 peek: $+
 <FTYPE> := <call> 。 peek: $-
-<FTYPE> := <call> 。 peek: $relop
+<FTYPE> := <call> 。 peek: $==
+<FTYPE> := <call> 。 peek: $>
+<FTYPE> := <call> 。 peek: $<
+<FTYPE> := <call> 。 peek: $<=
+<FTYPE> := <call> 。 peek: $!=
+<FTYPE> := <call> 。 peek: $>=
 }
-ItemSet 114{
+ItemSet 122{
 <SentenceBlock> := ${ 。 <InternalStatement> <SentenceString> $} peek: $}
 <SentenceBlock> := ${ 。 <InternalStatement> <SentenceString> $} peek: $if
 <SentenceBlock> := ${ 。 <InternalStatement> <SentenceString> $} peek: $while
@@ -2031,44 +3731,74 @@ ItemSet 114{
 <InternalStatement> := 。 <InternalVarStatement> $; <InternalStatement> peek: $}
 <InternalVarStatement> := 。 $int $id peek: $;
 }
-ItemSet 115{
+ItemSet 123{
 <while-Sentence> := $while $( <Expression> $) <SentenceBlock> 。 peek: $}
 <while-Sentence> := $while $( <Expression> $) <SentenceBlock> 。 peek: $if
 <while-Sentence> := $while $( <Expression> $) <SentenceBlock> 。 peek: $while
 <while-Sentence> := $while $( <Expression> $) <SentenceBlock> 。 peek: $return
 <while-Sentence> := $while $( <Expression> $) <SentenceBlock> 。 peek: $id
 }
-ItemSet 116{
+ItemSet 124{
 <call> := $( <ArgList> $) 。 peek: $)
 <call> := $( <ArgList> $) 。 peek: $*
 <call> := $( <ArgList> $) 。 peek: $/
 <call> := $( <ArgList> $) 。 peek: $+
 <call> := $( <ArgList> $) 。 peek: $-
-<call> := $( <ArgList> $) 。 peek: $relop
+<call> := $( <ArgList> $) 。 peek: $==
+<call> := $( <ArgList> $) 。 peek: $>
+<call> := $( <ArgList> $) 。 peek: $<
+<call> := $( <ArgList> $) 。 peek: $<=
+<call> := $( <ArgList> $) 。 peek: $!=
+<call> := $( <ArgList> $) 。 peek: $>=
 }
-ItemSet 117{
+ItemSet 125{
 <Element> := $( <Expression> 。 $) peek: $)
 <Element> := $( <Expression> 。 $) peek: $+
 <Element> := $( <Expression> 。 $) peek: $-
-<Element> := $( <Expression> 。 $) peek: $relop
+<Element> := $( <Expression> 。 $) peek: $==
+<Element> := $( <Expression> 。 $) peek: $>
+<Element> := $( <Expression> 。 $) peek: $<
+<Element> := $( <Expression> 。 $) peek: $<=
+<Element> := $( <Expression> 。 $) peek: $!=
+<Element> := $( <Expression> 。 $) peek: $>=
 }
-ItemSet 118{
+ItemSet 126{
 <call> := $( 。 <ArgList> $) peek: $)
 <call> := $( 。 <ArgList> $) peek: $+
 <call> := $( 。 <ArgList> $) peek: $-
-<call> := $( 。 <ArgList> $) peek: $relop
+<call> := $( 。 <ArgList> $) peek: $==
+<call> := $( 。 <ArgList> $) peek: $>
+<call> := $( 。 <ArgList> $) peek: $<
+<call> := $( 。 <ArgList> $) peek: $<=
+<call> := $( 。 <ArgList> $) peek: $!=
+<call> := $( 。 <ArgList> $) peek: $>=
 <ArgList> := 。 <Expression> peek: $)
 <ArgList> := 。 <Expression> $, <ArgList> peek: $)
 <Expression> := 。 <add-Expression> peek: $)
-<Expression> := 。 <add-Expression> $relop <Expression> peek: $)
+<Expression> := 。 <add-Expression> <relop> <Expression> peek: $)
 <Expression> := 。 <add-Expression> peek: $,
-<Expression> := 。 <add-Expression> $relop <Expression> peek: $,
+<Expression> := 。 <add-Expression> <relop> <Expression> peek: $,
 <add-Expression> := 。 <Term> peek: $)
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $)
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $)
-<add-Expression> := 。 <Term> peek: $relop
-<add-Expression> := 。 <Term> $+ <add-Expression> peek: $relop
-<add-Expression> := 。 <Term> $- <add-Expression> peek: $relop
+<add-Expression> := 。 <Term> peek: $==
+<add-Expression> := 。 <Term> peek: $>
+<add-Expression> := 。 <Term> peek: $<
+<add-Expression> := 。 <Term> peek: $<=
+<add-Expression> := 。 <Term> peek: $!=
+<add-Expression> := 。 <Term> peek: $>=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>=
 <add-Expression> := 。 <Term> peek: $,
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $,
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $,
@@ -2081,9 +3811,24 @@ ItemSet 118{
 <Term> := 。 <Element> peek: $-
 <Term> := 。 <Element> $* <Element> peek: $-
 <Term> := 。 <Element> $/ <Element> peek: $-
-<Term> := 。 <Element> peek: $relop
-<Term> := 。 <Element> $* <Element> peek: $relop
-<Term> := 。 <Element> $/ <Element> peek: $relop
+<Term> := 。 <Element> peek: $==
+<Term> := 。 <Element> $* <Element> peek: $==
+<Term> := 。 <Element> $/ <Element> peek: $==
+<Term> := 。 <Element> peek: $>
+<Term> := 。 <Element> $* <Element> peek: $>
+<Term> := 。 <Element> $/ <Element> peek: $>
+<Term> := 。 <Element> peek: $<
+<Term> := 。 <Element> $* <Element> peek: $<
+<Term> := 。 <Element> $/ <Element> peek: $<
+<Term> := 。 <Element> peek: $<=
+<Term> := 。 <Element> $* <Element> peek: $<=
+<Term> := 。 <Element> $/ <Element> peek: $<=
+<Term> := 。 <Element> peek: $!=
+<Term> := 。 <Element> $* <Element> peek: $!=
+<Term> := 。 <Element> $/ <Element> peek: $!=
+<Term> := 。 <Element> peek: $>=
+<Term> := 。 <Element> $* <Element> peek: $>=
+<Term> := 。 <Element> $/ <Element> peek: $>=
 <Term> := 。 <Element> peek: $,
 <Term> := 。 <Element> $* <Element> peek: $,
 <Term> := 。 <Element> $/ <Element> peek: $,
@@ -2102,26 +3847,51 @@ ItemSet 118{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 <Element> := 。 $num peek: $,
 <Element> := 。 $( <Expression> $) peek: $,
 <Element> := 。 $id <FTYPE> peek: $,
 }
-ItemSet 119{
+ItemSet 127{
 <Element> := $id <FTYPE> 。 peek: $)
 <Element> := $id <FTYPE> 。 peek: $+
 <Element> := $id <FTYPE> 。 peek: $-
-<Element> := $id <FTYPE> 。 peek: $relop
+<Element> := $id <FTYPE> 。 peek: $==
+<Element> := $id <FTYPE> 。 peek: $>
+<Element> := $id <FTYPE> 。 peek: $<
+<Element> := $id <FTYPE> 。 peek: $<=
+<Element> := $id <FTYPE> 。 peek: $!=
+<Element> := $id <FTYPE> 。 peek: $>=
 }
-ItemSet 120{
+ItemSet 128{
 <FTYPE> := <call> 。 peek: $)
 <FTYPE> := <call> 。 peek: $+
 <FTYPE> := <call> 。 peek: $-
-<FTYPE> := <call> 。 peek: $relop
+<FTYPE> := <call> 。 peek: $==
+<FTYPE> := <call> 。 peek: $>
+<FTYPE> := <call> 。 peek: $<
+<FTYPE> := <call> 。 peek: $<=
+<FTYPE> := <call> 。 peek: $!=
+<FTYPE> := <call> 。 peek: $>=
 }
-ItemSet 121{
+ItemSet 129{
 <SentenceBlock> := ${ <InternalStatement> 。 <SentenceString> $} peek: $}
 <SentenceBlock> := ${ <InternalStatement> 。 <SentenceString> $} peek: $else
 <SentenceBlock> := ${ <InternalStatement> 。 <SentenceString> $} peek: $if
@@ -2182,7 +3952,7 @@ ItemSet 121{
 <assign-Sentence> := 。 $id $= <Expression> $; peek: $return
 <assign-Sentence> := 。 $id $= <Expression> $; peek: $id
 }
-ItemSet 122{
+ItemSet 130{
 <if-Sentence> := $if $( <Expression> $) <SentenceBlock> $else 。 <SentenceBlock> peek: $}
 <if-Sentence> := $if $( <Expression> $) <SentenceBlock> $else 。 <SentenceBlock> peek: $if
 <if-Sentence> := $if $( <Expression> $) <SentenceBlock> $else 。 <SentenceBlock> peek: $while
@@ -2194,38 +3964,68 @@ ItemSet 122{
 <SentenceBlock> := 。 ${ <InternalStatement> <SentenceString> $} peek: $return
 <SentenceBlock> := 。 ${ <InternalStatement> <SentenceString> $} peek: $id
 }
-ItemSet 123{
+ItemSet 131{
 <Element> := $( <Expression> $) 。 peek: $)
 <Element> := $( <Expression> $) 。 peek: $*
 <Element> := $( <Expression> $) 。 peek: $/
 <Element> := $( <Expression> $) 。 peek: $+
 <Element> := $( <Expression> $) 。 peek: $-
-<Element> := $( <Expression> $) 。 peek: $relop
+<Element> := $( <Expression> $) 。 peek: $==
+<Element> := $( <Expression> $) 。 peek: $>
+<Element> := $( <Expression> $) 。 peek: $<
+<Element> := $( <Expression> $) 。 peek: $<=
+<Element> := $( <Expression> $) 。 peek: $!=
+<Element> := $( <Expression> $) 。 peek: $>=
 <Element> := $( <Expression> $) 。 peek: $,
 }
-ItemSet 124{
+ItemSet 132{
 <call> := $( <ArgList> 。 $) peek: $)
 <call> := $( <ArgList> 。 $) peek: $*
 <call> := $( <ArgList> 。 $) peek: $/
 <call> := $( <ArgList> 。 $) peek: $+
 <call> := $( <ArgList> 。 $) peek: $-
-<call> := $( <ArgList> 。 $) peek: $relop
+<call> := $( <ArgList> 。 $) peek: $==
+<call> := $( <ArgList> 。 $) peek: $>
+<call> := $( <ArgList> 。 $) peek: $<
+<call> := $( <ArgList> 。 $) peek: $<=
+<call> := $( <ArgList> 。 $) peek: $!=
+<call> := $( <ArgList> 。 $) peek: $>=
 <call> := $( <ArgList> 。 $) peek: $,
 }
-ItemSet 125{
+ItemSet 133{
 <Element> := $( 。 <Expression> $) peek: $)
 <Element> := $( 。 <Expression> $) peek: $+
 <Element> := $( 。 <Expression> $) peek: $-
-<Element> := $( 。 <Expression> $) peek: $relop
+<Element> := $( 。 <Expression> $) peek: $==
+<Element> := $( 。 <Expression> $) peek: $>
+<Element> := $( 。 <Expression> $) peek: $<
+<Element> := $( 。 <Expression> $) peek: $<=
+<Element> := $( 。 <Expression> $) peek: $!=
+<Element> := $( 。 <Expression> $) peek: $>=
 <Element> := $( 。 <Expression> $) peek: $,
 <Expression> := 。 <add-Expression> peek: $)
-<Expression> := 。 <add-Expression> $relop <Expression> peek: $)
+<Expression> := 。 <add-Expression> <relop> <Expression> peek: $)
 <add-Expression> := 。 <Term> peek: $)
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $)
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $)
-<add-Expression> := 。 <Term> peek: $relop
-<add-Expression> := 。 <Term> $+ <add-Expression> peek: $relop
-<add-Expression> := 。 <Term> $- <add-Expression> peek: $relop
+<add-Expression> := 。 <Term> peek: $==
+<add-Expression> := 。 <Term> peek: $>
+<add-Expression> := 。 <Term> peek: $<
+<add-Expression> := 。 <Term> peek: $<=
+<add-Expression> := 。 <Term> peek: $!=
+<add-Expression> := 。 <Term> peek: $>=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>=
 <Term> := 。 <Element> peek: $)
 <Term> := 。 <Element> $* <Element> peek: $)
 <Term> := 。 <Element> $/ <Element> peek: $)
@@ -2235,9 +4035,24 @@ ItemSet 125{
 <Term> := 。 <Element> peek: $-
 <Term> := 。 <Element> $* <Element> peek: $-
 <Term> := 。 <Element> $/ <Element> peek: $-
-<Term> := 。 <Element> peek: $relop
-<Term> := 。 <Element> $* <Element> peek: $relop
-<Term> := 。 <Element> $/ <Element> peek: $relop
+<Term> := 。 <Element> peek: $==
+<Term> := 。 <Element> $* <Element> peek: $==
+<Term> := 。 <Element> $/ <Element> peek: $==
+<Term> := 。 <Element> peek: $>
+<Term> := 。 <Element> $* <Element> peek: $>
+<Term> := 。 <Element> $/ <Element> peek: $>
+<Term> := 。 <Element> peek: $<
+<Term> := 。 <Element> $* <Element> peek: $<
+<Term> := 。 <Element> $/ <Element> peek: $<
+<Term> := 。 <Element> peek: $<=
+<Term> := 。 <Element> $* <Element> peek: $<=
+<Term> := 。 <Element> $/ <Element> peek: $<=
+<Term> := 。 <Element> peek: $!=
+<Term> := 。 <Element> $* <Element> peek: $!=
+<Term> := 。 <Element> $/ <Element> peek: $!=
+<Term> := 。 <Element> peek: $>=
+<Term> := 。 <Element> $* <Element> peek: $>=
+<Term> := 。 <Element> $/ <Element> peek: $>=
 <Element> := 。 $num peek: $)
 <Element> := 。 $( <Expression> $) peek: $)
 <Element> := 。 $id <FTYPE> peek: $)
@@ -2253,15 +4068,35 @@ ItemSet 125{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 }
-ItemSet 126{
+ItemSet 134{
 <Element> := $id 。 <FTYPE> peek: $)
 <Element> := $id 。 <FTYPE> peek: $+
 <Element> := $id 。 <FTYPE> peek: $-
-<Element> := $id 。 <FTYPE> peek: $relop
+<Element> := $id 。 <FTYPE> peek: $==
+<Element> := $id 。 <FTYPE> peek: $>
+<Element> := $id 。 <FTYPE> peek: $<
+<Element> := $id 。 <FTYPE> peek: $<=
+<Element> := $id 。 <FTYPE> peek: $!=
+<Element> := $id 。 <FTYPE> peek: $>=
 <Element> := $id 。 <FTYPE> peek: $,
 <FTYPE> := 。 <call> peek: $)
 <FTYPE> := 。 @empty peek: $)
@@ -2269,67 +4104,143 @@ ItemSet 126{
 <FTYPE> := 。 @empty peek: $+
 <FTYPE> := 。 <call> peek: $-
 <FTYPE> := 。 @empty peek: $-
-<FTYPE> := 。 <call> peek: $relop
-<FTYPE> := 。 @empty peek: $relop
+<FTYPE> := 。 <call> peek: $==
+<FTYPE> := 。 @empty peek: $==
+<FTYPE> := 。 <call> peek: $>
+<FTYPE> := 。 @empty peek: $>
+<FTYPE> := 。 <call> peek: $<
+<FTYPE> := 。 @empty peek: $<
+<FTYPE> := 。 <call> peek: $<=
+<FTYPE> := 。 @empty peek: $<=
+<FTYPE> := 。 <call> peek: $!=
+<FTYPE> := 。 @empty peek: $!=
+<FTYPE> := 。 <call> peek: $>=
+<FTYPE> := 。 @empty peek: $>=
 <FTYPE> := 。 <call> peek: $,
 <FTYPE> := 。 @empty peek: $,
 <call> := 。 $( <ArgList> $) peek: $)
 <call> := 。 $( <ArgList> $) peek: $+
 <call> := 。 $( <ArgList> $) peek: $-
-<call> := 。 $( <ArgList> $) peek: $relop
+<call> := 。 $( <ArgList> $) peek: $==
+<call> := 。 $( <ArgList> $) peek: $>
+<call> := 。 $( <ArgList> $) peek: $<
+<call> := 。 $( <ArgList> $) peek: $<=
+<call> := 。 $( <ArgList> $) peek: $!=
+<call> := 。 $( <ArgList> $) peek: $>=
 <call> := 。 $( <ArgList> $) peek: $,
 }
-ItemSet 127{
+ItemSet 135{
 <Element> := $num 。 peek: $)
 <Element> := $num 。 peek: $+
 <Element> := $num 。 peek: $-
-<Element> := $num 。 peek: $relop
+<Element> := $num 。 peek: $==
+<Element> := $num 。 peek: $>
+<Element> := $num 。 peek: $<
+<Element> := $num 。 peek: $<=
+<Element> := $num 。 peek: $!=
+<Element> := $num 。 peek: $>=
 <Element> := $num 。 peek: $,
 }
-ItemSet 128{
+ItemSet 136{
 <Term> := <Element> $* <Element> 。 peek: $)
 <Term> := <Element> $* <Element> 。 peek: $+
 <Term> := <Element> $* <Element> 。 peek: $-
-<Term> := <Element> $* <Element> 。 peek: $relop
+<Term> := <Element> $* <Element> 。 peek: $==
+<Term> := <Element> $* <Element> 。 peek: $>
+<Term> := <Element> $* <Element> 。 peek: $<
+<Term> := <Element> $* <Element> 。 peek: $<=
+<Term> := <Element> $* <Element> 。 peek: $!=
+<Term> := <Element> $* <Element> 。 peek: $>=
 <Term> := <Element> $* <Element> 。 peek: $,
 }
-ItemSet 129{
+ItemSet 137{
 <Term> := <Element> $/ <Element> 。 peek: $)
 <Term> := <Element> $/ <Element> 。 peek: $+
 <Term> := <Element> $/ <Element> 。 peek: $-
-<Term> := <Element> $/ <Element> 。 peek: $relop
+<Term> := <Element> $/ <Element> 。 peek: $==
+<Term> := <Element> $/ <Element> 。 peek: $>
+<Term> := <Element> $/ <Element> 。 peek: $<
+<Term> := <Element> $/ <Element> 。 peek: $<=
+<Term> := <Element> $/ <Element> 。 peek: $!=
+<Term> := <Element> $/ <Element> 。 peek: $>=
 <Term> := <Element> $/ <Element> 。 peek: $,
 }
-ItemSet 130{
+ItemSet 138{
 <ArgList> := <Expression> $, <ArgList> 。 peek: $)
 }
-ItemSet 131{
+ItemSet 139{
+<add-Expression> := <Term> 。 peek: $)
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $)
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $)
+<add-Expression> := <Term> 。 peek: $==
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $==
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $==
+<add-Expression> := <Term> 。 peek: $>
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $>
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $>
+<add-Expression> := <Term> 。 peek: $<
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $<
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $<
+<add-Expression> := <Term> 。 peek: $<=
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $<=
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $<=
+<add-Expression> := <Term> 。 peek: $!=
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $!=
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $!=
+<add-Expression> := <Term> 。 peek: $>=
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $>=
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $>=
+<add-Expression> := <Term> 。 peek: $,
+<add-Expression> := <Term> 。 $+ <add-Expression> peek: $,
+<add-Expression> := <Term> 。 $- <add-Expression> peek: $,
+}
+ItemSet 140{
 <add-Expression> := <Term> $+ <add-Expression> 。 peek: $)
-<add-Expression> := <Term> $+ <add-Expression> 。 peek: $relop
+<add-Expression> := <Term> $+ <add-Expression> 。 peek: $==
+<add-Expression> := <Term> $+ <add-Expression> 。 peek: $>
+<add-Expression> := <Term> $+ <add-Expression> 。 peek: $<
+<add-Expression> := <Term> $+ <add-Expression> 。 peek: $<=
+<add-Expression> := <Term> $+ <add-Expression> 。 peek: $!=
+<add-Expression> := <Term> $+ <add-Expression> 。 peek: $>=
 <add-Expression> := <Term> $+ <add-Expression> 。 peek: $,
 }
-ItemSet 132{
+ItemSet 141{
 <add-Expression> := <Term> $- <add-Expression> 。 peek: $)
-<add-Expression> := <Term> $- <add-Expression> 。 peek: $relop
+<add-Expression> := <Term> $- <add-Expression> 。 peek: $==
+<add-Expression> := <Term> $- <add-Expression> 。 peek: $>
+<add-Expression> := <Term> $- <add-Expression> 。 peek: $<
+<add-Expression> := <Term> $- <add-Expression> 。 peek: $<=
+<add-Expression> := <Term> $- <add-Expression> 。 peek: $!=
+<add-Expression> := <Term> $- <add-Expression> 。 peek: $>=
 <add-Expression> := <Term> $- <add-Expression> 。 peek: $,
 }
-ItemSet 133{
-<Expression> := <add-Expression> $relop <Expression> 。 peek: $)
-<Expression> := <add-Expression> $relop <Expression> 。 peek: $,
+ItemSet 142{
+<Expression> := <add-Expression> <relop> <Expression> 。 peek: $)
+<Expression> := <add-Expression> <relop> <Expression> 。 peek: $,
 }
-ItemSet 134{
+ItemSet 143{
 <Element> := $( <Expression> $) 。 peek: $;
 <Element> := $( <Expression> $) 。 peek: $+
 <Element> := $( <Expression> $) 。 peek: $-
-<Element> := $( <Expression> $) 。 peek: $relop
+<Element> := $( <Expression> $) 。 peek: $==
+<Element> := $( <Expression> $) 。 peek: $>
+<Element> := $( <Expression> $) 。 peek: $<
+<Element> := $( <Expression> $) 。 peek: $<=
+<Element> := $( <Expression> $) 。 peek: $!=
+<Element> := $( <Expression> $) 。 peek: $>=
 }
-ItemSet 135{
+ItemSet 144{
 <call> := $( <ArgList> 。 $) peek: $;
 <call> := $( <ArgList> 。 $) peek: $+
 <call> := $( <ArgList> 。 $) peek: $-
-<call> := $( <ArgList> 。 $) peek: $relop
+<call> := $( <ArgList> 。 $) peek: $==
+<call> := $( <ArgList> 。 $) peek: $>
+<call> := $( <ArgList> 。 $) peek: $<
+<call> := $( <ArgList> 。 $) peek: $<=
+<call> := $( <ArgList> 。 $) peek: $!=
+<call> := $( <ArgList> 。 $) peek: $>=
 }
-ItemSet 136{
+ItemSet 145{
 <SentenceBlock> := ${ <InternalStatement> 。 <SentenceString> $} peek: $}
 <SentenceBlock> := ${ <InternalStatement> 。 <SentenceString> $} peek: $if
 <SentenceBlock> := ${ <InternalStatement> 。 <SentenceString> $} peek: $while
@@ -2389,19 +4300,29 @@ ItemSet 136{
 <assign-Sentence> := 。 $id $= <Expression> $; peek: $return
 <assign-Sentence> := 。 $id $= <Expression> $; peek: $id
 }
-ItemSet 137{
+ItemSet 146{
 <Element> := $( <Expression> $) 。 peek: $)
 <Element> := $( <Expression> $) 。 peek: $+
 <Element> := $( <Expression> $) 。 peek: $-
-<Element> := $( <Expression> $) 。 peek: $relop
+<Element> := $( <Expression> $) 。 peek: $==
+<Element> := $( <Expression> $) 。 peek: $>
+<Element> := $( <Expression> $) 。 peek: $<
+<Element> := $( <Expression> $) 。 peek: $<=
+<Element> := $( <Expression> $) 。 peek: $!=
+<Element> := $( <Expression> $) 。 peek: $>=
 }
-ItemSet 138{
+ItemSet 147{
 <call> := $( <ArgList> 。 $) peek: $)
 <call> := $( <ArgList> 。 $) peek: $+
 <call> := $( <ArgList> 。 $) peek: $-
-<call> := $( <ArgList> 。 $) peek: $relop
+<call> := $( <ArgList> 。 $) peek: $==
+<call> := $( <ArgList> 。 $) peek: $>
+<call> := $( <ArgList> 。 $) peek: $<
+<call> := $( <ArgList> 。 $) peek: $<=
+<call> := $( <ArgList> 。 $) peek: $!=
+<call> := $( <ArgList> 。 $) peek: $>=
 }
-ItemSet 139{
+ItemSet 148{
 <SentenceBlock> := ${ <InternalStatement> <SentenceString> 。 $} peek: $}
 <SentenceBlock> := ${ <InternalStatement> <SentenceString> 。 $} peek: $else
 <SentenceBlock> := ${ <InternalStatement> <SentenceString> 。 $} peek: $if
@@ -2409,47 +4330,77 @@ ItemSet 139{
 <SentenceBlock> := ${ <InternalStatement> <SentenceString> 。 $} peek: $return
 <SentenceBlock> := ${ <InternalStatement> <SentenceString> 。 $} peek: $id
 }
-ItemSet 140{
+ItemSet 149{
 <if-Sentence> := $if $( <Expression> $) <SentenceBlock> $else <SentenceBlock> 。 peek: $}
 <if-Sentence> := $if $( <Expression> $) <SentenceBlock> $else <SentenceBlock> 。 peek: $if
 <if-Sentence> := $if $( <Expression> $) <SentenceBlock> $else <SentenceBlock> 。 peek: $while
 <if-Sentence> := $if $( <Expression> $) <SentenceBlock> $else <SentenceBlock> 。 peek: $return
 <if-Sentence> := $if $( <Expression> $) <SentenceBlock> $else <SentenceBlock> 。 peek: $id
 }
-ItemSet 141{
+ItemSet 150{
 <call> := $( <ArgList> $) 。 peek: $)
 <call> := $( <ArgList> $) 。 peek: $*
 <call> := $( <ArgList> $) 。 peek: $/
 <call> := $( <ArgList> $) 。 peek: $+
 <call> := $( <ArgList> $) 。 peek: $-
-<call> := $( <ArgList> $) 。 peek: $relop
+<call> := $( <ArgList> $) 。 peek: $==
+<call> := $( <ArgList> $) 。 peek: $>
+<call> := $( <ArgList> $) 。 peek: $<
+<call> := $( <ArgList> $) 。 peek: $<=
+<call> := $( <ArgList> $) 。 peek: $!=
+<call> := $( <ArgList> $) 。 peek: $>=
 <call> := $( <ArgList> $) 。 peek: $,
 }
-ItemSet 142{
+ItemSet 151{
 <Element> := $( <Expression> 。 $) peek: $)
 <Element> := $( <Expression> 。 $) peek: $+
 <Element> := $( <Expression> 。 $) peek: $-
-<Element> := $( <Expression> 。 $) peek: $relop
+<Element> := $( <Expression> 。 $) peek: $==
+<Element> := $( <Expression> 。 $) peek: $>
+<Element> := $( <Expression> 。 $) peek: $<
+<Element> := $( <Expression> 。 $) peek: $<=
+<Element> := $( <Expression> 。 $) peek: $!=
+<Element> := $( <Expression> 。 $) peek: $>=
 <Element> := $( <Expression> 。 $) peek: $,
 }
-ItemSet 143{
+ItemSet 152{
 <call> := $( 。 <ArgList> $) peek: $)
 <call> := $( 。 <ArgList> $) peek: $+
 <call> := $( 。 <ArgList> $) peek: $-
-<call> := $( 。 <ArgList> $) peek: $relop
+<call> := $( 。 <ArgList> $) peek: $==
+<call> := $( 。 <ArgList> $) peek: $>
+<call> := $( 。 <ArgList> $) peek: $<
+<call> := $( 。 <ArgList> $) peek: $<=
+<call> := $( 。 <ArgList> $) peek: $!=
+<call> := $( 。 <ArgList> $) peek: $>=
 <call> := $( 。 <ArgList> $) peek: $,
 <ArgList> := 。 <Expression> peek: $)
 <ArgList> := 。 <Expression> $, <ArgList> peek: $)
 <Expression> := 。 <add-Expression> peek: $)
-<Expression> := 。 <add-Expression> $relop <Expression> peek: $)
+<Expression> := 。 <add-Expression> <relop> <Expression> peek: $)
 <Expression> := 。 <add-Expression> peek: $,
-<Expression> := 。 <add-Expression> $relop <Expression> peek: $,
+<Expression> := 。 <add-Expression> <relop> <Expression> peek: $,
 <add-Expression> := 。 <Term> peek: $)
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $)
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $)
-<add-Expression> := 。 <Term> peek: $relop
-<add-Expression> := 。 <Term> $+ <add-Expression> peek: $relop
-<add-Expression> := 。 <Term> $- <add-Expression> peek: $relop
+<add-Expression> := 。 <Term> peek: $==
+<add-Expression> := 。 <Term> peek: $>
+<add-Expression> := 。 <Term> peek: $<
+<add-Expression> := 。 <Term> peek: $<=
+<add-Expression> := 。 <Term> peek: $!=
+<add-Expression> := 。 <Term> peek: $>=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $+ <add-Expression> peek: $>=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $==
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $<=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $!=
+<add-Expression> := 。 <Term> $- <add-Expression> peek: $>=
 <add-Expression> := 。 <Term> peek: $,
 <add-Expression> := 。 <Term> $+ <add-Expression> peek: $,
 <add-Expression> := 。 <Term> $- <add-Expression> peek: $,
@@ -2462,9 +4413,24 @@ ItemSet 143{
 <Term> := 。 <Element> peek: $-
 <Term> := 。 <Element> $* <Element> peek: $-
 <Term> := 。 <Element> $/ <Element> peek: $-
-<Term> := 。 <Element> peek: $relop
-<Term> := 。 <Element> $* <Element> peek: $relop
-<Term> := 。 <Element> $/ <Element> peek: $relop
+<Term> := 。 <Element> peek: $==
+<Term> := 。 <Element> $* <Element> peek: $==
+<Term> := 。 <Element> $/ <Element> peek: $==
+<Term> := 。 <Element> peek: $>
+<Term> := 。 <Element> $* <Element> peek: $>
+<Term> := 。 <Element> $/ <Element> peek: $>
+<Term> := 。 <Element> peek: $<
+<Term> := 。 <Element> $* <Element> peek: $<
+<Term> := 。 <Element> $/ <Element> peek: $<
+<Term> := 。 <Element> peek: $<=
+<Term> := 。 <Element> $* <Element> peek: $<=
+<Term> := 。 <Element> $/ <Element> peek: $<=
+<Term> := 。 <Element> peek: $!=
+<Term> := 。 <Element> $* <Element> peek: $!=
+<Term> := 。 <Element> $/ <Element> peek: $!=
+<Term> := 。 <Element> peek: $>=
+<Term> := 。 <Element> $* <Element> peek: $>=
+<Term> := 。 <Element> $/ <Element> peek: $>=
 <Term> := 。 <Element> peek: $,
 <Term> := 。 <Element> $* <Element> peek: $,
 <Term> := 。 <Element> $/ <Element> peek: $,
@@ -2483,47 +4449,82 @@ ItemSet 143{
 <Element> := 。 $num peek: $-
 <Element> := 。 $( <Expression> $) peek: $-
 <Element> := 。 $id <FTYPE> peek: $-
-<Element> := 。 $num peek: $relop
-<Element> := 。 $( <Expression> $) peek: $relop
-<Element> := 。 $id <FTYPE> peek: $relop
+<Element> := 。 $num peek: $==
+<Element> := 。 $( <Expression> $) peek: $==
+<Element> := 。 $id <FTYPE> peek: $==
+<Element> := 。 $num peek: $>
+<Element> := 。 $( <Expression> $) peek: $>
+<Element> := 。 $id <FTYPE> peek: $>
+<Element> := 。 $num peek: $<
+<Element> := 。 $( <Expression> $) peek: $<
+<Element> := 。 $id <FTYPE> peek: $<
+<Element> := 。 $num peek: $<=
+<Element> := 。 $( <Expression> $) peek: $<=
+<Element> := 。 $id <FTYPE> peek: $<=
+<Element> := 。 $num peek: $!=
+<Element> := 。 $( <Expression> $) peek: $!=
+<Element> := 。 $id <FTYPE> peek: $!=
+<Element> := 。 $num peek: $>=
+<Element> := 。 $( <Expression> $) peek: $>=
+<Element> := 。 $id <FTYPE> peek: $>=
 <Element> := 。 $num peek: $,
 <Element> := 。 $( <Expression> $) peek: $,
 <Element> := 。 $id <FTYPE> peek: $,
 }
-ItemSet 144{
+ItemSet 153{
 <Element> := $id <FTYPE> 。 peek: $)
 <Element> := $id <FTYPE> 。 peek: $+
 <Element> := $id <FTYPE> 。 peek: $-
-<Element> := $id <FTYPE> 。 peek: $relop
+<Element> := $id <FTYPE> 。 peek: $==
+<Element> := $id <FTYPE> 。 peek: $>
+<Element> := $id <FTYPE> 。 peek: $<
+<Element> := $id <FTYPE> 。 peek: $<=
+<Element> := $id <FTYPE> 。 peek: $!=
+<Element> := $id <FTYPE> 。 peek: $>=
 <Element> := $id <FTYPE> 。 peek: $,
 }
-ItemSet 145{
+ItemSet 154{
 <FTYPE> := <call> 。 peek: $)
 <FTYPE> := <call> 。 peek: $+
 <FTYPE> := <call> 。 peek: $-
-<FTYPE> := <call> 。 peek: $relop
+<FTYPE> := <call> 。 peek: $==
+<FTYPE> := <call> 。 peek: $>
+<FTYPE> := <call> 。 peek: $<
+<FTYPE> := <call> 。 peek: $<=
+<FTYPE> := <call> 。 peek: $!=
+<FTYPE> := <call> 。 peek: $>=
 <FTYPE> := <call> 。 peek: $,
 }
-ItemSet 146{
+ItemSet 155{
 <call> := $( <ArgList> $) 。 peek: $;
 <call> := $( <ArgList> $) 。 peek: $+
 <call> := $( <ArgList> $) 。 peek: $-
-<call> := $( <ArgList> $) 。 peek: $relop
+<call> := $( <ArgList> $) 。 peek: $==
+<call> := $( <ArgList> $) 。 peek: $>
+<call> := $( <ArgList> $) 。 peek: $<
+<call> := $( <ArgList> $) 。 peek: $<=
+<call> := $( <ArgList> $) 。 peek: $!=
+<call> := $( <ArgList> $) 。 peek: $>=
 }
-ItemSet 147{
+ItemSet 156{
 <SentenceBlock> := ${ <InternalStatement> <SentenceString> 。 $} peek: $}
 <SentenceBlock> := ${ <InternalStatement> <SentenceString> 。 $} peek: $if
 <SentenceBlock> := ${ <InternalStatement> <SentenceString> 。 $} peek: $while
 <SentenceBlock> := ${ <InternalStatement> <SentenceString> 。 $} peek: $return
 <SentenceBlock> := ${ <InternalStatement> <SentenceString> 。 $} peek: $id
 }
-ItemSet 148{
+ItemSet 157{
 <call> := $( <ArgList> $) 。 peek: $)
 <call> := $( <ArgList> $) 。 peek: $+
 <call> := $( <ArgList> $) 。 peek: $-
-<call> := $( <ArgList> $) 。 peek: $relop
+<call> := $( <ArgList> $) 。 peek: $==
+<call> := $( <ArgList> $) 。 peek: $>
+<call> := $( <ArgList> $) 。 peek: $<
+<call> := $( <ArgList> $) 。 peek: $<=
+<call> := $( <ArgList> $) 。 peek: $!=
+<call> := $( <ArgList> $) 。 peek: $>=
 }
-ItemSet 149{
+ItemSet 158{
 <SentenceBlock> := ${ <InternalStatement> <SentenceString> $} 。 peek: $}
 <SentenceBlock> := ${ <InternalStatement> <SentenceString> $} 。 peek: $else
 <SentenceBlock> := ${ <InternalStatement> <SentenceString> $} 。 peek: $if
@@ -2531,31 +4532,46 @@ ItemSet 149{
 <SentenceBlock> := ${ <InternalStatement> <SentenceString> $} 。 peek: $return
 <SentenceBlock> := ${ <InternalStatement> <SentenceString> $} 。 peek: $id
 }
-ItemSet 150{
+ItemSet 159{
 <Element> := $( <Expression> $) 。 peek: $)
 <Element> := $( <Expression> $) 。 peek: $+
 <Element> := $( <Expression> $) 。 peek: $-
-<Element> := $( <Expression> $) 。 peek: $relop
+<Element> := $( <Expression> $) 。 peek: $==
+<Element> := $( <Expression> $) 。 peek: $>
+<Element> := $( <Expression> $) 。 peek: $<
+<Element> := $( <Expression> $) 。 peek: $<=
+<Element> := $( <Expression> $) 。 peek: $!=
+<Element> := $( <Expression> $) 。 peek: $>=
 <Element> := $( <Expression> $) 。 peek: $,
 }
-ItemSet 151{
+ItemSet 160{
 <call> := $( <ArgList> 。 $) peek: $)
 <call> := $( <ArgList> 。 $) peek: $+
 <call> := $( <ArgList> 。 $) peek: $-
-<call> := $( <ArgList> 。 $) peek: $relop
+<call> := $( <ArgList> 。 $) peek: $==
+<call> := $( <ArgList> 。 $) peek: $>
+<call> := $( <ArgList> 。 $) peek: $<
+<call> := $( <ArgList> 。 $) peek: $<=
+<call> := $( <ArgList> 。 $) peek: $!=
+<call> := $( <ArgList> 。 $) peek: $>=
 <call> := $( <ArgList> 。 $) peek: $,
 }
-ItemSet 152{
+ItemSet 161{
 <SentenceBlock> := ${ <InternalStatement> <SentenceString> $} 。 peek: $}
 <SentenceBlock> := ${ <InternalStatement> <SentenceString> $} 。 peek: $if
 <SentenceBlock> := ${ <InternalStatement> <SentenceString> $} 。 peek: $while
 <SentenceBlock> := ${ <InternalStatement> <SentenceString> $} 。 peek: $return
 <SentenceBlock> := ${ <InternalStatement> <SentenceString> $} 。 peek: $id
 }
-ItemSet 153{
+ItemSet 162{
 <call> := $( <ArgList> $) 。 peek: $)
 <call> := $( <ArgList> $) 。 peek: $+
 <call> := $( <ArgList> $) 。 peek: $-
-<call> := $( <ArgList> $) 。 peek: $relop
+<call> := $( <ArgList> $) 。 peek: $==
+<call> := $( <ArgList> $) 。 peek: $>
+<call> := $( <ArgList> $) 。 peek: $<
+<call> := $( <ArgList> $) 。 peek: $<=
+<call> := $( <ArgList> $) 。 peek: $!=
+<call> := $( <ArgList> $) 。 peek: $>=
 <call> := $( <ArgList> $) 。 peek: $,
 }

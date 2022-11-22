@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "src/Parser.h"
+#include "src/Lexer.h"
 #include <QMainWindow>
 #include "ui_mainwindow.h"
 
@@ -24,6 +25,7 @@ public slots:
 private:
     Ui::MainWindow *ui;
     Parser *mParser = 0;
+    Lexer *lexer = 0;
 };
 
 #endif // MAINWINDOW_H
