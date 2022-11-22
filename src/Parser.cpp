@@ -269,6 +269,7 @@ void Parser::calFirstVN(){
             std::vector<string> &fG = firstVN[g.state.type];
             const size_t isz = fG.size();
 
+            for(; sit != g.symbols.cend() && !sit->isTerminal; sit++) {
             auto sit = g.symbols.begin();
             for(; sit != g.symbols.end() && !(sit->isTerminal); sit++) {
                 // append(fG, firstVN[sit->type]);
