@@ -20,7 +20,8 @@ int main(int argc, char *argv[])
 
     Parser parser;
     //parser.readGrammarYACC("./asset/grammar_yacc.txt");
-    parser.readGrammar("./asset/grammar_yacc.txt");
+    //parser.readGrammar("./asset/g.txt");
+    parser.readGrammar("./asset/grammar.txt");
 	parser.printGrammar("./asset/printed_grammar.txt");
 
     parser.calFirstVN();
