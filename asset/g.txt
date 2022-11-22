@@ -1,4 +1,0 @@
-<Program> = <S> ;
-<S> = <A> ;
-<A> = <B> <A> | @empty ;
-<B> = $a <B> | $b ;

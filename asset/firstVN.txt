@@ -13,6 +13,7 @@
 <if-Sentence>: $if, 
 <Element>: $num, $(, $id, 
 <Expression>: $num, $(, $id, 
+<relop>: $==, $>, $<, $<=, $!=, $>=, 
 <add-Expression>: $num, $(, $id, 
 <FTYPE>: @empty, $(, 
 <call>: $(, 

@@ -5,6 +5,7 @@
 #include<assert.h>
 #include <algorithm>
 #include<ios>
+#include<filesystem>
 using std::string;
 const std::string EMPTY("@empty");
 
@@ -269,7 +270,6 @@ void Parser::calFirstVN(){
             std::vector<string> &fG = firstVN[g.state.type];
             const size_t isz = fG.size();
 
-            for(; sit != g.symbols.cend() && !sit->isTerminal; sit++) {
             auto sit = g.symbols.begin();
             for(; sit != g.symbols.end() && !(sit->isTerminal); sit++) {
                 // append(fG, firstVN[sit->type]);
@@ -619,6 +619,34 @@ void Parser::constructTable() {
             }
         }
     }
+}
+
+void Parser::constructDFA(const std::string& filename) {
+    std::ofstream f(filename);
+    f << "digraph dfa{\n";
+    f << "size = \" 50, 50\"; \n";
+    f << "fontname = \"Microsoft YaHei\";\n";
+    f << "fontsize = 10; \n";
+    f << "node [shape = circle, fontname = \"Microsfot YaHei\", fontsize = 10];\n";
+    f << "edge [fontname = \"Microsoft YaHei\", fontsize = 10];\n";
+
+    for (int i = 0; i < cluster.size(); i++) {
+        f << i << ";\n";
+    }
+    
+    for (auto& action : actions) {
+        if (action.useStack) {
+            f << action.state << " -> " << action.j << "[label = \"" << action.inString << "\" ]; \n";
+        }
+    }
+    for (auto& go : gotos) {
+		f << go.state << " -> " << go.gotoState << "[label = \"" << go.inState << "\" ]; \n";
+    }
+
+    f << "}\n";
+    f.close();
+    auto dir = 
+    system(".\\asset\\gen.bat");
 }
 
 void Parser::printTable(const std::string& filename) {

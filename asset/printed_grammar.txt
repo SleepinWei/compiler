@@ -1,4 +1,5 @@
 Symbols:
+$!=
 $(
 $)
 $*
@@ -7,13 +8,17 @@ $,
 $-
 $/
 $;
+$<
+$<=
 $=
+$==
+$>
+$>=
 $else
 $id
 $if
 $int
 $num
-$relop
 $return
 $void
 $while
@@ -36,6 +41,7 @@ $}
 <assign-Sentence>
 <call>
 <if-Sentence>
+<relop>
 <return-Sentence>
 <start>
 <while-Sentence>
@@ -62,7 +68,13 @@ $}
 <if-Sentence>->$if $( <Expression> $) <SentenceBlock> 
 <if-Sentence>->$if $( <Expression> $) <SentenceBlock> $else <SentenceBlock> 
 <Expression>-><add-Expression> 
-<Expression>-><add-Expression> $relop <Expression> 
+<Expression>-><add-Expression> <relop> <Expression> 
+<relop>->$== 
+<relop>->$> 
+<relop>->$< 
+<relop>->$<= 
+<relop>->$!= 
+<relop>->$>= 
 <add-Expression>-><Term> 
 <add-Expression>-><Term> $+ <add-Expression> 
 <add-Expression>-><Term> $- <add-Expression> 

@@ -9,6 +9,7 @@
 #include<unordered_map>
 #include<set>
 #include<stack>
+#include<stdlib.h>
 
 class Parser {
 public:
@@ -40,6 +41,7 @@ public:
     std::vector<Item> GO(const std::vector<Item>& itemSet, const std::string& x);
     void constructCluster();
     void constructTable();
+    void constructDFA(const std::string& filename);
 
 	//wtc
     std::vector<std::string> calFirst(const std::vector<Symbol> &rhs, size_t ofst, const Symbol &peek);
