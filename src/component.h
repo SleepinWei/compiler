@@ -78,7 +78,7 @@ public:
     }
     ~Item(){};
 public:
-    const GrammarEntry* entry;
+    GrammarEntry* entry;
     int dotPos;
     Symbol peek;
     bool operator==(const Item &other) const {
@@ -131,7 +131,7 @@ public:
     std::string inString; // incoming string   
     bool useStack; // sj or rj
     int j; // sj or rj 
-    const GrammarEntry* gen; 
+    GrammarEntry* gen; 
     bool isAcc;
 };
 

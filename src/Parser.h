@@ -13,11 +13,13 @@
 
 class Parser {
 public:
-    std::vector<GrammarEntry> grammar;
+    //std::vector<GrammarEntry> grammar;
+    std::unordered_map<std::string, std::vector<GrammarEntry*>> grammar;
+
     std::set<Symbol> grammarSymbols;
     GrammarEntry* startEntry;
-    std::unordered_map<Symbol, std::set<Symbol>, Symbol_hash> firstMap;
-    std::unordered_map<std::string, std::vector<std::string>> firstVN;
+    //std::unordered_map<Symbol, std::set<Symbol>, Symbol_hash> firstMap;
+    std::unordered_map<std::string, std::set<std::string>,std::hash<std::string>> firstVN;
     std::vector<std::vector<Item>> cluster;
 
     std::vector<Action> actions;
@@ -28,15 +30,15 @@ public:
     std::stack<Symbol> symbolStack;
     int inputPos; // inputString position
 public:
-    void readGrammarYACC(const std::string& filename);
+    ~Parser();
     void readGrammar(const std::string& filename);
     void printGrammar(const std::string& filename);
-    void printFirst(const std::string& filename);
+    //void printFirst(const std::string& filename);
     void printVNFirst(const std::string& filename);
     void printCluster(const std::string& filename);
     void printTable(const std::string& filename);
     // zyw 
-    void calFirst();
+    //void calFirst();
     //std::set<Item> calClosure(const std::set<Item>& itemSet);
     std::vector<Item> GO(const std::vector<Item>& itemSet, const std::string& x);
     void constructCluster();
@@ -44,7 +46,7 @@ public:
     void constructDFA(const std::string& filename);
 
 	//wtc
-    std::vector<std::string> calFirst(const std::vector<Symbol> &rhs, size_t ofst, const Symbol &peek);
+    std::set<std::string> calFirst(const std::vector<Symbol> &rhs, size_t ofst, const Symbol &peek);
     void closure(std::vector<Item> &itemSet);
     void calFirstVN();
 

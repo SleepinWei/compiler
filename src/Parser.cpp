@@ -9,55 +9,6 @@
 using std::string;
 const std::string EMPTY("@empty");
 
-void Parser::readGrammarYACC(const std::string& filename) {
-    std::ifstream f(filename);
-    while (f.peek() != EOF) {
-        // input state
-		std::string state_type;
-        f >> state_type;
-
-        Symbol state = Loader::loadSymbolYacc(state_type);
-        grammarSymbols.insert(state);
-
-        vector<Symbol> symbols;
-
-        std::string equal;
-        f >> equal;
-        assert(equal == ":");
-
-        // input the rest
-        while(true){
-            string symbol_type;
-            f >> symbol_type;
-
-            if (symbol_type == ";") {
-               GrammarEntry gEntry(state,symbols);
-               this->grammar.push_back(gEntry);
-               break;
-            }
-            else if(symbol_type == "|") {
-               // create a new entry
-               GrammarEntry gEntry(state,symbols);
-               this->grammar.push_back(gEntry);
-
-               // clear symbols
-               vector<Symbol>().swap(symbols);
-            }else{
-               // add to current entry
-                Symbol symbol = Loader::loadSymbolYacc(symbol_type);
-				grammarSymbols.insert(symbol);
-                symbols.push_back(symbol);
-            }
-        }
-
-        for (auto& entry : grammar) {
-            if (entry.state.type == "program") {
-                startEntry = &entry;
-            }
-        }
-    }
-}
-
 void Parser::readGrammar(const std::string& filename){
     std::ifstream f(filename);
     while(f.peek()!=EOF){
@@ -91,8 +42,15 @@ void Parser::readGrammar(const std::string& filename){
 
             if(symbol_type == "|" || symbol_type == ";") {
                // create a new entry
-               GrammarEntry gEntry(state,symbols);
-               this->grammar.push_back(gEntry);
+               auto gEntry = new GrammarEntry(state,symbols);
+               //this->grammar.push_back(gEntry);
+               if (grammar.find(state_type) == grammar.end()) {
+                   // if not found, insert a state_type
+                   grammar.insert({ state_type,std::vector<GrammarEntry*>{gEntry} });
+               }
+               else {
+                   grammar[state_type].push_back(gEntry);
+               }
                if (symbol_type == ";")
                    break;
 
@@ -116,11 +74,11 @@ void Parser::readGrammar(const std::string& filename){
         //    //    startEntry = gEntry;
         //    //}
         //    this->grammar.push_back(gEntry);
-            for (auto& entry : grammar) {
-                if (entry.state.type == "<Program>") {
-                    startEntry = &entry;
-                }
-            }
+            //for (auto& entry : grammar) {
+                //if (entry.state.type == "<Program>") {
+		startEntry = grammar["<Program>"][0];
+                //}
+            //}
         //}
     }
 
@@ -135,101 +93,25 @@ void Parser::printGrammar(const std::string &filename){
     }
     f << "--------------------------------------\n";
     for(auto iter = grammar.begin(); iter != grammar.end(); ++iter){
-        f << (*iter).state.type.c_str() << "->";
-        auto& vec = (*iter).symbols;
-        for(auto in_iter = vec.begin();in_iter != vec.end();++in_iter ){
-            f << (*in_iter).type.c_str() << " ";
-        }
-        f << "\n";
-    }
-}
-
-void Parser::calFirst(){
-    // init 
-    std::unordered_map<Symbol, std::set<Symbol>, Symbol_hash>().swap(firstMap);
-
-    //
-    while (true) {
-        // TODO: decide haveChanged
-        bool haveChanged = false;
-        for (auto& entry : grammar) { // for every entry in grammar
-            const auto& left = entry.state;
-            const auto& right = entry.symbols;
-            if (firstMap.find(left) == firstMap.end()) {
-				// insert new symbol
-                firstMap.insert({ left,std::set<Symbol>() });
-            }
-            // X -> Y1,Y2...Yn
-            auto& symbolSet = firstMap[left]; // fisrt(X)
-            bool allHasEmpty = true;
-            auto iter = right.begin();
-            for (; iter != right.end();++iter) {
-                const auto& r_symbol = *iter;
-                if (r_symbol.isTerminal && symbolSet.find(r_symbol)==symbolSet.end()) {
-                    // if is terminal: add to set
-                    // Y1: terminal
-                    symbolSet.insert(r_symbol);
-                    haveChanged = true;
-                    allHasEmpty &= false;
-                    break;
-                }
-                else if (r_symbol.isTerminal) {
-                    // already added -> return 
-                    // Y1: terminal but is already added
-                    allHasEmpty &= false;
-                    break;
-                }
-                else {
-                    // Y1 non-terminal
-                    if (firstMap.find(r_symbol) != firstMap.end()) {
-                        // decide whether changes or not
-                        auto& first_y1= firstMap[r_symbol]; // First[Y1]
-                        bool hasEmpty = false;
-                        for (auto& temp : first_y1) { // elements in first[Y1]
-                            if (temp.isEmpty) {
-                                // if encounter empty, skip
-                                hasEmpty |= true;
-                            }
-                            else {
-                                // not empty
-                                if (symbolSet.find(temp) == symbolSet.end()) {
-                                    //if haven't added,
-									symbolSet.insert(temp);
-                                    haveChanged |= true;
-                                }
-                            }
-                        }
-                        allHasEmpty &= hasEmpty;
-                        if (!hasEmpty) {
-                            // if there's no empty set, break;
-                            break;
-                        }
-                    }
-                    else {
-                        // empty set
-                        break;
-                    }
-                }
-            }
-            if (allHasEmpty && iter == right.end()) {
-                // add empty to set
-                Symbol empty("@empty", true, true);
-                if (symbolSet.find(empty) == symbolSet.end()) {
-                    // empty string is not added yet;
-                    symbolSet.insert(empty);
-                    haveChanged |= true;
-                }
+        f << iter->first << "->";
+        for (auto _iter = iter->second.begin(); _iter != iter->second.end(); ++_iter) {
+            const auto& vec = (*_iter)->symbols;
+            for (auto in_iter = vec.begin(); in_iter != vec.end(); ++in_iter) {
+                f << (*in_iter).type.c_str() << " ";
             }
         }
-        if (!haveChanged) {
-            // no changes -> quit;
-            break;
-        }
+		f << "\n";
     }
 }
 
 template<typename T>
 static bool notFound(const std::vector<T> &vec, const T& val)
+{
+    return (std::find(vec.cbegin(), vec.cend(), val) == vec.cend());
+}
+
+template<typename T>
+static bool notFound(const std::set<T> &vec, const T& val)
 {
     return (std::find(vec.cbegin(), vec.cend(), val) == vec.cend());
 }
@@ -244,6 +126,16 @@ static void append(std::vector<T> &vec, const std::vector<T> &other)
 }
 
 template<typename T>
+static void append(std::set<T> &vec, const std::set<T> &other)
+{
+    if (vec == other) {
+        return;
+    }
+    vec.insert(other.cbegin(), other.cend());
+}
+
+
+template<typename T>
 static void removeDup(std::vector<T> &v)
 {
     auto end = v.end();
@@ -254,54 +146,72 @@ static void removeDup(std::vector<T> &v)
     v.erase(end, v.end());
 }
 
+Parser::~Parser() {
+    for (auto iter = grammar.begin(); iter != grammar.end(); ++iter) {
+        for (auto _iter = iter->second.begin(); _iter != iter->second.end(); ++_iter) {
+            if (*_iter != nullptr) {
+                delete *_iter;
+            }
+        }
+    }
+}
 
 void Parser::calFirstVN(){
 
-    std::unordered_map<std::string,std::vector<std::string>>().swap(firstVN);
+    std::unordered_map<std::string,std::set<std::string>>().swap(firstVN);
 
-    for (const GrammarEntry &g : grammar)
-        if (firstVN.find(g.state.type) == firstVN.end())
-            firstVN.insert(std::make_pair(g.state.type, std::vector<std::string>()));
+    //for (const GrammarEntry &g : grammar)
+    for (auto iter = grammar.begin(); iter != grammar.end(); ++iter) {
+        // iter->first : state string
+        if (firstVN.find(iter->first) == firstVN.end())
+            firstVN.insert(std::make_pair(iter->first, std::set<std::string>()));
+    }
 
     bool change = true;
     while(change) {
         change = false;
-        for (const GrammarEntry &g : grammar) {
-            std::vector<string> &fG = firstVN[g.state.type];
+        //for (const GrammarEntry &g : grammar) {
+        for(auto iter = grammar.begin();iter!=grammar.end();++iter){
+
+            std::set<string> &fG = firstVN[iter->first];
             const size_t isz = fG.size();
 
-            auto sit = g.symbols.begin();
-            for(; sit != g.symbols.end() && !(sit->isTerminal); sit++) {
-                // append(fG, firstVN[sit->type]);
-                bool noEmpty = notFound(fG, EMPTY);
-                append(fG, firstVN[sit->type]);
-                if (noEmpty)
-                    std::remove(fG.begin(), fG.begin(), EMPTY);
-                if (notFound(firstVN[sit->type], EMPTY))
-                    break;
-            }
-            if (sit == g.symbols.cend()) {
-                fG.insert(fG.begin(), EMPTY);
-            } else if (sit->isTerminal) {
-                fG.push_back(sit->isEmpty ? EMPTY : sit->type);
-            }
+            for (auto _iter = iter->second.begin(); _iter != iter->second.end(); ++_iter) {
+                auto& vec = (*_iter)->symbols;
+                auto sit = vec.begin();
+                for (; sit != vec.end() && !(sit->isTerminal); ++sit) {
+                    bool noEmpty = notFound(fG, EMPTY);
+                    append(fG, firstVN[sit->type]);
+                    if(noEmpty)
+                        fG.erase(EMPTY);
+                    if (notFound(firstVN[sit->type], EMPTY))
+                        break;
+                }
+                if (sit == vec.cend()) {
+                    fG.insert(fG.begin(), EMPTY);
+                }
+                else if (sit->isTerminal) {
+                    //fG.push_back(sit->isEmpty ? EMPTY : sit->type);
+                    fG.insert(sit->isEmpty ? EMPTY : sit->type);
+                }
 
-            removeDup(fG);
-            change |= (fG.size() > isz);
+                //removeDup(fG); // no dup for set
+                change |= (fG.size() > isz);
+            }
         }
     }
 }
 
-void Parser::printFirst(const std::string& filename) {
-	std::ofstream f(filename);
-    for (auto iter = firstMap.begin(); iter != firstMap.end(); ++iter) {
-        f << iter->first.type << ": ";
-        for (auto& sym : iter->second) {
-            f << sym.type << ", ";
-        }
-        f << '\n';
-    }
-}
+//void Parser::printFirst(const std::string& filename) {
+	//std::ofstream f(filename);
+    //for (auto iter = firstMap.begin(); iter != firstMap.end(); ++iter) {
+        //f << iter->first.type << ": ";
+        //for (auto& sym : iter->second) {
+            //f << sym.type << ", ";
+        //}
+        //f << '\n';
+    //}
+//}
 
 void Parser::printVNFirst(const std::string& filename) {
 	std::ofstream f(filename);
@@ -326,16 +236,16 @@ void Parser::printCluster(const std::string& filename) {
     }
 }
 
-std::vector<std::string> Parser::calFirst(const std::vector<Symbol> &rhs, size_t ofst, const Symbol &peek)
+std::set<std::string> Parser::calFirst(const std::vector<Symbol> &rhs, size_t ofst, const Symbol &peek)
 {
-    std::vector<std::string> result;
+    std::set<std::string> result;
     bool finalempty = true;
     for(; ofst < rhs.size() && !rhs[ofst].isTerminal; ofst++) {
         append(result, firstVN[rhs[ofst].type]);
         if (!notFound(firstVN[rhs[ofst].type], EMPTY)) {
             // find empty: remove empty and continue
             finalempty = true;
-            result.erase(std::remove(result.begin(), result.end(), EMPTY));
+            result.erase(EMPTY);
         }
         else {
             // no empty, then try returning
@@ -346,9 +256,9 @@ std::vector<std::string> Parser::calFirst(const std::vector<Symbol> &rhs, size_t
 
     if (ofst == rhs.size() && finalempty) {
         if (peek.isEmpty)
-            result.push_back(EMPTY);
+            result.insert(EMPTY);
         else if (peek.isTerminal)
-            result.push_back(peek.type);
+            result.insert(peek.type);
         else
             append(result, firstVN[peek.type]);
     } 
@@ -357,7 +267,7 @@ std::vector<std::string> Parser::calFirst(const std::vector<Symbol> &rhs, size_t
         ;
     }
     else if (rhs[ofst].isTerminal) {
-        result.push_back(rhs[ofst].type);
+        result.insert(rhs[ofst].type);
     }
 
     return result;
@@ -381,16 +291,19 @@ void Parser::closure(std::vector<Item> &itemSet)
 			auto calResult = calFirst(itm.entry->symbols, itm.dotPos+1, itm.peek);
 
             int i_ = 1;
-            for (const GrammarEntry &ety : grammar) {
-                if (ety.state.type != nxtnt.type)
-                    continue;
+            //for (const GrammarEntry &ety : grammar) {
+                //if (ety.state.type != nxtnt.type)
+                    //continue;
                 // find B->dot C
+            auto& vec = grammar[nxtnt.type];
+            for(auto iter = vec.begin();iter!=vec.end();++iter){
+                GrammarEntry* ety = *iter;
                 for (const std::string &fb : calResult) {
                     // first(beta a), a = item.peek
                     if (fb == EMPTY) // skip empty
                         continue;
                     Item newitm;
-                    newitm.entry = &ety;
+                    newitm.entry = ety;
                     newitm.dotPos = 0;
                     newitm.peek.isEmpty = (fb == EMPTY);
                     newitm.peek.isTerminal = true;
