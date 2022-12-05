@@ -73,3 +73,6 @@ Thumbs.db
 
 .vs/
 x64/
+*.zip
+*.docx
+*.pdf
