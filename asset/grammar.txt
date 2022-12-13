@@ -15,7 +15,6 @@
 <add-Expression> = <Term> | <Term> $+ <add-Expression> | <Term> $- <add-Expression> ;
 <Term> = <Element> | <Element> $* <Element> | <Element> $/ <Element> ;
 <Element> = $num | $( <Expression> $) | $id <FTYPE> ;
-<FTYPE> = <call> | @empty ;
-<call> = $( <ArgList> $) ;
+<FTYPE> = $( <ArgList> $) | @empty ;
 <Arg> = <ArgList> | @empty ;
 <ArgList> = <Expression> | <Expression> $, <ArgList> ; 

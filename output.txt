@@ -18,49 +18,27 @@ Conclude: use rule <Element> := $num
 Conclude: use rule <Term> := <Element> 
 Conclude: use rule <add-Expression> := <Term> 
 Conclude: use rule <Expression> := <add-Expression> 
-Move: read $;, push state 64
+Move: read $;, push state 63
 Conclude: use rule <assign-Sentence> := $id $= <Expression> $; 
 Conclude: use rule <Sentence> := <assign-Sentence> 
-Move: read $while, push state 17
-Move: read $(, push state 35
-Move: read $id, push state 41
-Conclude: use rule <FTYPE> := @empty 
-Conclude: use rule <Element> := $id <FTYPE> 
-Conclude: use rule <Term> := <Element> 
-Conclude: use rule <add-Expression> := <Term> 
-Move: read $<, push state 57
-Conclude: use rule <relop> := $< 
-Move: read $num, push state 42
-Conclude: use rule <Element> := $num 
-Conclude: use rule <Term> := <Element> 
-Conclude: use rule <add-Expression> := <Term> 
-Conclude: use rule <Expression> := <add-Expression> 
-Conclude: use rule <Expression> := <add-Expression> <relop> <Expression> 
-Move: read $), push state 92
-Move: read ${, push state 120
-Conclude: use rule <InternalStatement> := @empty 
 Move: read $id, push state 14
 Move: read $=, push state 25
-Move: read $id, push state 29
-Conclude: use rule <FTYPE> := @empty 
-Conclude: use rule <Element> := $id <FTYPE> 
-Conclude: use rule <Term> := <Element> 
-Move: read $+, push state 54
 Move: read $num, push state 30
 Conclude: use rule <Element> := $num 
 Conclude: use rule <Term> := <Element> 
+Move: read $+, push state 53
+Move: read $num, push state 30
+Conclude: use rule <Element> := $num 
+Move: read $*, push state 50
+Move: read $num, push state 84
+Conclude: use rule <Element> := $num 
+Conclude: use rule <Term> := <Element> $* <Element> 
 Conclude: use rule <add-Expression> := <Term> 
 Conclude: use rule <add-Expression> := <Term> $+ <add-Expression> 
 Conclude: use rule <Expression> := <add-Expression> 
-Move: read $;, push state 64
+Move: read $;, push state 63
 Conclude: use rule <assign-Sentence> := $id $= <Expression> $; 
 Conclude: use rule <Sentence> := <assign-Sentence> 
-Conclude: use rule <SentenceString> := @empty 
-Conclude: use rule <SentenceString> := <Sentence> <SentenceString> 
-Move: read $}, push state 158
-Conclude: use rule <SentenceBlock> := ${ <InternalStatement> <SentenceString> $} 
-Conclude: use rule <while-Sentence> := $while $( <Expression> $) <SentenceBlock> 
-Conclude: use rule <Sentence> := <while-Sentence> 
 Conclude: use rule <SentenceString> := @empty 
 Conclude: use rule <SentenceString> := <Sentence> <SentenceString> 
 Conclude: use rule <SentenceString> := <Sentence> <SentenceString> 

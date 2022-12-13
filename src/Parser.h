@@ -11,6 +11,7 @@
 #include<stack>
 #include<tuple>
 #include<stdlib.h>
+#include"Node.h"
 
 //struct my_less {
     //bool operator()(const std::tuple<int, std::string>& s1,const std::tuple<int, std::string>&s2)const {
@@ -24,17 +25,16 @@ public:
 
     std::set < std::string > grammarSymbols;
     GrammarEntry* startEntry;
-    //std::unordered_map<Symbol, std::set<Symbol>, Symbol_hash> firstMap;
     std::unordered_map<std::string, std::set<std::string>,std::hash<std::string>> firstVN;
     std::vector<std::set<Item>> cluster;
 
-    //std::vector<Action> actions;
     std::map<std::tuple<int, std::string>, TableEntry> table;
-    //std::vector<Goto> gotos;
-    //std::unordered_map<std::tuple<int, std::string>, Action> gotos;
 
+    // parse tree
+    Node* root;
     // 
     std::stack<int> stateStack;
+    std::stack<Node*> nodeStack;
     std::stack<Symbol> symbolStack;
     int inputPos; // inputString position
 public:
@@ -44,9 +44,8 @@ public:
     void printVNFirst(const std::string& filename);
     void printCluster(const std::string& filename);
     void printTable(const std::string& filename);
-    // zyw 
-    //void calFirst();
-    //std::set<Item> calClosure(const std::set<Item>& itemSet);
+    void printTree(const std::string& filename);
+
     std::set<Item> GO(const std::set<Item>& itemSet, const std::string& x);
     void constructCluster();
     void constructTable();

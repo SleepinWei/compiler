@@ -67,6 +67,12 @@ public:
 
     Symbol state;
     vector<Symbol> symbols;
+    string op;
+    /*
+    * statement : def, const .. 
+    * arithmetic : +, -, *, /, uminus
+    * control : if_then_else , if_then
+    */
 };
 
 class Item{

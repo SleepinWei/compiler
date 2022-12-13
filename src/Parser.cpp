@@ -535,30 +535,17 @@ void Parser::constructTable() {
     }
 }
 
+
 void Parser::constructDFA(const std::string& filename) {
     std::ofstream f(filename);
-    f << "digraph dfa{\n";
+    f << "digraph btree{\n";
     f << "size = \" 50, 50\"; \n";
-    f << "fontname = \"Microsoft YaHei\";\n";
+    //f << "fontname = \"Microsoft YaHei\";\n";
     f << "fontsize = 10; \n";
-    f << "node [shape = circle, fontname = \"Microsfot YaHei\", fontsize = 10];\n";
-    f << "edge [fontname = \"Microsoft YaHei\", fontsize = 10];\n";
+    f << "node [shape=circle, fontsize=22, fontname=Consolas];\n";
+    f << "edge [style=bold]\n";
 
-    for (int i = 0; i < cluster.size(); i++) {
-        f << i << ";\n";
-    }
-    
-    //for (auto& action : actions) {
-        //if (action.useStack) {
-            //f << action.state << " -> " << action.j << "[label = \"" << action.inString << "\" ]; \n";
-        //}
-    //}
-    //for (auto& go : gotos) {
-		//f << go.state << " -> " << go.gotoState << "[label = \"" << go.inState << "\" ]; \n";
-    //}
-    //for (auto iter = table.begin(); iter != table.end();++iter) {
-    //    //f <<
-    //}
+    //outputTree(f, this->root);
 
     f << "}\n";
     f.close();
@@ -607,6 +594,8 @@ void Parser::printTable(const std::string& filename) {
 void Parser::analyze(const std::vector<std::string>& inputs, const std::string& filename) {
     inputPos = 0;
     stateStack.push(0);
+    // construct a node for every non-op state
+
     std::ofstream f(filename);
     f << "Action Table\n";
     while (true) {
@@ -619,6 +608,9 @@ void Parser::analyze(const std::vector<std::string>& inputs, const std::string& 
         if (pos != table.end()) {
             auto tableEntry = pos->second;
             if (tableEntry.isAcc) {
+                this->root = nodeStack.top();
+                nodeStack.pop();
+				std::cout << "remaining node in stack: " << nodeStack.size() << '\n';
                 f << "Done!";
                 std::cout<<"Regulation Process Done";
                 return;
@@ -627,6 +619,12 @@ void Parser::analyze(const std::vector<std::string>& inputs, const std::string& 
                 // ÒÆ½ø
                 stateStack.push(tableEntry.destState);
                 symbolStack.push(Symbol(iSym, true, false));
+                if (iSym == "$id" || iSym == "$num") {
+                    // non-op
+                    auto newNode = new Node;
+                    newNode->place = iSym;
+                    nodeStack.push(newNode);
+                }
                 if(iSym != "#")
 					++inputPos; // move to next ;
                 // output 
@@ -649,26 +647,84 @@ void Parser::analyze(const std::vector<std::string>& inputs, const std::string& 
                 if (giter!=table.end()) {
                     int newS = giter->second.destState;
                     stateStack.push(newS);
-                    for (int i = 0; i < r; i++) {
+                    //TODO:if_then_else Óï¾ä
+                    auto resultNode = new Node;
+                    resultNode->place = rule->state.type;
+
+                    int stateCnt = 0;
+                    for (int i = 0; i < r; ++i) {
+                        auto top = symbolStack.top();
                         symbolStack.pop();
+
+                        if (!top.isTerminal || top.type == "$id" || top.type == "$num") {
+                            if (stateCnt == 0) {
+								auto topNode = nodeStack.top();
+                                nodeStack.pop();
+                                resultNode->right = topNode;
+                            }
+                            else if (stateCnt == 1) {
+                                auto topNode = nodeStack.top();
+                                nodeStack.pop();
+                                resultNode->left = topNode;
+                            }
+                            else {
+                                std::cout << "Error: More than 2 operands\n";
+                            }
+                            ++stateCnt;
+                        }
                     }
+                    //for (int i = 0; i < r; i++) {
+                         //handle nodes
+                        //auto top = symbolStack.top();
+                        //if (top.type == "$id" || top.type == "$num") {
+                            
+                        //}
+                        //symbolStack.pop();
+                    //}
                     symbolStack.push(A);
+                    nodeStack.push(resultNode);
 
                     f << "Conclude: " << "use rule ";
                     rule->print(f);
                 }
                 else {
                     // error
-                    std::cout << "Error" << '\n';
+                    std::cout << "Error: No matching GOTO At state " << newTop << " Read State " << A.type << "\n";
                 }
             }
         }
         else {
             // error 
-            std::cout << "Error" << '\n';
-            std::cout << iSym << '\n';
-            std::cout << "State: " << topState << '\n';
+            std::cout << "Error No Matching Action: At state ";
+            std::cout << topState << " Read Symbol "<< iSym<< '\n';
             break;
         }
     }
+}
+
+void outputTree(std::ofstream& f, Node* root) {
+    f << (int)root << "[label=\"op: " << root->op << " state: " << root->place << "\"];\n";
+    if (root->left) {
+        f << (int)root << "->" << (int)root->left<< ";\n";
+        outputTree(f, root->left);
+    }
+    if (root->right) {
+        f << (int)root << "->" << (int)root->right << ";\n";
+        outputTree(f, root->right);
+    }
+}
+
+void Parser::printTree(const std::string& filename) {
+    std::ofstream f(filename);
+    f << "digraph btree{\n";
+    f << "size = \" 50, 50\"; \n";
+    //f << "fontname = \"Microsoft YaHei\";\n";
+    f << "fontsize = 10; \n";
+    f << "node [shape=box, fontsize=22, fontname=Consolas];\n";
+    f << "edge [style=bold]\n";
+
+    outputTree(f, this->root);
+
+    f << "}\n";
+    f.close();
 }

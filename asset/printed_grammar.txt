@@ -39,7 +39,6 @@ $}
 <Type>
 <add-Expression>
 <assign-Sentence>
-<call>
 <if-Sentence>
 <relop>
 <return-Sentence>
@@ -63,7 +62,6 @@ $}
 <Expression>-><add-Expression> <add-Expression> <relop> <Expression> 
 <relop>->$== $> $< $<= $!= $>= 
 <add-Expression>-><Term> <Term> $+ <add-Expression> <Term> $- <add-Expression> 
-<FTYPE>-><call> @empty 
-<call>->$( <ArgList> $) 
+<FTYPE>->$( <ArgList> $) @empty 
 <Arg>-><ArgList> @empty 
 <ArgList>-><Expression> <Expression> $, <ArgList> 
