@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 
     parser.constructTable();
     parser.printTable("./asset/table.txt");
-    parser.constructDFA("./asset/dfa.dot");
+    //parser.constructDFA("./asset/dfa.dot");
     std::cout << "Table Done\n";
 
     parser.analyze(lex.inputs,"./output.txt");

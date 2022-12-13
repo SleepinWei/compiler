@@ -10,6 +10,7 @@
 using std::vector;
 using std::string;
 
+
 class Symbol{
 public:
     Symbol(){};
@@ -81,10 +82,30 @@ public:
     GrammarEntry* entry;
     int dotPos;
     Symbol peek;
+
     bool operator==(const Item &other) const {
         return (entry == other.entry)
             && (dotPos == other.dotPos)
             && (peek.type == other.peek.type);
+    }
+    bool operator<(const Item& other)const {
+        if ((int)entry < (int)other.entry) {
+            return true;
+        }
+        else if ((int)entry > (int)other.entry) {
+            return false;
+        }
+        if (dotPos < other.dotPos)
+        {
+            return true;
+        }
+        else if (dotPos > other.dotPos) {
+            return false;
+        }
+        if (peek.type < other.peek.type) {
+            return true;
+        }
+        return false;
     }
 
     void print(std::ofstream& f) const {
@@ -103,55 +124,52 @@ public:
     }
 };
 
-class Action {
+class TableEntry{
 public:
-    Action() {
-        state = -1;
-        inString = "";
+    TableEntry() {
         useStack = false;
-        j = -1;
-        isAcc = false;
-    };
-    Action(int state_, string s_, bool useStack_, int j_) {
-        state = state_;
-        inString = s_;
-        useStack = useStack_;
-        j = j_;
+        destState = -1;
         gen = nullptr;
         isAcc = false;
     }
-    ~Action() {};
+    TableEntry(bool useStack_, int destState_,GrammarEntry* gen_,bool isAcc_) {
+        useStack = useStack_;
+        destState = destState_;
+        this->gen = gen_;
+        isAcc = isAcc_;
+    }
+    ~TableEntry() {};
 
-    bool operator==(const Action& a) {
-        return (state == a.state) && (inString == a.inString) && (useStack == a.useStack) && (j = a.j) && isAcc == a.isAcc && gen==a.gen;
+    bool operator==(const TableEntry& a) {
+        return (useStack == a.useStack) && (destState == a.destState) && (gen == a.gen) && (isAcc == a.isAcc);
     }
 
 public:
-    int state; // current state
-    std::string inString; // incoming string   
+    //int state; // current state
+    //std::string inString; // incoming string   
     bool useStack; // sj or rj
-    int j; // sj or rj 
+    int destState; // sj or rj 
     GrammarEntry* gen; 
     bool isAcc;
 };
 
-class Goto {
-public:
-    Goto() {};
-    Goto(int state_, string inState_, int gotoState_) {
-        state = state_;
-        inState = inState_;
-        gotoState = gotoState_;
-    }
-    ~Goto() {};
-
-    bool operator==(const Goto& g) {
-        return state == g.state && inState == g.inState && gotoState == g.gotoState;
-    }
-public:
-    int state;
-    std::string inState;
-    int gotoState;
-};
+//class Goto {
+//public:
+//    Goto() {};
+//    Goto(int state_, string inState_, int gotoState_) {
+//        state = state_;
+//        inState = inState_;
+//        gotoState = gotoState_;
+//    }
+//    ~Goto() {};
+//
+//    bool operator==(const Goto& g) {
+//        return state == g.state && inState == g.inState && gotoState == g.gotoState;
+//    }
+//public:
+//    int state;
+//    std::string inState;
+//    int gotoState;
+//};
 
 #endif // COMPONENT_H

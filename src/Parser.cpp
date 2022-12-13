@@ -5,7 +5,6 @@
 #include<assert.h>
 #include <algorithm>
 #include<ios>
-#include<filesystem>
 using std::string;
 const std::string EMPTY("@empty");
 
@@ -19,7 +18,7 @@ void Parser::readGrammar(const std::string& filename){
         if (state_type == "")
             break;
         Symbol state = Loader::loadSymbol(state_type);
-        grammarSymbols.insert(state);
+        grammarSymbols.insert(state_type);
 
         vector<Symbol> symbols;
 
@@ -62,7 +61,7 @@ void Parser::readGrammar(const std::string& filename){
                 symbols.push_back(symbol);
 
                 if (symbol.type != EMPTY) {
-                    grammarSymbols.insert(symbol);
+                    grammarSymbols.insert(symbol.type);
                 }
             }
         }
@@ -88,8 +87,8 @@ void Parser::readGrammar(const std::string& filename){
 void Parser::printGrammar(const std::string &filename){
     std::ofstream f(filename);
     f << "Symbols:\n";
-    for (auto iter = grammarSymbols.begin(); iter != grammarSymbols.end(); ++iter) {
-        f << iter->type<< '\n';
+    for(auto sym:grammarSymbols){
+        f << sym << '\n';
     }
     f << "--------------------------------------\n";
     for(auto iter = grammar.begin(); iter != grammar.end(); ++iter){
@@ -158,7 +157,7 @@ Parser::~Parser() {
 
 void Parser::calFirstVN(){
 
-    std::unordered_map<std::string,std::set<std::string>>().swap(firstVN);
+    std::unordered_map<std::string,std::set<std::string>,std::hash<std::string>>().swap(firstVN);
 
     //for (const GrammarEntry &g : grammar)
     for (auto iter = grammar.begin(); iter != grammar.end(); ++iter) {
@@ -242,7 +241,7 @@ std::set<std::string> Parser::calFirst(const std::vector<Symbol> &rhs, size_t of
     bool finalempty = true;
     for(; ofst < rhs.size() && !rhs[ofst].isTerminal; ofst++) {
         append(result, firstVN[rhs[ofst].type]);
-        if (!notFound(firstVN[rhs[ofst].type], EMPTY)) {
+        if (firstVN[rhs[ofst].type].find(EMPTY)!=firstVN[rhs[ofst].type].end()) {
             // find empty: remove empty and continue
             finalempty = true;
             result.erase(EMPTY);
@@ -273,57 +272,70 @@ std::set<std::string> Parser::calFirst(const std::vector<Symbol> &rhs, size_t of
     return result;
 }
 
-void Parser::closure(std::vector<Item> &itemSet)
+#include<queue>
+void Parser::closure(std::set<Item>& itemSet)
 {
-    bool change = true;
-    while(change) {
-        const size_t isz = itemSet.size();
-        for(size_t i=0;i<isz;i++){
-        //for (const Item &itm : itemSet) {
-            auto& itm = itemSet[i];
-            if (itm.dotPos >= itm.entry->symbols.size()) {
-                continue;
-            }
-            if (itm.entry->symbols[itm.dotPos].isTerminal)
-                continue;
-            // A-> alpha dot B beta 
-            const Symbol &nxtnt = itm.entry->symbols[itm.dotPos];// B 
-			auto calResult = calFirst(itm.entry->symbols, itm.dotPos+1, itm.peek);
+    //bool change = true;
+    //std::set<Item> resultSet = itemSet;
+    std::queue<Item> candidate;
+    for (const Item& it : itemSet) {
+        candidate.push(it);
+    }
 
-            int i_ = 1;
-            //for (const GrammarEntry &ety : grammar) {
-                //if (ety.state.type != nxtnt.type)
-                    //continue;
-                // find B->dot C
-            auto& vec = grammar[nxtnt.type];
-            for(auto iter = vec.begin();iter!=vec.end();++iter){
-                GrammarEntry* ety = *iter;
-                for (const std::string &fb : calResult) {
-                    // first(beta a), a = item.peek
-                    if (fb == EMPTY) // skip empty
-                        continue;
-                    Item newitm;
-                    newitm.entry = ety;
-                    newitm.dotPos = 0;
-                    newitm.peek.isEmpty = (fb == EMPTY);
-                    newitm.peek.isTerminal = true;
-                    newitm.peek.type = fb;
-                    if (notFound(itemSet, newitm)) {
-                        itemSet.emplace_back(newitm);
-                    }
-                }
-            }
-        }
-        change = (itemSet.size() > isz);
+    while(candidate.size()) {
+        //const size_t isz = resultSet.size();
+        //for(size_t i=0;i<isz;i++){
+        //for (const auto& itm : itemSet) {
+        const auto itm = candidate.front();
+        candidate.pop();
+            //auto& itm = itemSet[i];
+		if (itm.dotPos >= itm.entry->symbols.size()) {
+			continue;
+		}
+		if (itm.entry->symbols[itm.dotPos].isTerminal)
+			continue;
+		// A-> alpha dot B beta 
+		const Symbol& nxtnt = itm.entry->symbols[itm.dotPos];// B 
+		auto calResult = calFirst(itm.entry->symbols, itm.dotPos + 1, itm.peek);
+
+		//int i_ = 1;
+		//for (const GrammarEntry &ety : grammar) {
+			//if (ety.state.type != nxtnt.type)
+				//continue;
+			// find B->dot C
+		auto& vec = grammar[nxtnt.type];
+		for (auto iter = vec.begin(); iter != vec.end(); ++iter) {
+			GrammarEntry* ety = *iter;
+			for (const std::string& fb : calResult) {
+				// first(beta a), a = item.peek
+				if (fb == EMPTY) // skip empty
+					continue;
+				Item newitm;
+				newitm.entry = ety;
+				newitm.dotPos = 0;
+				newitm.peek.isEmpty = (fb == EMPTY);
+				newitm.peek.isTerminal = true;
+				newitm.peek.type = fb;
+				//if (notFound(itemSet, newitm)) {
+					//itemSet.emplace_back(newitm);
+                auto found_pos = itemSet.find(newitm);
+				if(found_pos == itemSet.end()){
+					itemSet.insert(newitm);
+					candidate.push(newitm);
+				}
+			}
+		}
+        //}
+        //change = (resultSet.size() > isz);
     }
 }
 
-std::vector<Item> Parser::GO(const std::vector<Item>& itemSet, const std::string& X) {
+std::set<Item> Parser::GO(const std::set<Item>& itemSet, const std::string& X) {
     assert(X != EMPTY);
-    std::vector<Item> result;
+    std::set<Item> result;
 
     // construct J 
-    for (auto item : itemSet) {
+    for (const auto& item : itemSet) {
         // for all items in itemSet
         if (item.dotPos < item.entry->symbols.size()) {
             auto& symbols = item.entry->symbols;
@@ -340,9 +352,9 @@ std::vector<Item> Parser::GO(const std::vector<Item>& itemSet, const std::string
                 jitem.peek = item.peek;
                 assert(jitem.entry != nullptr);
                 assert(jitem.dotPos >= 0 && jitem.dotPos <= item.entry->symbols.size());
-                if (notFound(result, jitem)) {
-                    result.emplace_back(jitem);
-                }
+                //if (notFound(result, jitem)) {
+                    result.insert(jitem);
+                //}
             }
         }
     }
@@ -361,23 +373,13 @@ std::vector<Item> Parser::GO(const std::vector<Item>& itemSet, const std::string
     return result;
 }
 
-int FoundCluster(const std::vector<std::vector<Item>>& cluster, const std::vector<Item>& goSet) {
+int FoundCluster(const std::vector<std::set<Item>>& cluster, const std::set<Item>& goSet) {
     
-    for (int iter = 0; iter < cluster.size();iter++) {
+    for (int iter = 0; iter < cluster.size();++iter){
         auto& itemset = cluster[iter];
-        bool equal = true;
-        if (itemset.size() != goSet.size()) {
-            continue;
-        }
-        else {
-            for (int i = 0; i < itemset.size(); i++) {
-                equal &= (itemset[i] == goSet[i]);
-                if (!equal)
-                    break;
-            }
-        }
-        if (equal) {
-            return iter;
+        if (itemset.size() == goSet.size() && goSet == itemset) 
+        {
+			return iter;
         }
     }
     return -1;
@@ -397,47 +399,53 @@ void Parser::constructCluster() {
     startItem.entry = startEntry;
     startItem.peek = Symbol("#", true, false);
 
-    std::vector<Item> startItemSet = { startItem };
+    std::set<Item> startItemSet = { startItem };
     closure(startItemSet);
-    std::vector<std::vector<Item>>().swap(cluster);
+    std::vector<std::set<Item>>().swap(cluster);
     cluster.emplace_back(startItemSet);
     //std::vector<std::vector<Item>>{startItemSet}.swap(cluster);
 
     bool change = true;
-	std::ofstream f("./asset/go.txt");
-    int startIndex = 0;
-    while (true){
-        //change = false; 
-        int nextStartIndex = cluster.size();
-        // std::cout << "iters" << '\n';
-        for(int i=startIndex;i<nextStartIndex;i++){
-        //for (auto& itemSet : cluster) {
-            //for (string sym : grammarSymbols) {
-            for(auto sym_iter = grammarSymbols.begin();sym_iter!=grammarSymbols.end();++sym_iter){
-				const auto& itemSet = cluster[i];
-                string sym = sym_iter->type;
+    std::ofstream f("./asset/go.txt");
 
-                std::vector<Item> goSet = GO(itemSet, sym);
+    // candidate queue
+    std::queue<int> candidate;  
+    candidate.push(0);
 
-                if (goSet.size()) {
-                    int pos = FoundCluster(cluster, goSet);
-                    // std::cout << pos << '\n';
-                    if (pos ==-1) {
-                        // add goset to cluster
-                        
-                        //change |= true;
-                        cluster.emplace_back(goSet);
-                        pos = cluster.size() - 1;
-                    }
-                     
-                }
-            }
-        }
-		startIndex = nextStartIndex;
-        if (nextStartIndex == cluster.size()) {
-            break;
-        }
-    }
+    while (candidate.size()){
+		auto itemIndex = candidate.front();
+		candidate.pop();
+
+		for(const auto& sym:grammarSymbols){
+			//string sym = sym_iter->type;
+            const auto& itemSet = cluster[itemIndex];
+
+			std::set<Item> goSet = GO(itemSet, sym);
+
+			if (goSet.size()) {
+				int pos = FoundCluster(cluster, goSet);
+
+				// std::cout << pos << '\n';
+				if (pos ==-1) {
+					// add goset to cluster
+					cluster.emplace_back(goSet);
+
+					pos = cluster.size() - 1;
+                    candidate.push(pos);
+				}
+                // TODO: construct table here
+                assert(pos != -1);
+
+                //Action action;
+                TableEntry entry;
+                entry.useStack = true;
+                entry.destState = pos;
+                entry.gen = nullptr;
+
+                table.insert({ std::tuple<int,std::string>{itemIndex,sym},entry});
+			}
+		}
+	}
 }
 
 void Parser::constructTable() {
@@ -446,59 +454,66 @@ void Parser::constructTable() {
         // std::cout << citer << '\n';
         auto& itemSet = cluster[citer];
         // Action table
-        for (int iiter = 0; iiter < itemSet.size(); iiter++) {
+        //for (int iiter = 0; iiter < itemSet.size(); iiter++) {
+        for(const auto& item:itemSet){
             // item iter
             // std::cout << iiter << '\n';
-            auto& item = itemSet[iiter];
-            if (item.dotPos < item.entry->symbols.size() && item.entry->symbols[0].type != EMPTY){
-				// compute GO(Ik,a)
-                // sym : a
-                Symbol _s = item.entry->symbols[item.dotPos];
-                if (!_s.isTerminal) {
-                    continue;
-                }
-                string sym = _s.type;
-                if (sym == "@empty") {
-                    continue;
-                }
-				auto goSet = GO(itemSet, sym);
-                if (goSet.size() == 0) {
-                    continue;
-                }
-                int pos = FoundCluster(cluster, goSet);
+            //auto& item = itemSet[iiter];
+    //        if (item.dotPos < item.entry->symbols.size() && item.entry->symbols[0].type != EMPTY){
+				//// compute GO(Ik,a)
+    //            // sym : a
+    //            Symbol _s = item.entry->symbols[item.dotPos];
+    //            if (!_s.isTerminal) {
+    //                continue;
+    //            }
+    //            string sym = _s.type;
+    //            if (sym == "@empty") {
+    //                continue;
+    //            }
+				//auto goSet = GO(itemSet, sym);
+    //            if (goSet.size() == 0) {
+    //                continue;
+    //            }
+    //            int pos = FoundCluster(cluster, goSet);
 
-                Action action;
-                action.state = citer;
-                action.inString = sym;
-                action.useStack = true;
-                action.j = pos;
-                action.gen = nullptr;
-                // 
-                if (std::find(actions.begin(), actions.end(), action) == actions.end()) {
-                    actions.emplace_back(action);
-                }
-            }
-            else if (item.dotPos == item.entry->symbols.size() || item.entry->symbols[0].type == EMPTY) {
+    //            Action action;
+    //            action.state = citer;
+    //            action.inString = sym;
+    //            action.useStack = true;
+    //            action.j = pos;
+    //            action.gen = nullptr;
+    //            // 
+    //            if (std::find(actions.begin(), actions.end(), action) == actions.end()) {
+    //                actions.emplace_back(action);
+    //            }
+    //        }
+           //else 
+            if (item.dotPos == item.entry->symbols.size() || item.entry->symbols[0].type == EMPTY) {
                 // [A -> alpha dot, a]
 
-                Action action;
+                /*Action action;
                 action.state = citer;
                 action.inString = item.peek.type;
                 action.useStack = false;
                 action.gen = item.entry;
-                action.j = -1;
+                action.j = -1;*/
+                TableEntry entry;
+                entry.destState = -1;
+                entry.gen = item.entry;
+                entry.isAcc = false;
 
                 if (item.entry->state.type == "<Program>" && item.dotPos == 1 && item.peek.type == "#") {
                     // S' -> S dot, #
-                    action.isAcc = true;
+                    entry.isAcc = true;
                 }
-				if (std::find(actions.begin(), actions.end(), action) == actions.end()) {
-                    actions.emplace_back(action);
-                }
+				//if (std::find(actions.begin(), actions.end(), action) == actions.end()) {
+                    //actions.emplace_back(action);
+                //}
+                table.insert({ {citer,item.peek.type},entry});
             }
         }
         // GOTO table
-        for (auto& sym : grammarSymbols) {
+        /*for (auto& sym : grammarSymbols) {
             if (sym.isTerminal) {
                 continue;
             }
@@ -516,7 +531,7 @@ void Parser::constructTable() {
                     gotos.emplace_back(g);
                 }
             }
-        }
+        }*/
     }
 }
 
@@ -533,14 +548,17 @@ void Parser::constructDFA(const std::string& filename) {
         f << i << ";\n";
     }
     
-    for (auto& action : actions) {
-        if (action.useStack) {
-            f << action.state << " -> " << action.j << "[label = \"" << action.inString << "\" ]; \n";
-        }
-    }
-    for (auto& go : gotos) {
-		f << go.state << " -> " << go.gotoState << "[label = \"" << go.inState << "\" ]; \n";
-    }
+    //for (auto& action : actions) {
+        //if (action.useStack) {
+            //f << action.state << " -> " << action.j << "[label = \"" << action.inString << "\" ]; \n";
+        //}
+    //}
+    //for (auto& go : gotos) {
+		//f << go.state << " -> " << go.gotoState << "[label = \"" << go.inState << "\" ]; \n";
+    //}
+    //for (auto iter = table.begin(); iter != table.end();++iter) {
+    //    //f <<
+    //}
 
     f << "}\n";
     f.close();
@@ -550,35 +568,41 @@ void Parser::constructDFA(const std::string& filename) {
 
 void Parser::printTable(const std::string& filename) {
     std::ofstream f(filename);
-	f << "Action Table\n";
-    for (auto& a : actions) {
-        f << a.state << ' ' << a.inString << ' ' << (a.useStack ? "s" : "r") << a.j << ' ' << (int)a.gen 
-            << ' ' << (a.isAcc ? "acc" : "") << '\n';
-    }
-    f << "----------------------\n";
-	f << "GOTO Table\n";
-    for (auto& g : gotos) {
-        f << g.state << ' ' << g.inState << ' ' << g.gotoState << '\n';
+	f << "Table\n";
+    //for (auto& a : actions) {
+        //f << a.state << ' ' << a.inString << ' ' << (a.useStack ? "s" : "r") << a.j << ' ' << (int)a.gen 
+            //<< ' ' << (a.isAcc ? "acc" : "") << '\n';
+    //}
+    //f << "----------------------\n";
+	//f << "GOTO Table\n";
+    //for (auto& g : gotos) {
+        //f << g.state << ' ' << g.inState << ' ' << g.gotoState << '\n';
+    //}
+    for (auto iter = table.begin(); iter != table.end(); ++iter) {
+        auto& t = iter->first;
+        auto& v = iter->second;
+        f << std::get<0>(t) << ' ' << std::get<1>(t) << (v.useStack ? "s" : "r") << v.destState << ' ' << (int)v.gen
+            << ' ' << (v.isAcc ? "acc" : "") << '\n';
     }
 }
 
-Action* Parser::findAction(int s,string in) {
-    for (auto& a : actions) {
-        if (a.state == s && a.inString == in) {
-            return &a;
-        }
-     }
-    return nullptr;
-}
+//Action* Parser::findAction(int s,string in) {
+    //for (auto& a : actions) {
+        //if (a.state == s && a.inString == in) {
+            //return &a;
+        //}
+     //}
+    //return nullptr;
+//}
 
-Goto* Parser::findGoto(int s, std::string sym) {
-    for (auto& g : gotos) {
-        if (g.state == s && g.inState == sym) {
-            return &g;
-        }
-    }
-    return nullptr;
-}
+//Goto* Parser::findGoto(int s, std::string sym) {
+    //for (auto& g : gotos) {
+        //if (g.state == s && g.inState == sym) {
+            //return &g;
+        //}
+    //}
+    //return nullptr;
+//}
 
 void Parser::analyze(const std::vector<std::string>& inputs, const std::string& filename) {
     inputPos = 0;
@@ -589,26 +613,28 @@ void Parser::analyze(const std::vector<std::string>& inputs, const std::string& 
         string iSym = inputs[inputPos]; // ai 
         int topState = stateStack.top();
 
-        Action* act = findAction(topState, iSym);
+        //Action* act = findAction(topState, iSym);
+        auto pos = table.find({topState, iSym});
         //Goto* g = findGoto(topState, iSym);
-        if (act) {
-            if (act->isAcc) {
+        if (pos != table.end()) {
+            auto tableEntry = pos->second;
+            if (tableEntry.isAcc) {
                 f << "Done!";
                 std::cout<<"Regulation Process Done";
                 return;
             }
-            else if (act->useStack) {
+            else if (tableEntry.useStack) {
                 // ÒÆ½ø
-                stateStack.push(act->j);
+                stateStack.push(tableEntry.destState);
                 symbolStack.push(Symbol(iSym, true, false));
                 if(iSym != "#")
 					++inputPos; // move to next ;
                 // output 
-                f << "Move: " << "read " << iSym << ", " << "push state " << act->j<< '\n';
+                f << "Move: " << "read " << iSym << ", " << "push state " << tableEntry.destState<< '\n';
             }
             else {
                 // ¹éÔ¼
-                const GrammarEntry* rule = act->gen;
+                const GrammarEntry* rule = tableEntry.gen;
                 const Symbol& A = rule->state;
                 int r = rule->symbols.size();
                 if (rule->symbols[0].type == EMPTY) {
@@ -618,9 +644,10 @@ void Parser::analyze(const std::vector<std::string>& inputs, const std::string& 
                     stateStack.pop();
                 }
                 int newTop = stateStack.top();
-                Goto* g = findGoto(newTop, A.type);
-                if (g) {
-                    int newS = g->gotoState;
+                //Goto* g = findGoto(newTop, A.type);
+                auto giter = table.find({newTop,A.type});
+                if (giter!=table.end()) {
+                    int newS = giter->second.destState;
                     stateStack.push(newS);
                     for (int i = 0; i < r; i++) {
                         symbolStack.pop();
@@ -632,6 +659,7 @@ void Parser::analyze(const std::vector<std::string>& inputs, const std::string& 
                 }
                 else {
                     // error
+                    std::cout << "Error" << '\n';
                 }
             }
         }
