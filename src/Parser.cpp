@@ -1,4 +1,5 @@
 #include"Parser.h"
+#include"token.h"
 #include<fstream>
 #include<sstream>
 #include<iostream>
@@ -6,7 +7,82 @@
 #include <algorithm>
 #include<ios>
 using std::string;
-const std::string EMPTY("@empty");
+
+void Parser::readGrammarY(const std::string& filename) {
+	std::ifstream f(filename);
+    while(f.peek()!=EOF){
+        // input state
+        std::string state_type;
+        f >> state_type;
+
+        if (state_type == "")
+            break;
+        Symbol state = Loader::loadSymbolY(state_type);
+        grammarSymbols.insert(state_type);
+
+        vector<Symbol> symbols;
+
+        std::string equal;
+        f >> equal;
+        assert(equal == ":");
+
+        // input the rest
+        //string rest;
+        //std::getline(f,rest);
+        //std::stringstream stream(rest);
+
+        while(f.peek()!=EOF){
+            string symbol_type;
+            f >> symbol_type;
+            
+            if (symbol_type == "") {
+                break;
+            }
+
+            if(symbol_type == "|" || symbol_type == ";") {
+               // create a new entry
+               auto gEntry = new GrammarEntry(state,symbols);
+               //this->grammar.push_back(gEntry);
+               if (grammar.find(state_type) == grammar.end()) {
+                   // if not found, insert a state_type
+                   grammar.insert({ state_type,std::vector<GrammarEntry*>{gEntry} });
+               }
+               else {
+                   grammar[state_type].push_back(gEntry);
+               }
+               if (symbol_type == ";")
+                   break;
+
+               // clear symbols
+               vector<Symbol>().swap(symbols);
+            }else{
+               // add to current entry
+                Symbol symbol = Loader::loadSymbolY(symbol_type);
+                symbols.push_back(symbol);
+
+                if (symbol.type != EMPTY) {
+                    grammarSymbols.insert(symbol.type);
+                }
+            }
+        }
+
+        //if(symbols.size()){
+        //    GrammarEntry gEntry(state,symbols);
+
+        //    //if (state.type == "<Program>") {
+        //    //    startEntry = gEntry;
+        //    //}
+        //    this->grammar.push_back(gEntry);
+            //for (auto& entry : grammar) {
+                //if (entry.state.type == "<Program>") {
+		startEntry = grammar[START][0];
+                //}
+            //}
+        //}
+    }
+
+    //calFirstVN();
+}
 
 void Parser::readGrammar(const std::string& filename){
     std::ifstream f(filename);
@@ -81,7 +157,7 @@ void Parser::readGrammar(const std::string& filename){
         //}
     }
 
-    calFirstVN();
+    //calFirstVN();
 }
 
 void Parser::printGrammar(const std::string &filename){
@@ -94,6 +170,9 @@ void Parser::printGrammar(const std::string &filename){
     for(auto iter = grammar.begin(); iter != grammar.end(); ++iter){
         f << iter->first << "->";
         for (auto _iter = iter->second.begin(); _iter != iter->second.end(); ++_iter) {
+            if (_iter != iter->second.begin()) {
+                f << " | ";
+            }
             const auto& vec = (*_iter)->symbols;
             for (auto in_iter = vec.begin(); in_iter != vec.end(); ++in_iter) {
                 f << (*in_iter).type.c_str() << " ";
@@ -397,7 +476,7 @@ void Parser::constructCluster() {
     Item startItem;
     startItem.dotPos = 0;
     startItem.entry = startEntry;
-    startItem.peek = Symbol("#", true, false);
+    startItem.peek = Symbol(END, true, false);
 
     std::set<Item> startItemSet = { startItem };
     closure(startItemSet);
@@ -413,6 +492,7 @@ void Parser::constructCluster() {
     candidate.push(0);
 
     while (candidate.size()){
+        std::cout << "remaining candidate : " << candidate.size() << '\n';
 		auto itemIndex = candidate.front();
 		candidate.pop();
 
@@ -502,7 +582,7 @@ void Parser::constructTable() {
                 entry.gen = item.entry;
                 entry.isAcc = false;
 
-                if (item.entry->state.type == "<Program>" && item.dotPos == 1 && item.peek.type == "#") {
+                if (item.entry->state.type == START && item.dotPos == 1 && item.peek.type == END) {
                     // S' -> S dot, #
                     entry.isAcc = true;
                 }
@@ -619,13 +699,13 @@ void Parser::analyze(const std::vector<std::string>& inputs, const std::string& 
                 // ÒÆ½ø
                 stateStack.push(tableEntry.destState);
                 symbolStack.push(Symbol(iSym, true, false));
-                if (iSym == "$id" || iSym == "$num") {
+                if (iSym == NUM || iSym == IDENTIFIER) {
                     // non-op
                     auto newNode = new Node;
                     newNode->place = iSym;
                     nodeStack.push(newNode);
                 }
-                if(iSym != "#")
+                if(iSym !=END)
 					++inputPos; // move to next ;
                 // output 
                 f << "Move: " << "read " << iSym << ", " << "push state " << tableEntry.destState<< '\n';
@@ -656,7 +736,7 @@ void Parser::analyze(const std::vector<std::string>& inputs, const std::string& 
                         auto top = symbolStack.top();
                         symbolStack.pop();
 
-                        if (!top.isTerminal || top.type == "$id" || top.type == "$num") {
+                        if (!top.isTerminal || top.type == IDENTIFIER || top.type == NUM ) {
                             if (stateCnt == 0) {
 								auto topNode = nodeStack.top();
                                 nodeStack.pop();
@@ -673,14 +753,6 @@ void Parser::analyze(const std::vector<std::string>& inputs, const std::string& 
                             ++stateCnt;
                         }
                     }
-                    //for (int i = 0; i < r; i++) {
-                         //handle nodes
-                        //auto top = symbolStack.top();
-                        //if (top.type == "$id" || top.type == "$num") {
-                            
-                        //}
-                        //symbolStack.pop();
-                    //}
                     symbolStack.push(A);
                     nodeStack.push(resultNode);
 

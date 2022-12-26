@@ -39,6 +39,7 @@ public:
     int inputPos; // inputString position
 public:
     ~Parser();
+    void readGrammarY(const std::string& filename);
     void readGrammar(const std::string& filename);
     void printGrammar(const std::string& filename);
     void printVNFirst(const std::string& filename);
@@ -78,7 +79,7 @@ public:
         }
         assert(0);
     }
-    static Symbol loadSymbolYacc(const string& s) {
+    static Symbol loadSymbolY(const string& s) {
         if (s[0] >= 'A' && s[0] <= 'Z' || s[0] == '\'') {
             // is terminal
             return Symbol(s, true);

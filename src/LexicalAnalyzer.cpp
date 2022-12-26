@@ -3,6 +3,7 @@
 #include <map>
 #include<fstream>
 #include <regex>
+#include "token.h"
 using namespace std;
 
 void Error(string s)
@@ -33,81 +34,104 @@ string Preprocess(string s) {
 
     return filtered_comment;
 }
-map<string, int> word;
-string word_list[] = {"else", "if", "int", "return", "void", "while", "(", ")", "{", "}",
-                      "*", "+", "-", "/", ",", ";", "=", "!=", "<", "<=", "==", ">", ">="};
+
+//map<string, int> word;
+//string word_list[] = {"else", "if", "int", "return", "void", "while", "(", ")", "{", "}",
+                      //"*", "+", "-", "/", ",", ";", "=", "!=", "<", "<=", "==", ">", ">="};
+std::map<string, string> word_map = {
+    {"sizeof","SIZEOF"},
+    {"->","PTR_OP"},{"++","INC_OP"},{"--","DEC_OP"},{"<<","LEFT_OP"},{">>","RIGHT_OP"},{"<=","LE_OP"} ,{">=","GE_OP"},{"==","EQ_OP"},{"!=","NE_OP"},
+    {"&&","AND_OP"},{"||","OR_OP"},{"*=","MUL_ASSIGN"},{"/=","DIV_ASSIGN"},{"%=","MOD_ASSIGN"},{"+=","ADD_ASSIGN"},
+    {"-=","SUB_ASSIGN"},{"<<=","LEFT_ASSIGN"},{">>=","RIGHT_ASSIGN"},{"&=","AND_ASSIGN"},
+    {"^=","XOR_ASSIGN"},{"|=","OR_ASSIGN"},
+    {"typedef","TYPEDEF"},{"extern","EXTERN"},{"static","STATIC"},{"auto","AUTO"},{"register","REGISTER"},
+    {"int","INT"},{"char","CHAR"},{"short","SHORT"},{"unsigned","UNSIGNED"},{"float","FLOAT"},
+    {"double","DOUBLE"},{"const","CONST"},{"volatile","VOLATILE"},{"void","VOID"},
+    {"struct","STRUCT"},{"union","UNION"},{"enum","ENUM"},
+    {"case","CASE"},{"default","DEFAULT"},{"if","IF"},{"else","ELSE"},{"while","WHILE"},{"(","("},
+    {"switch","SWITCH"},{"while","WHILE"},{"do","DO"},{"continue","CONTINUE"},
+    {"break","BREAK"},{"return","RETURN"},{"for","FOR"},
+    {")","')'"},{"(","("}, {"{","{"}, {"}","}"},{"*","*"},
+    {"+","+"},{"-","-"},{"/","/"},{"\\","\\"},{".","."},{",",","},{"~","~"},{"!","!"},{"&","&"},{"%","%"},
+    {">",">"},{"<","<"},{"|","|"},{"?","?"},{":",":"},{"=","="},{"[","["},{"]","]"},{"...","ELLIPSIS"},
+    {";",";"},
+};
+std::map<string, string> m = { {"a","b"},{"c","c"}};
+
+
 int identifier_code=1;
 int num_code=2;
-void init() {
-    int code = 3;
-    for (auto str : word_list) 
-        word[str] = ++code;
-}
-int searchWord(string s) {
-    auto i = word.find(s);
-    if(i != word.end())
-        return i->second;
-    return -1;
-}
+//void init() {
+    //int code = 3;
+    //for (auto str : word_list) 
+        //word[str] = ++code;
+//}
+
+//int searchWord(string s) {
+    //auto i = word.find(s);
+    //if(i != word.end())
+        //return i->second;
+    //return -1;
+//}
 
 ofstream fout("out.txt");
-int GetToken(string s,int& i)
-{
-    int len=s.length()-1;//不算尾零
-    string token="";
-    char cur_ch;
-    while((cur_ch=s[i])==' '){
-        i++;
-        if(i>=len)
-            return -1;
-    }
-    if(isalpha(cur_ch)||cur_ch=='_')//字母或_开头
-    {
-        do{
-            token+=cur_ch;
-            cur_ch=s[++i];
-        }while(i<len && (isalpha(cur_ch)||isdigit(cur_ch)||cur_ch=='_'));//字母、数字、_组成
-        if(searchWord(token)!=-1)//标识符
-        {
-            fout<<"$id"<<"\t"<<token<<endl;
-        }
-        else{//关键字
-            fout<<'$'<<token<<"\t"<<token<<endl;   
-        }
-        return 0;
-    }
-    else if(isdigit(cur_ch))//整数
-    {
-        do{
-            token+=cur_ch;
-            cur_ch=s[++i];
-        }while(i<len && isdigit(cur_ch));
-        fout<<"$num"<<"\t"<<token<<endl;
-        return 0;
-    }
-    else{
-        token+=cur_ch;
-        string cur_ch_str=token;
-        if(i+1<len){
-            token+=s[i+1];
-            if(searchWord(token)!=-1)//双字符运算符
-            {
-                i+=2;
-                fout<<'$'<<token<<"\t"<<token<<endl;
-                return 0;
-            }
-        }
-        if(searchWord(cur_ch_str)!=-1)//单字符运算符
-        {
-            i++;
-            fout<<'$'<<cur_ch_str<<"\t"<<cur_ch_str<<endl;
-            return 0;
-        }
-        else
-            Error("Unknown, the next two character are \""+token+"\"");
-        return -1;
-    }
-}
+//int GetToken(string s,int& i)
+//{
+    //int len=s.length()-1;//不算尾零
+    //string token="";
+    //char cur_ch;
+    //while((cur_ch=s[i])==' '){
+        //i++;
+        //if(i>=len)
+            //return -1;
+    //}
+    //if(isalpha(cur_ch)||cur_ch=='_')//字母或_开头
+    //{
+        //do{
+            //token+=cur_ch;
+            //cur_ch=s[++i];
+        //}while(i<len && (isalpha(cur_ch)||isdigit(cur_ch)||cur_ch=='_'));//字母、数字、_组成
+        //if(searchWord(token)!=-1)//标识符
+        //{
+            //fout<<"$id"<<"\t"<<token<<endl;
+        //}
+        //else{//关键字
+            //fout<<'$'<<token<<"\t"<<token<<endl;   
+        //}
+        //return 0;
+    //}
+    //else if(isdigit(cur_ch))//整数
+    //{
+        //do{
+            //token+=cur_ch;
+            //cur_ch=s[++i];
+        //}while(i<len && isdigit(cur_ch));
+        //fout<<"$num"<<"\t"<<token<<endl;
+        //return 0;
+    //}
+    //else{
+        //token+=cur_ch;
+//        string cur_ch_str=token;
+//        if(i+1<len){
+//            token+=s[i+1];
+//            if(searchWord(token)!=-1)//双字符运算符
+//            {
+//                i+=2;
+//                fout<<'$'<<token<<"\t"<<token<<endl;
+//                return 0;
+//            }
+//        }
+//        if(searchWord(cur_ch_str)!=-1)//单字符运算符
+//        {
+//            i++;
+//            fout<<'$'<<cur_ch_str<<"\t"<<cur_ch_str<<endl;
+//            return 0;
+//        }
+//        else
+//            Error("Unknown, the next two character are \""+token+"\"");
+//        return -1;
+//    }
+//}
 
 
 //int main()

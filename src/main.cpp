@@ -22,15 +22,15 @@ int main(int argc, char *argv[])
     return a.exec();
 #else
     Lexer lex;
-    ifstream t("./asset/source.txt");
-    string s((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
-    lex.Preprocess(s);
-    lex.analyze();
+    //string s((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+    //lex.Preprocess(s);
+    lex.analyze("./asset/source.txt");
     lex.print("./asset/lex.txt");
     std::cout << "Lex Analysis Done" << '\n';
 
     Parser parser;
-    parser.readGrammar("./asset/grammar.txt");
+    //parser.readGrammar("./asset/grammar.txt");
+    parser.readGrammarY("./asset/c99.txt");
     parser.printGrammar("./asset/printed_grammar.txt");
 
     parser.calFirstVN();
