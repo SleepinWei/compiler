@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
     //parser.constructDFA("./asset/dfa.dot");
     std::cout << "Table Done\n";
 
-    parser.analyze(lex.inputs,"./output.txt");
+    parser.analyze(lex.inputs,"./asset/output.txt");
     parser.printTree("./asset/tree.dot");
 
     return 0;

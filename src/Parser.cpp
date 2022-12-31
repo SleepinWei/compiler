@@ -5,7 +5,7 @@
 #include<iostream>
 #include<assert.h>
 #include <algorithm>
-#include<ios>
+#include<queue>
 using std::string;
 
 void Parser::readGrammarY(const std::string& filename) {
@@ -351,7 +351,6 @@ std::set<std::string> Parser::calFirst(const std::vector<Symbol> &rhs, size_t of
     return result;
 }
 
-#include<queue>
 void Parser::closure(std::set<Item>& itemSet)
 {
     //bool change = true;

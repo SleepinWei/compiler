@@ -80,9 +80,12 @@ public:
         assert(0);
     }
     static Symbol loadSymbolY(const string& s) {
-        if (s[0] >= 'A' && s[0] <= 'Z' || s[0] == '\'') {
+        if (s[0] >= 'A' && s[0] <= 'Z'){
             // is terminal
             return Symbol(s, true);
+        }
+        else if (s[0] == '\'') {
+            return Symbol(s.substr(1, s.length() - 2), true);
         }
         else if (s[0] >= 'a' && s[0] <= 'z') {
             // not terminal

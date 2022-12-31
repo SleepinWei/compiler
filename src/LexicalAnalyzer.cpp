@@ -74,7 +74,7 @@ int num_code=2;
     //return -1;
 //}
 
-ofstream fout("out.txt");
+//ofstream fout("out.txt");
 //int GetToken(string s,int& i)
 //{
     //int len=s.length()-1;//不算尾零
