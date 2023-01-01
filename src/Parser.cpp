@@ -702,12 +702,13 @@ void Parser::analyze(const std::vector<std::string>& inputs, const std::string& 
                 // ÒÆ½ø
                 stateStack.push(tableEntry.destState);
                 symbolStack.push(Symbol(iSym, true, false));
-                if (iSym == NUM || iSym == IDENTIFIER) {
+                //if (iSym == NUM || iSym == IDENTIFIER) {
                     // non-op
                     auto newNode = new Node;
                     newNode->place = iSym;
+                    newNode->isTerminal = true;
                     nodeStack.push(newNode);
-                }
+                //}
                 if(iSym !=END)
 					++inputPos; // move to next ;
                 // output 
@@ -732,33 +733,16 @@ void Parser::analyze(const std::vector<std::string>& inputs, const std::string& 
                     stateStack.push(newS);
                     //TODO:if_then_else Óï¾ä
                     auto resultNode = new Node;
+                    resultNode->isTerminal = false;
                     resultNode->place = rule->state.type;
 
-                    int stateCnt = 0;
                     for (int i = 0; i < r; ++i) {
-                        auto top = symbolStack.top();
-                        symbolStack.pop();
+						auto top = symbolStack.top();
+						symbolStack.pop();
 
-                        if (!top.isTerminal || top.type == IDENTIFIER || top.type == NUM ) {
-                            if (stateCnt == 0) {
-								auto topNode = nodeStack.top();
-                                nodeStack.pop();
-                                resultNode->right = topNode;
-                            }
-                            else if (stateCnt == 1) {
-                                auto topNode = nodeStack.top();
-                                nodeStack.pop();
-                                resultNode->left = topNode;
-                            }
-                            else {
-                                std::cout << "Error: More than 2 operands: Rule: " << rule->state.type;
-                                for (auto& sym : rule->symbols) {
-                                    std::cout << sym.type << ' ';
-                                }
-                                std::cout << "\n";
-                            }
-                            ++stateCnt;
-                        }
+						auto topNode = nodeStack.top();
+						nodeStack.pop();
+						resultNode->children.push_back(topNode);
                     }
                     symbolStack.push(A);
                     nodeStack.push(resultNode);
@@ -782,14 +766,10 @@ void Parser::analyze(const std::vector<std::string>& inputs, const std::string& 
 }
 
 void outputTree(std::ofstream& f, Node* root) {
-    f << (int)root << "[label=\"op: " << root->op << " state: " << root->place << "\"];\n";
-    if (root->left) {
-        f << (int)root << "->" << (int)root->left<< ";\n";
-        outputTree(f, root->left);
-    }
-    if (root->right) {
-        f << (int)root << "->" << (int)root->right << ";\n";
-        outputTree(f, root->right);
+    f << (int)root << "[label=\"" << root->place << "\"];\n";
+    for (auto& child : root->children) {
+        f << (int)root << "->" << (int)child<< ";\n";
+        outputTree(f, child);
     }
 }
 

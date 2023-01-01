@@ -38,9 +38,8 @@ public:
 	std::unordered_map<std::string, ConstInfo> constTable;
 
 	void constTranslation(GrammarEntry* rule,Node* root) {
-		assert(root->left && root->right);
-		auto id = root->left;
-		auto id1 = root->right;
+		//auto id = root->left;
+		//auto id1 = root->right;
 
 		// rely on specific grammar 
 		// CD->id=id1 / num

@@ -4,15 +4,14 @@ class GrammarEntry;
 
 class Node {
 public:
-	Node() { left = right = nullptr; code = place = op = ""; }
+	Node() {};
 	~Node() {};
 
 public:
-	Node* left;
-	Node* right;
+	std::vector<Node*> children;
 
 	string code;
 	string place;
-	string op;
+	bool isTerminal;
 	//GrammarEntry* entry;
 };

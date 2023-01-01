@@ -1,1 +1,1 @@
-dot ./asset/dfa.dot -T png -o ./asset/dfa.png
+dot ./tree.dot -T png -o ./tree.png
