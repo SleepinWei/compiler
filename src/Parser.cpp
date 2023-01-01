@@ -678,6 +678,10 @@ void Parser::analyze(const std::vector<std::string>& inputs, const std::string& 
     std::ofstream f(filename);
     f << "Action Table\n";
     while (true) {
+        if (inputPos >= inputs.size()) {
+            std::cout << "inputPos > size of inputs\n";
+            break;
+        }
         string iSym = inputs[inputPos]; // ai 
         int topState = stateStack.top();
 
@@ -747,7 +751,11 @@ void Parser::analyze(const std::vector<std::string>& inputs, const std::string& 
                                 resultNode->left = topNode;
                             }
                             else {
-                                std::cout << "Error: More than 2 operands\n";
+                                std::cout << "Error: More than 2 operands: Rule: " << rule->state.type;
+                                for (auto& sym : rule->symbols) {
+                                    std::cout << sym.type << ' ';
+                                }
+                                std::cout << "\n";
                             }
                             ++stateCnt;
                         }

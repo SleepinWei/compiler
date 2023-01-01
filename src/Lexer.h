@@ -218,6 +218,7 @@ public:
 				}
 				++pos;
 			}
+            inputs.push_back(NUM);
         }
         else {
             // 
@@ -244,6 +245,7 @@ public:
         while (pos < src.length()) {
             readOneToken(src, pos);
         }
+        inputs.push_back(END);
     }
 
     void print(const std::string& filename) {

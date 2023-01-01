@@ -16,3 +16,62 @@ Move: read IDENTIFIER, push state 96
 Conclude: use rule direct_declarator := IDENTIFIER 
 Conclude: use rule declarator := direct_declarator 
 Move: read =, push state 84
+Move: read CONSTANT, push state 110
+Conclude: use rule primary_expression := CONSTANT 
+Conclude: use rule postfix_expression := primary_expression 
+Conclude: use rule unary_expression := postfix_expression 
+Conclude: use rule cast_expression := unary_expression 
+Conclude: use rule multiplicative_expression := cast_expression 
+Conclude: use rule additive_expression := multiplicative_expression 
+Conclude: use rule shift_expression := additive_expression 
+Conclude: use rule relational_expression := shift_expression 
+Conclude: use rule equality_expression := relational_expression 
+Conclude: use rule and_expression := equality_expression 
+Conclude: use rule exclusive_or_expression := and_expression 
+Conclude: use rule inclusive_or_expression := exclusive_or_expression 
+Conclude: use rule logical_and_expression := inclusive_or_expression 
+Conclude: use rule logical_or_expression := logical_and_expression 
+Conclude: use rule conditional_expression := logical_or_expression 
+Conclude: use rule assignment_expression := conditional_expression 
+Conclude: use rule initializer := assignment_expression 
+Conclude: use rule init_declarator := declarator = initializer 
+Conclude: use rule init_declarator_list := init_declarator 
+Move: read ;, push state 675
+Conclude: use rule declaration := declaration_specifiers init_declarator_list ; 
+Conclude: use rule declaration_list := declaration 
+Move: read INT, push state 11
+Conclude: use rule type_specifier := INT 
+Conclude: use rule declaration_specifiers := type_specifier 
+Move: read IDENTIFIER, push state 96
+Conclude: use rule direct_declarator := IDENTIFIER 
+Conclude: use rule declarator := direct_declarator 
+Move: read =, push state 84
+Move: read IDENTIFIER, push state 246
+Conclude: use rule primary_expression := IDENTIFIER 
+Conclude: use rule postfix_expression := primary_expression 
+Conclude: use rule unary_expression := postfix_expression 
+Conclude: use rule cast_expression := unary_expression 
+Conclude: use rule multiplicative_expression := cast_expression 
+Conclude: use rule additive_expression := multiplicative_expression 
+Conclude: use rule shift_expression := additive_expression 
+Conclude: use rule relational_expression := shift_expression 
+Conclude: use rule equality_expression := relational_expression 
+Conclude: use rule and_expression := equality_expression 
+Conclude: use rule exclusive_or_expression := and_expression 
+Conclude: use rule inclusive_or_expression := exclusive_or_expression 
+Conclude: use rule logical_and_expression := inclusive_or_expression 
+Conclude: use rule logical_or_expression := logical_and_expression 
+Conclude: use rule conditional_expression := logical_or_expression 
+Conclude: use rule assignment_expression := conditional_expression 
+Conclude: use rule initializer := assignment_expression 
+Conclude: use rule init_declarator := declarator = initializer 
+Conclude: use rule init_declarator_list := init_declarator 
+Move: read ;, push state 675
+Conclude: use rule declaration := declaration_specifiers init_declarator_list ; 
+Conclude: use rule declaration_list := declaration_list declaration 
+Move: read }, push state 374
+Conclude: use rule compound_statement := { declaration_list } 
+Conclude: use rule function_definition := declaration_specifiers declarator compound_statement 
+Conclude: use rule external_declaration := function_definition 
+Conclude: use rule translation_unit := external_declaration 
+Done!
