@@ -7,6 +7,7 @@
 #include<sstream>
 #include"token.h"
 #include"component.h"
+#include"Node.h"
 using namespace std;
 
 class Lexer {
@@ -64,91 +65,8 @@ public:
     int identifier_code = 1;
     int num_code = 2;
     //ofstream fout ("out.txt");
-    vector<std::string> inputs;
+    vector<Node*> inputs;
     string filtered_comment;
-
-    //void init() {
-    //    int code = 3;
-    //    for (auto str : word_list)
-    //        word[str] = ++code;
-    //}
-    //int searchWord_(string s) {
-    //    auto i = word.find(s);
-    //    if (i != word.end())
-    //        return i->second;
-    //    return -1;
-    //}
-    //int searchWord(string s) {
-    //    auto iter = std::find(word_list.begin(), word_list.end(), s);
-    //    if (iter == word_list.end()) {
-    //        return -1;
-    //    }
-    //    return iter - word_list.begin();
-    //}
-
-    //int GetToken(string s, int& i)
-    //{
-    //    int len = s.length() - 1;//不算尾零
-    //    string token = "";
-    //    char cur_ch;
-    //    while ((cur_ch = s[i]) == ' ') {
-    //        i++;
-    //        if (i >= len)
-    //            return -1;
-    //    }
-    //    if (isalpha(cur_ch) || cur_ch == '_')//字母或_开头
-    //    {
-    //        do {
-    //            token += cur_ch;
-    //            cur_ch = s[++i];
-    //        } while (i < len && (isalpha(cur_ch) || isdigit(cur_ch) || cur_ch == '_'));//字母、数字、_组成
-    //        if (searchWord(token) == -1)//标识符
-    //        //if(std::find(word_list.begin(),word_list.end(),token)==word_list.end())
-    //        {
-    //            //fout << "$id" << "\t" << token << endl;
-    //            inputs.push_back("$id");
-    //        }
-    //        else {//关键字
-    //            //fout << '$' << token << "\t" << token << endl;
-    //            inputs.push_back("$" + token);
-    //        }
-    //        return 0;
-    //    }
-    //    else if (isdigit(cur_ch))//整数
-    //    {
-    //        do {
-    //            token += cur_ch;
-    //            cur_ch = s[++i];
-    //        } while (i < len && isdigit(cur_ch));
-    //        //fout << "$num" << "\t" << token << endl;
-    //        inputs.push_back("$num");
-    //        return 0;
-    //    }
-    //    else {
-    //        token += cur_ch;
-    //        string cur_ch_str = token;
-    //        if (i + 1 < len) {
-    //            token += s[i + 1];
-    //            if (searchWord(token) != -1)//双字符运算符
-    //            {
-    //                i += 2;
-    //                //fout << '$' << token << "\t" << token << endl;
-    //                inputs.push_back("$" + token);
-    //                return 0;
-    //            }
-    //        }
-    //        if (searchWord(cur_ch_str) != -1)//单字符运算符
-    //        {
-    //            i++;
-    //            //fout << '$' << cur_ch_str << "\t" << cur_ch_str << endl;
-    //            inputs.push_back("$" + cur_ch_str);
-    //            return 0;
-    //        }
-    //        else
-    //            Error("Unknown, the next two character are \"" + token + "\"");
-    //        return -1;
-    //    }
-    //}
 
     void readSpace(const std::string& src, int& pos) {
         while (pos < src.length() && (src[pos] == ' ' || src[pos] == '\t' || src[pos] == '\n')) {
@@ -185,11 +103,11 @@ public:
             // 判断是否为保留字
             if (reservedWord.find(token) == reservedWord.end()) {
                 // not found: IDENTIFIER
-                inputs.push_back(IDENTIFIER);
+                inputs.push_back(new Node(IDENTIFIER,token,true));
             }
             else {
                 // 如果是保留字
-                inputs.push_back(reservedWord[token]);
+                inputs.push_back(new Node(reservedWord[token], token,true));
             }
         }
         else if(s[pos] >= '0' && s[pos] <= '9') {
@@ -218,7 +136,7 @@ public:
 				}
 				++pos;
 			}
-            inputs.push_back(NUM);
+            inputs.push_back(new Node(NUM,token,true));
         }
         else {
             // 
@@ -227,7 +145,7 @@ public:
 
             if (reservedWord.find(token) != reservedWord.end()) {
                 // found
-                inputs.push_back(token);
+                inputs.push_back(new Node(reservedWord[token],token,true));
             }
             else {
                 // not found
@@ -245,13 +163,13 @@ public:
         while (pos < src.length()) {
             readOneToken(src, pos);
         }
-        inputs.push_back(END);
+        inputs.push_back(new Node(END,END,true));
     }
 
     void print(const std::string& filename) {
         ofstream f(filename);
         for (auto& token : inputs) {
-            f << token<< '\n';
+            f << token->type << ' ' << token->place << '\n';
         }
     }
 public:
