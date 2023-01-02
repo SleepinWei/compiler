@@ -1,17 +1,17 @@
-INT
-IDENTIFIER
-(
-)
-{
-INT
-IDENTIFIER
-=
-CONSTANT
-;
-INT
-IDENTIFIER
-=
-IDENTIFIER
-;
-}
-#
+INT int
+IDENTIFIER main
+( (
+) )
+{ {
+INT int
+IDENTIFIER a
+= =
+CONSTANT 1
+; ;
+INT int
+IDENTIFIER b
+= =
+IDENTIFIER a
+; ;
+} }
+# #

@@ -224,6 +224,15 @@ static void removeDup(std::vector<T> &v)
     v.erase(end, v.end());
 }
 
+void deleteTree(Node* root) {
+    for (auto child : root->children) {
+        deleteTree(child);
+    }
+    if (!root->isTerminal) {
+        delete root;
+    }
+}
+
 Parser::~Parser() {
     for (auto iter = grammar.begin(); iter != grammar.end(); ++iter) {
         for (auto _iter = iter->second.begin(); _iter != iter->second.end(); ++_iter) {
@@ -670,7 +679,7 @@ void Parser::printTable(const std::string& filename) {
     //return nullptr;
 //}
 
-void Parser::analyze(const std::vector<std::string>& inputs, const std::string& filename) {
+void Parser::analyze(const std::vector<Node*>& inputs, const std::string& filename) {
     inputPos = 0;
     stateStack.push(0);
     // construct a node for every non-op state
@@ -682,7 +691,7 @@ void Parser::analyze(const std::vector<std::string>& inputs, const std::string& 
             std::cout << "inputPos > size of inputs\n";
             break;
         }
-        string iSym = inputs[inputPos]; // ai 
+        string iSym = inputs[inputPos]->type; // ai 
         int topState = stateStack.top();
 
         //Action* act = findAction(topState, iSym);
@@ -702,13 +711,8 @@ void Parser::analyze(const std::vector<std::string>& inputs, const std::string& 
                 // ÒÆ½ø
                 stateStack.push(tableEntry.destState);
                 symbolStack.push(Symbol(iSym, true, false));
-                //if (iSym == NUM || iSym == IDENTIFIER) {
-                    // non-op
-                    auto newNode = new Node;
-                    newNode->place = iSym;
-                    newNode->isTerminal = true;
-                    nodeStack.push(newNode);
-                //}
+				nodeStack.push(inputs[inputPos]);
+
                 if(iSym !=END)
 					++inputPos; // move to next ;
                 // output 
@@ -732,9 +736,7 @@ void Parser::analyze(const std::vector<std::string>& inputs, const std::string& 
                     int newS = giter->second.destState;
                     stateStack.push(newS);
                     //TODO:if_then_else Óï¾ä
-                    auto resultNode = new Node;
-                    resultNode->isTerminal = false;
-                    resultNode->place = rule->state.type;
+                    auto resultNode = new Node(rule->state.type,rule->state.type,false);
 
                     for (int i = 0; i < r; ++i) {
 						auto top = symbolStack.top();

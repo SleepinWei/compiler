@@ -12,6 +12,11 @@ using namespace std;
 
 class Lexer {
 public:
+    ~Lexer() {
+        for (auto n : inputs) {
+            delete n;
+        }
+    }
     void Error(string s)
     {
         cerr << s << endl;
@@ -56,7 +61,7 @@ public:
     {"case","CASE"},{"default","DEFAULT"},{"if","IF"},{"else","ELSE"},{"while","WHILE"},{"(","("},
     {"switch","SWITCH"},{"while","WHILE"},{"do","DO"},{"continue","CONTINUE"},
     {"break","BREAK"},{"return","RETURN"},{"for","FOR"},
-    {")","')'"},{"(","("}, {"{","{"}, {"}","}"},{"*","*"},
+    {")",")"},{"(","("}, {"{","{"}, {"}","}"},{"*","*"},
     {"+","+"},{"-","-"},{"/","/"},{"\\","\\"},{".","."},{",",","},{"~","~"},{"!","!"},{"&","&"},{"%","%"},
     {">",">"},{"<","<"},{"|","|"},{"?","?"},{":",":"},{"=","="},{"[","["},{"]","]"},{"...","ELLIPSIS"},
     {";",";"},
