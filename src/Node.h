@@ -16,6 +16,8 @@ public:
 	string code;
 	string place; // actual value: 123 
 	string type; // corresponding symbol in grammar : NUM
+
+	string var_type;
 	bool isTerminal;
 	//GrammarEntry* entry;
 };

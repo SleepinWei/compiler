@@ -6,7 +6,10 @@
 #include<assert.h>
 #include <algorithm>
 #include<queue>
+#include"Generator.h"
+
 using std::string;
+extern Generator generator;
 
 void Parser::readGrammarY(const std::string& filename) {
 	std::ifstream f(filename);
@@ -751,6 +754,8 @@ void Parser::analyze(const std::vector<Node*>& inputs, const std::string& filena
 
                     f << "Conclude: " << "use rule ";
                     rule->print(f);
+
+                    generator.analyze(rule, resultNode);
                 }
                 else {
                     // error
@@ -768,7 +773,11 @@ void Parser::analyze(const std::vector<Node*>& inputs, const std::string& filena
 }
 
 void outputTree(std::ofstream& f, Node* root) {
-    f << (int)root << "[label=\"" << root->place << "\"];\n";
+    f << (int)root << "[label=\"" << root->place;
+    if (root->var_type != "") {
+        f << ' ' << "var_type:" << root->var_type << ' ';
+    }
+    f << "\"];\n";
     for (auto& child : root->children) {
         f << (int)root << "->" << (int)child<< ";\n";
         outputTree(f, child);

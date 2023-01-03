@@ -10,8 +10,11 @@
 
 #include"Parser.h"
 #include"Lexer.h"
+#include"Generator.h"
 #include<iostream>
 #include<fstream>
+
+Generator generator;
 
 int main(int argc, char *argv[])
 {
@@ -48,6 +51,7 @@ int main(int argc, char *argv[])
 
     parser.analyze(lex.inputs,"./asset/output.txt");
     parser.printTree("./asset/tree.dot");
+
 
     return 0;
 #endif

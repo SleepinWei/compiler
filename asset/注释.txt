@@ -1,0 +1,1001 @@
+ 
+
+C99文法分析
+
+ 
+
+文法入口产生式，用于推导出external_declaration列表
+
+translation_unit
+: external_declaration
+| translation_unit external_declaration 
+;
+
+ 
+
+external_declaration用于推导出全局变量定义或声明，函数定义，typedef等
+
+external_declaration
+: function_definition
+| declaration
+;
+
+ 
+
+declaration用于推导出变量定义或变量声明
+
+declaration
+: declaration_specifiers ';'
+| declaration_specifiers init_declarator_list ';'
+;
+
+ 
+
+init_declarator_list
+
+: init_declarator
+
+| init_declarator_list ',' init_declarator
+
+;
+
+ 
+
+init_declarator
+
+: declarator
+
+| declarator '=' initializer
+
+;
+
+ 
+
+ 
+
+declaration_specifiers推导出存储类型，函数修饰符，类型标识的列表
+
+declaration_specifiers
+
+: storage_class_specifier
+
+| storage_class_specifier declaration_specifiers
+
+| type_specifier
+
+| type_specifier declaration_specifiers
+
+| type_qualifier
+
+| type_qualifier declaration_specifiers
+
+| function_specifier
+
+| function_specifier declaration_specifiers
+
+;
+
+ 
+
+storage_class_specifier存储类型
+
+storage_class_specifier
+
+: TYPEDEF
+
+| EXTERN
+
+| STATIC
+
+| AUTO
+
+| REGISTER
+
+;
+
+ 
+
+function_specifier函数修饰符
+
+function_specifier
+
+: INLINE
+
+;
+
+ 
+
+type_specifier类型标识
+
+type_specifier
+
+: VOID
+
+| CHAR
+
+| SHORT
+
+| INT
+
+| LONG
+
+| FLOAT
+
+| DOUBLE
+
+| SIGNED
+
+| UNSIGNED
+
+| BOOL
+
+| COMPLEX
+
+| IMAGINARY
+
+| struct_or_union_specifier
+
+| enum_specifier
+
+| TYPE_NAME
+
+;
+
+ 
+
+type_qualifier类型限定符
+
+type_qualifier
+
+: CONST
+
+| RESTRICT
+
+| VOLATILE
+
+;
+
+ 
+
+enum_specifier枚举类型
+
+enum_specifier
+
+: ENUM '{' enumerator_list '}'
+
+| ENUM IDENTIFIER '{' enumerator_list '}'
+
+| ENUM '{' enumerator_list ',' '}'
+
+| ENUM IDENTIFIER '{' enumerator_list ',' '}'
+
+| ENUM IDENTIFIER
+
+;
+
+ 
+
+enumerator_list推导出枚举类型中的每个枚举项
+
+enumerator_list
+
+: enumerator
+
+| enumerator_list ',' enumerator
+
+;
+
+ 
+
+enumerator推导出单个枚举项
+
+enumerator
+
+: IDENTIFIER
+
+| IDENTIFIER '=' constant_expression
+
+;
+
+ 
+
+struct_or_union_specifier结构体，联合类型定义
+
+struct_or_union_specifier
+
+: struct_or_union IDENTIFIER '{' struct_declaration_list '}' 
+
+| struct_or_union '{' struct_declaration_list '}'
+
+| struct_or_union IDENTIFIER
+
+;
+
+ 
+
+struct_or_union推导出struct和union关键字
+
+struct_or_union
+
+: STRUCT
+
+| UNION
+
+;
+
+ 
+
+struct_declaration_list推导出结构体或联合类型中的成员变量
+
+struct_declaration_list
+
+: struct_declaration
+
+| struct_declaration_list struct_declaration
+
+;
+
+ 
+
+struct_declaration推导出结构体或联合的单个成员变量
+
+struct_declaration
+
+: specifier_qualifier_list struct_declarator_list ';'
+
+;
+
+ 
+
+specifier_qualifier_list推导出类型标识符和类型限定符列表
+
+specifier_qualifier_list
+
+: type_specifier specifier_qualifier_list
+
+| type_specifier
+
+| type_qualifier specifier_qualifier_list
+
+| type_qualifier
+
+;
+
+ 
+
+struct_declarator_list推导出某个类型的多个标识符，例如红色部分struct a{ int a,b,:5; };
+
+struct_declarator_list
+
+: struct_declarator
+
+| struct_declarator_list ',' struct_declarator
+
+;
+
+ 
+
+struct_declarator推导出单个成员变量，例如红色部分struct a{ int a; };
+
+struct_declarator
+
+: declarator
+
+| ':' constant_expression 空位域
+
+| declarator ':' constant_expression 位域
+
+;
+
+ 
+
+declarator推导出单个成员变量，例如红色部分struct a { int **a; };
+
+declarator
+
+: pointer direct_declarator
+
+| direct_declarator
+
+;
+
+ 
+
+pointer推导出指针类型，包括多个*号和类型限定符，例如红色部分  struct a { int * const * a; };
+
+pointer
+
+: '*'
+
+| '*' type_qualifier_list
+
+| '*' pointer
+
+| '*' type_qualifier_list pointer
+
+;
+
+ 
+
+type_qualifier_list推导出类型限定符列表
+
+type_qualifier_list
+
+: type_qualifier
+
+| type_qualifier_list type_qualifier
+
+;
+
+ 
+
+ 
+
+direct_declarator
+
+: IDENTIFIER
+
+| '(' declarator ')'
+
+| direct_declarator '[' type_qualifier_list assignment_expression ']'
+
+| direct_declarator '[' type_qualifier_list ']'
+
+| direct_declarator '[' assignment_expression ']'
+
+| direct_declarator '[' STATIC type_qualifier_list assignment_expression ']'
+
+| direct_declarator '[' type_qualifier_list STATIC assignment_expression ']'
+
+| direct_declarator '[' type_qualifier_list '*' ']'
+
+| direct_declarator '[' '*' ']'
+
+| direct_declarator '[' ']'
+
+| direct_declarator '(' parameter_type_list ')'
+
+| direct_declarator '(' identifier_list ')'
+
+| direct_declarator '(' ')'
+
+;
+
+ 
+
+identifier_list推导出id list
+
+identifier_list
+
+: IDENTIFIER
+
+| identifier_list ',' IDENTIFIER
+
+;
+
+ 
+
+assignment_expression推导出赋值表达式
+
+assignment_expression
+
+: conditional_expression
+
+| unary_expression assignment_operator assignment_expression
+
+;
+
+ 
+
+assignment_operator推导出赋值运算符 = , *= , /=, %=, +=, -=, <<=, >>=, &=, ^=, |=
+
+assignment_operator
+
+: '='
+
+| MUL_ASSIGN
+
+| DIV_ASSIGN
+
+| MOD_ASSIGN
+
+| ADD_ASSIGN
+
+| SUB_ASSIGN
+
+| LEFT_ASSIGN
+
+| RIGHT_ASSIGN
+
+| AND_ASSIGN
+
+| XOR_ASSIGN
+
+| OR_ASSIGN
+
+;
+
+ 
+
+constant_expression推导出常量表达式
+
+constant_expression
+
+: conditional_expression
+
+;
+
+ 
+
+conditional_expression推导出条件表达式
+
+conditional_expression
+
+: logical_or_expression
+
+| logical_or_expression '?' expression ':' conditional_expression
+
+;
+
+ 
+
+logical_or_expression逻辑or表达式
+
+logical_or_expression
+
+: logical_and_expression
+
+| logical_or_expression OR_OP logical_and_expression
+
+;
+
+ 
+
+logical_and_expression逻辑and表达式
+
+logical_and_expression
+
+: inclusive_or_expression
+
+| logical_and_expression AND_OP inclusive_or_expression
+
+;
+
+ 
+
+inclusive_or_expression推导出或运算表达式
+
+inclusive_or_expression
+
+: exclusive_or_expression
+
+| inclusive_or_expression '|' exclusive_or_expression
+
+;
+
+ 
+
+exclusive_or_expression推导出异或运算表达式
+
+exclusive_or_expression
+
+: and_expression
+
+| exclusive_or_expression '^' and_expression
+
+;
+
+ 
+
+and_expression推导出与运算表达式
+
+and_expression
+
+: equality_expression
+
+| and_expression '&' equality_expression
+
+;
+
+ 
+
+equality_expression推导出等值判断表达式 == 或者 !=
+
+equality_expression
+
+: relational_expression
+
+| equality_expression EQ_OP relational_expression
+
+| equality_expression NE_OP relational_expression
+
+;
+
+ 
+
+relational_expression推导出关系表达式
+
+relational_expression
+
+: shift_expression
+
+| relational_expression '<' shift_expression
+
+| relational_expression '>' shift_expression
+
+| relational_expression LE_OP shift_expression
+
+| relational_expression GE_OP shift_expression
+
+;
+
+ 
+
+shift_expression推导出移位表达式 >>或<<
+
+shift_expression
+
+: additive_expression
+
+| shift_expression LEFT_OP additive_expression
+
+| shift_expression RIGHT_OP additive_expression
+
+;
+
+ 
+
+additive_expression推导出加减表达式
+
+additive_expression
+
+: multiplicative_expression
+
+| additive_expression '+' multiplicative_expression
+
+| additive_expression '-' multiplicative_expression
+
+;
+
+ 
+
+multiplicative_expression推导出乘除模表达式
+
+multiplicative_expression
+
+: cast_expression
+
+| multiplicative_expression '*' cast_expression
+
+| multiplicative_expression '/' cast_expression
+
+| multiplicative_expression '%' cast_expression
+
+;
+
+ 
+
+cast_expression推导出类型转化表达式
+
+cast_expression
+
+: unary_expression
+
+| '(' type_name ')' cast_expression
+
+;
+
+ 
+
+unary_expression推导出一元表达式
+
+unary_expression
+
+: postfix_expression
+
+| INC_OP unary_expression
+
+| DEC_OP unary_expression
+
+| unary_operator cast_expression
+
+| SIZEOF unary_expression
+
+| SIZEOF '(' type_name ')'
+
+;
+
+ 
+
+unary_operator推导出一元运算符
+
+unary_operator
+
+: '&'
+
+| '*'
+
+| '+'
+
+| '-'
+
+| '~'
+
+| '!'
+
+;
+
+ 
+
+postfix_expression推导出后缀表达式
+
+postfix_expression
+
+: primary_expression
+
+| postfix_expression '[' expression ']'
+
+| postfix_expression '(' ')'
+
+| postfix_expression '(' argument_expression_list ')'
+
+| postfix_expression '.' IDENTIFIER //结构体成员变量.引用
+
+| postfix_expression PTR_OP IDENTIFIER  //指针引用 ->
+
+| postfix_expression INC_OP // 后置++
+
+| postfix_expression DEC_OP // 后置--
+
+| '(' type_name ')' '{' initializer_list '}'
+
+| '(' type_name ')' '{' initializer_list ',' '}'
+
+;
+
+ 
+
+primary_expression推导出主要表达式
+
+primary_expression
+
+: IDENTIFIER
+
+| CONSTANT
+
+| STRING_LITERAL
+
+| '(' expression ')'
+
+;
+
+ 
+
+expression
+
+: assignment_expression
+
+| expression ',' assignment_expression //逗号表达式
+
+;
+
+ 
+
+type_name推导出类型名
+
+type_name
+
+: specifier_qualifier_list
+
+| specifier_qualifier_list abstract_declarator
+
+;
+
+ 
+
+abstract_declarator推导出抽象声明(好像是单纯类型声明，不带变量名的)
+
+abstract_declarator
+
+: pointer
+
+| direct_abstract_declarator
+
+| pointer direct_abstract_declarator
+
+;
+
+ 
+
+direct_abstract_declarator推导出直接抽象声明
+
+direct_abstract_declarator
+
+: '(' abstract_declarator ')'
+
+| '[' ']'
+
+| '[' assignment_expression ']'
+
+| direct_abstract_declarator '[' ']'
+
+| direct_abstract_declarator '[' assignment_expression ']'
+
+| '[' '*' ']'
+
+| direct_abstract_declarator '[' '*' ']'
+
+| '(' ')'
+
+| '(' parameter_type_list ')'
+
+| direct_abstract_declarator '(' ')'
+
+| direct_abstract_declarator '(' parameter_type_list ')'
+
+;
+
+ 
+
+parameter_type_list推导出函数参数列表
+
+parameter_type_list
+
+: parameter_list //推导出普通参数列表
+
+| parameter_list ',' ELLIPSIS //变参列表
+
+;
+
+ 
+
+parameter_list推导出函数参数列表
+
+parameter_list
+
+: parameter_declaration
+
+| parameter_list ',' parameter_declaration
+
+;
+
+ 
+
+parameter_declaration推导出函数单个参数声明
+
+parameter_declaration
+
+: declaration_specifiers declarator
+
+| declaration_specifiers abstract_declarator
+
+| declaration_specifiers
+
+;
+
+ 
+
+argument_expression_list推导出实参列表的表达式
+
+argument_expression_list
+
+: assignment_expression
+
+| argument_expression_list ',' assignment_expression
+
+;
+
+ 
+
+initializer_list推导出初始化列表
+
+initializer_list
+
+: initializer
+
+| designation initializer
+
+| initializer_list ',' initializer
+
+| initializer_list ',' designation initializer
+
+;
+
+ 
+
+initializer
+
+: assignment_expression
+
+| '{' initializer_list '}'
+
+| '{' initializer_list ',' '}'
+
+;
+
+ 
+
+designation推导出 [const_expression] .id列表
+
+designation
+
+: designator_list '='
+
+;
+
+ 
+
+designator_list
+
+: designator
+
+| designator_list designator
+
+;
+
+ 
+
+designator
+
+: '[' constant_expression ']'
+
+| '.' IDENTIFIER
+
+;
+
+ 
+
+function_definition推导出函数定义
+
+function_definition
+
+: declaration_specifiers declarator declaration_list compound_statement
+
+| declaration_specifiers declarator compound_statement
+
+;
+
+ 
+
+declaration_list
+
+: declaration
+
+| declaration_list declaration
+
+;
+
+ 
+
+compound_statement推导出复合语句
+
+compound_statement
+
+: '{' '}'
+
+| '{' block_item_list '}'
+
+;
+
+ 
+
+block_item_list
+
+: block_item
+
+| block_item_list block_item
+
+;
+
+ 
+
+block_item推导出函数内的每个语句
+
+block_item
+
+: declaration
+
+| statement
+
+;
+
+ 
+
+statement推导出函数内的每个语句
+
+statement
+
+: labeled_statement
+
+| compound_statement
+
+| expression_statement
+
+| selection_statement
+
+| iteration_statement
+
+| jump_statement
+
+;
+
+ 
+
+labeled_statement推导出标签声明
+
+labeled_statement
+
+: IDENTIFIER ':' statement
+
+| CASE constant_expression ':' statement
+
+| DEFAULT ':' statement
+
+;
+
+ 
+
+expression_statement推导出表达式声明
+
+expression_statement
+
+: ';'
+
+| expression ';'
+
+;
+
+ 
+
+selection_statement推导出条件分支语句
+
+selection_statement
+
+: IF '(' expression ')' statement
+
+| IF '(' expression ')' statement ELSE statement
+
+| SWITCH '(' expression ')' statement
+
+;
+
+ 
+
+iteration_statement推导出循环语句
+
+iteration_statement
+
+: WHILE '(' expression ')' statement
+
+| DO statement WHILE '(' expression ')' ';'
+
+| FOR '(' expression_statement expression_statement ')' statement
+
+| FOR '(' expression_statement expression_statement expression ')' statement
+
+| FOR '(' declaration expression_statement ')' statement
+
+| FOR '(' declaration expression_statement expression ')' statement
+;
+
+ 
+
+jump_statement推导出跳转声明
+
+jump_statement
+: GOTO IDENTIFIER ';'
+
+| CONTINUE ';'
+
+| BREAK ';'
+
+| RETURN ';'
+
+| RETURN expression ';'
+
+;
+
+ 
+————————————————
+版权声明：本文为CSDN博主「施工中请绕行」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/xinghongduo/article/details/45366405
