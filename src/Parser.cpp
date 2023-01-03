@@ -739,7 +739,7 @@ void Parser::analyze(const std::vector<Node*>& inputs, const std::string& filena
                     int newS = giter->second.destState;
                     stateStack.push(newS);
                     //TODO:if_then_else Óï¾ä
-                    auto resultNode = new Node(rule->state.type,rule->state.type,false);
+                    auto resultNode = new Node(rule->state.type,"", false);
 
                     for (int i = 0; i < r; ++i) {
 						auto top = symbolStack.top();

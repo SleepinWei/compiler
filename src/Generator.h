@@ -10,7 +10,7 @@ class Node;
 class Generator {
 public:
 	static Generator generator;
-	Generator() { nextquad = QUAD_BEGIN; }
+	Generator() { nextquad = QUAD_BEGIN; tempCnt = 0; }
 	~Generator() = default;
 
 public:
@@ -20,9 +20,15 @@ public:
 	vector<Quad> quads;
 	const string QUAD_EMPTY = "-";
 
+	// temp
+	int tempCnt;
+	string newtemp();
+
 	//static Generator& Instance();
 
 	void analyze(const GrammarEntry* rule, Node* root);
 
 	void Statement(const GrammarEntry* rule, Node* root);
+
+	void Assignment(const GrammarEntry* rule, Node* root);
 };
