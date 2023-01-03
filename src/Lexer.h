@@ -147,8 +147,14 @@ public:
             // 
             token += s[pos];
             ++pos;
-
-            if (reservedWord.find(token) != reservedWord.end()) {
+            if (pos < s.length() && reservedWord.find(token + s[pos]) != reservedWord.end())
+            {
+                // found
+                token += s[pos];
+                ++pos;
+                inputs.push_back(new Node(reservedWord[token], token, true));
+            }
+            else if (reservedWord.find(token) != reservedWord.end()) {
                 // found
                 inputs.push_back(new Node(reservedWord[token],token,true));
             }

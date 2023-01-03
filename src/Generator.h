@@ -54,4 +54,8 @@ public:
 		}
 		//if(constTable.find())
 	}
+	void BoolTranslation(GrammarEntry* rule, Node* root)
+	{
+		;
+	}
 };
