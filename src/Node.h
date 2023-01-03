@@ -19,3 +19,10 @@ public:
 	bool isTerminal;
 	//GrammarEntry* entry;
 };
+
+struct Quad {
+	string op;
+	string arg1;
+	string arg2;
+	string dst;
+};

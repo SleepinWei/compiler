@@ -26,7 +26,7 @@ struct ConstInfo{
 
 class Generator {
 public:
-	Generator();
+	Generator() { nextquad = 100; }
 	~Generator() = default;
 
 public:
@@ -36,6 +36,9 @@ public:
 	//std::unordered_map<std::string, Information*> symbolTable;
 	int constCnt;
 	std::unordered_map<std::string, ConstInfo> constTable;
+
+	// quad
+	int nextquad;
 
 	void constTranslation(GrammarEntry* rule,Node* root) {
 		//auto id = root->left;
