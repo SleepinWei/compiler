@@ -41,6 +41,7 @@ public:
 	int nextquad;
 	const int QUAD_BEGIN = 100; 
 	vector<Quad> quads;
+	const string QUAD_EMPTY = "-";
 
 	void constTranslation(GrammarEntry* rule,Node* root) {
 		//auto id = root->left;
