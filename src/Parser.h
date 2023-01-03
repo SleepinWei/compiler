@@ -91,6 +91,9 @@ public:
             // not terminal
             return Symbol(s, false);
         }
+        else if (s == "@") {
+            return Symbol(s, true, true);
+        }
     }
 };
 

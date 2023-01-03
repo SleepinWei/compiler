@@ -26,7 +26,7 @@ struct ConstInfo{
 
 class Generator {
 public:
-	Generator() { nextquad = 100; }
+	Generator() { nextquad = QUAD_BEGIN; }
 	~Generator() = default;
 
 public:
@@ -39,6 +39,8 @@ public:
 
 	// quad
 	int nextquad;
+	const int QUAD_BEGIN = 100; 
+	vector<Quad> quads;
 
 	void constTranslation(GrammarEntry* rule,Node* root) {
 		//auto id = root->left;
