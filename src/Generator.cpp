@@ -93,6 +93,20 @@ void Generator::Statement(const GrammarEntry* rule, Node* root) {
 			quads.push_back({ "=",root->children[2]->place,QUAD_EMPTY,root->children[0]->place });
 		}
 	}
+	else if (rule->state.type == "direct_declarator") {
+		if (rule->symbols.size() == 1) {
+			// direct = identifier
+			root->place = root->children[0]->place;
+		}
+	}
+	else if (rule->state.type == "declarator") {
+		if (rule->symbols.size() == 1) {
+			root->place = root->children[0]->place;
+		}
+	}
+	else if (rule->state.type == "assignment_operator") {
+		root->place = root->children[0]->place;
+	}
 }
 void Generator::Assignment(const GrammarEntry* rule,Node* root) {
 	// 最高级为 assignment_expression
