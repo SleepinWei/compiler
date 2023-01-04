@@ -11,6 +11,7 @@ CONFIG -= app_bundle
 
 SOURCES += \
         mainwindow.cpp \
+        src/Generator.cpp \
         src/Parser.cpp \
         src/main.cpp \
         ui/AssetItem.cpp
@@ -22,6 +23,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     mainwindow.h \
+    src/Generator.h \
     src/Parser.h \
     src/component.h \
     ui/AssetItem.h

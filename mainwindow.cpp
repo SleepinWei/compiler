@@ -31,7 +31,7 @@ void MainWindow::loadGrammar()
     ifstream t("./source.txt");
     string s((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
     lexer->Preprocess(s);
-    lexer->analyze();
+//    lexer->analyze();
     lexer->print("./asset/lex.txt");
     std::cout << "Lex Analysis Done" << '\n';
     mParser->readGrammar("./grammar.txt");
@@ -56,11 +56,11 @@ void MainWindow::loadGrammar()
         ui->listWidget->removeItemWidget(itm);
         delete itm;
     }
-    ui->listWidget->addItem(new AssetItem("源程序", "./source.txt"));
-    ui->listWidget->addItem(new AssetItem("词法分析结果", "./asset/lex.txt"));
-    ui->listWidget->addItem(new AssetItem("文法产生式", "./asset/printed_grammar.txt"));
-    ui->listWidget->addItem(new AssetItem("FIRST集", "./asset/firstVN.txt"));
-    ui->listWidget->addItem(new AssetItem("项目集族", "./asset/cluster.txt"));
+//    ui->listWidget->addItem(new AssetItem("源程序", "./source.txt"));
+//    ui->listWidget->addItem(new AssetItem("词法分析结果", "./asset/lex.txt"));
+//    ui->listWidget->addItem(new AssetItem("文法产生式", "./asset/printed_grammar.txt"));
+//    ui->listWidget->addItem(new AssetItem("FIRST集", "./asset/firstVN.txt"));
+//    ui->listWidget->addItem(new AssetItem("项目集族", "./asset/cluster.txt"));
     ui->listWidget->addItem(new AssetItem("状态转移表", "./asset/table.txt"));
     ui->listWidget->addItem(new AssetItem("规约过程", "./asset/Regulation_process.txt"));
 

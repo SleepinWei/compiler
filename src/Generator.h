@@ -31,4 +31,10 @@ public:
 	void Statement(const GrammarEntry* rule, Node* root);
 
 	void Assignment(const GrammarEntry* rule, Node* root);
+
+	void Iteration(const GrammarEntry* rule, Node* root);
+
+	void Mquad(const GrammarEntry* rule, Node* root);
+
+	void Selection(const GrammarEntry* rule, Node* root);
 };
