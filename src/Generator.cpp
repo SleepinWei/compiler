@@ -54,10 +54,9 @@ void Generator::Statement(const GrammarEntry* rule, Node* root) {
 	if (rule->state.type == "type_specifier") {
 		root->var_type = rule->symbols[0].type;
 	}
-	else if (rule->state.type == "declaration_specifiers" && rule->symbols[0].type == "type_specifier") {
-		auto child = root->children[0];
-		if (child->place == "type_specifier") {
-			root->var_type = child->var_type;
+	else if (rule->state.type == "declaration_specifiers"){
+		if (root->children[0]->type == "type_specifier") {
+			root->var_type = root->children[0]->var_type;
 		}
 	}
 	else if (rule->state.type == "declaration") {
@@ -67,12 +66,31 @@ void Generator::Statement(const GrammarEntry* rule, Node* root) {
 		}
 		else {
 			// declaration = declaration_specifers init_declarator_list ; 
-			//root->
+
+		}
+	}
+	else if (rule->state.type == "init_declarator_list") {
+		if (rule->symbols.size() == 1) {
+			//root-> type
 		}
 	}
 	else if (rule->state.type == "initializer") {
 		if (rule->symbols.size() == 1) {
-			root->place = root->children[0]->type;
+			root->place = root->children[0]->place;
+		}
+		else {
+			// initializer = { init_list } 
+		}
+	}
+	else if (rule->state.type == "init_declarator") {
+		if (rule->symbols.size() == 1) {
+			//init_declarator = declarator
+			root->place = root->children[0]->place;
+		}
+		else {
+			// init_declarator = declarator = initialzier
+			root->place = root->children[0]->place;
+			quads.push_back({ "=",root->children[2]->place,QUAD_EMPTY,root->children[0]->place });
 		}
 	}
 }
