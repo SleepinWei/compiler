@@ -52,6 +52,7 @@ int main(int argc, char *argv[])
     parser.analyze(lex.inputs,"./asset/output.txt");
     parser.printTree("./asset/tree.dot");
 
+    generator.output("./asset/quads.txt");
 
     return 0;
 #endif

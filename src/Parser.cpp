@@ -747,7 +747,7 @@ void Parser::analyze(const std::vector<Node*>& inputs, const std::string& filena
 
 						auto topNode = nodeStack.top();
 						nodeStack.pop();
-						resultNode->children.push_back(topNode);
+						resultNode->children.insert(resultNode->children.begin(),topNode);
                     }
                     symbolStack.push(A);
                     nodeStack.push(resultNode);

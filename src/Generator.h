@@ -31,4 +31,6 @@ public:
 	void Statement(const GrammarEntry* rule, Node* root);
 
 	void Assignment(const GrammarEntry* rule, Node* root);
+
+	void output(const string& filename);
 };

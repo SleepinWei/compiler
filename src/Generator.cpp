@@ -24,9 +24,13 @@ void Generator::Statement(const GrammarEntry* rule, Node* root) {
 		}
 	}
 	else if (rule->state.type == "declaration") {
-		auto child = root->children[0];
-		if (child->place == "declaration_specifiers") {
-			root->var_type = child->var_type;
+		if (rule->symbols.size() == 1) {
+			// declaration = declaration_specifiers ; 
+			root->var_type = root->children[0]->var_type;
+		}
+		else {
+			// declaration = declaration_specifers init_declarator_list ; 
+			//root->
 		}
 	}
 }
@@ -155,5 +159,13 @@ void Generator::Assignment(const GrammarEntry* rule,Node* root) {
 		else {
 			std::cout << "Primary_expression use other rules" << '\n';
 		}
+	}
+}
+
+void Generator::output(const string& filename) {
+	std::ofstream fout(filename);
+
+	for (auto quad : quads) {
+		fout << "(" << quad.op << " ," << quad.arg1 << " ," << quad.arg2 << " ," << quad.dst << ")\n";
 	}
 }
