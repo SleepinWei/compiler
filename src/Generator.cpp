@@ -5,12 +5,46 @@
 void Generator::analyze(const GrammarEntry* rule, Node* root) {
 	Statement(rule, root);
 	Assignment(rule, root);
+	BoolExpression(rule, root);
 }
 
 string Generator::newtemp() {
 	string temp = "T" + std::to_string(tempCnt);
 	++tempCnt;
 	return temp;
+}
+
+void Generator::BoolExpression(const GrammarEntry* rule, Node* root)
+{
+	auto state = rule->state;
+	auto symbols = rule->symbols;
+	if (state.type == "m_quad")
+	{
+		;// root->quad = nextquad();
+	}
+	else if (root->children.size() == 3)
+	{
+		if (state.type == "relational_expression" && symbols[0].type == "relational_expression" && symbols[2].type == "shift_expression")
+		{	
+			root->place = newtemp();
+			quads.push_back(Quad(symbols[1].type, root->children[0]->place, root->children[2]->place, root->place));
+		}
+		
+	}
+	else if (root->children.size() == 4)
+	{
+		Node* e1 = root->children[0], * e2 = root->children[3], * m = root->children[1];
+		if (state.type == "logical_and_expression" && symbols[1].type == "AND_OP")
+		{
+			root->place = newtemp();
+			quads.push_back(Quad("AND_OP", e1->place, e2->place, root->place));
+		}
+		else if (state.type == "logical_or_expression" && symbols[1].type == "OR_OP")
+		{
+			root->place = newtemp();
+			quads.push_back(Quad("OR_OP", e1->place, e2->place, root->place));
+		}
+	}
 }
 
 void Generator::Statement(const GrammarEntry* rule, Node* root) {

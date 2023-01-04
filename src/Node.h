@@ -27,4 +27,11 @@ struct Quad {
 	string arg1;
 	string arg2;
 	string dst;
+	Quad(string op, string arg1, string arg2, string dst)
+	{
+		this->op = op;
+		this->arg1 = arg1;
+		this->arg2 = arg2;
+		this->dst = dst;
+	}
 };

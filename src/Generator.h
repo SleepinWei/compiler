@@ -10,12 +10,12 @@ class Node;
 class Generator {
 public:
 	static Generator generator;
-	Generator() { nextquad = QUAD_BEGIN; tempCnt = 0; }
+	Generator() { tempCnt = 0; }
 	~Generator() = default;
 
 public:
 	// quad
-	int nextquad;
+	int nextquad() { return quads.size() + QUAD_BEGIN; }
 	const int QUAD_BEGIN = 100; 
 	vector<Quad> quads;
 	const string QUAD_EMPTY = "-";
@@ -23,7 +23,13 @@ public:
 	// temp
 	int tempCnt;
 	string newtemp();
-
+	void backpatch(std::vector <int>& list_, int q)
+	{
+		for (auto& i : list_)
+		{
+			quads[i - QUAD_BEGIN].dst = std::to_string(q);
+		}
+	}
 	//static Generator& Instance();
 
 	void analyze(const GrammarEntry* rule, Node* root);
@@ -31,6 +37,8 @@ public:
 	void Statement(const GrammarEntry* rule, Node* root);
 
 	void Assignment(const GrammarEntry* rule, Node* root);
+
+	void BoolExpression(const GrammarEntry* rule, Node* root);
 
 	void output(const string& filename);
 };
