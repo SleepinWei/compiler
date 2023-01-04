@@ -773,9 +773,15 @@ void Parser::analyze(const std::vector<Node*>& inputs, const std::string& filena
 }
 
 void outputTree(std::ofstream& f, Node* root) {
-    f << (int)root << "[label=\"" << root->place;
+    f << (int)root << "[label=\"";
+    if (root->type != "") {
+        f << root->type << "\\n";
+    }
+    if (root->place != "") {
+        f << "place:" << root->place << "\\n";
+    }
     if (root->var_type != "") {
-        f << ' ' << "var_type:" << root->var_type << ' ';
+        f << "var_type:" << root->var_type << "";
     }
     f << "\"];\n";
     for (auto& child : root->children) {

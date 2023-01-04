@@ -70,10 +70,24 @@ void Generator::Statement(const GrammarEntry* rule, Node* root) {
 			//root->
 		}
 	}
+	else if (rule->state.type == "initializer") {
+		if (rule->symbols.size() == 1) {
+			root->place = root->children[0]->type;
+		}
+	}
 }
 void Generator::Assignment(const GrammarEntry* rule,Node* root) {
 	// 最高级为 assignment_expression
-	if (rule->state.type == "assignment_expression") {
+	if (rule->state.type == "expression") {
+		if (rule->symbols.size() == 1) {
+			// exp = assign_exp 
+			root->place = root->children[0]->place;
+		}
+		else {
+			// exp = exp , assign_exp 
+		}
+	}
+	else if (rule->state.type == "assignment_expression") {
 		if (rule->symbols.size() == 1) {
 			// assign = conditional 
 			root->place = root->children[0]->place;
@@ -81,7 +95,7 @@ void Generator::Assignment(const GrammarEntry* rule,Node* root) {
 		else {
 			// assign = unary assign_op assign_expression
 			root->place = root->children[0]->place;
-			quads.push_back({ root->children[1]->place,root->place,root->children[2]->place,root->children[3]->place });
+			quads.push_back({ root->children[1]->place,root->place,root->children[2]->place,root->place });
 		}
 	}
 	else if (rule->state.type == "inclusive_or_expression" || rule->state.type == "logical_and_expression" || rule->state.type == "logicial_and_expression"
@@ -243,11 +257,11 @@ void Generator::Mquad(const GrammarEntry* rule, Node* root) {
 	}
 	if (rule->state.type == "m_quad_jz") {
 		root->place = std::to_string(nextquad());
-		quads.push_back({ "jz", QUAD_EMPTY, QUAD_EMPTY, 0 });
+		quads.push_back({ "jz", QUAD_EMPTY, QUAD_EMPTY, ""});
 	}
 	if (rule->state.type == "m_quad_j") {
 		root->place = std::to_string(nextquad());
-		quads.push_back({ "j", QUAD_EMPTY, QUAD_EMPTY, 0 });
+		quads.push_back({ "j", QUAD_EMPTY, QUAD_EMPTY, ""});
 	}
 
 }
