@@ -76,3 +76,5 @@ x64/
 *.zip
 *.docx
 *.pdf
+
+.vscode

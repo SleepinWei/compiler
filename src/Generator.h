@@ -41,4 +41,9 @@ public:
 	void BoolExpression(const GrammarEntry* rule, Node* root);
 
 	void output(const string& filename);
+	void Iteration(const GrammarEntry* rule, Node* root);
+
+	void Mquad(const GrammarEntry* rule, Node* root);
+
+	void Selection(const GrammarEntry* rule, Node* root);
 };

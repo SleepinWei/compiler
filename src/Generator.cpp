@@ -6,6 +6,9 @@ void Generator::analyze(const GrammarEntry* rule, Node* root) {
 	Statement(rule, root);
 	Assignment(rule, root);
 	BoolExpression(rule, root);
+	Iteration(rule, root);
+	Mquad(rule, root);
+	Selection(rule, root);
 }
 
 string Generator::newtemp() {
@@ -203,3 +206,71 @@ void Generator::output(const string& filename) {
 		fout << "(" << quad.op << " ," << quad.arg1 << " ," << quad.arg2 << " ," << quad.dst << ")\n";
 	}
 }
+void Generator::Iteration(const GrammarEntry* rule, Node* root) {
+	if (rule->state.type != "iteration_statement")
+		return;
+	if (rule->symbols[0].type == "WHILE") {
+		// WHILE m_quad ( expression ) m_quad_jz statement
+		quads.push_back({ "j", QUAD_EMPTY, QUAD_EMPTY, root->children[1]->place });
+		int sbegin = std::stoi(root->children[5]->place) - QUAD_BEGIN;
+		quads[sbegin].arg1 = root->children[3]->place;
+		quads[sbegin].dst = std::to_string(nextquad());
+	}
+	else if (rule->symbols[0].type == "DO") {
+		// DO m_quad statement WHILE ( expression ) ;
+		quads.push_back({ "jnz", root->children[5]->place, QUAD_EMPTY, root->children[1]->place });
+	}
+	else if (rule->symbols[0].type == "FOR" && rule->symbols.size() == 11) {
+		// FOR ( expression_statement m_quad expression_statement m_quad_jz m_quad_j expression ) m_quad_j statement
+		int pupdate = std::stoi(root->children[6]->place) + 1;
+		quads.push_back({ "j", QUAD_EMPTY, QUAD_EMPTY, std::to_string(pupdate) });
+		int pexpjz = std::stoi(root->children[5]->place) - QUAD_BEGIN;
+		int pstmt = std::stoi(root->children[9]->place) + 1;
+		quads[pexpjz].arg1 = root->children[4]->place;
+		quads[pexpjz].dst = std::to_string(nextquad());
+		quads[pexpjz + 1].dst = std::to_string(pstmt);
+		int pupdj = std::stoi(root->children[9]->place) - QUAD_BEGIN;
+		quads[pupdj].dst = root->children[3]->place;
+	}
+	else {
+		std::cout << "iteration_statement use other rules" << '\n';
+	}
+}
+
+void Generator::Mquad(const GrammarEntry* rule, Node* root) {
+	if (rule->state.type == "m_quad") {
+		root->place = std::to_string(nextquad());
+	}
+	if (rule->state.type == "m_quad_jz") {
+		root->place = std::to_string(nextquad());
+		quads.push_back({ "jz", QUAD_EMPTY, QUAD_EMPTY, 0 });
+	}
+	if (rule->state.type == "m_quad_j") {
+		root->place = std::to_string(nextquad());
+		quads.push_back({ "j", QUAD_EMPTY, QUAD_EMPTY, 0 });
+	}
+
+}
+
+void Generator::Selection(const GrammarEntry* rule, Node* root) {
+	if (rule->state.type != "selection_statement")
+		return;
+	if (rule->symbols[0].type == "IF" && rule->symbols.size() == 6) {
+		// IF ( expression ) m_quad_jz statement
+		int pjz = std::stoi(root->children[4]->place) - QUAD_BEGIN;
+		quads[pjz].arg1 = root->children[2]->place;
+		quads[pjz].dst = std::to_string(nextquad());
+	}
+	else if (rule->symbols[0].type == "IF" && rule->symbols.size() == 2) {
+		// IF ( expression ) m_quad_jz statement m_quad_j ELSE m_quad statement
+		int pjz = std::stoi(root->children[4]->place) - QUAD_BEGIN;
+		quads[pjz].arg1 = root->children[2]->place;
+		quads[pjz].dst = root->children[8]->place;
+		int pj = std::stoi(root->children[6]->place) - QUAD_BEGIN;
+		quads[pj].dst = std::to_string(nextquad());
+	}
+	else {
+		std::cout << "selection_statement use other rules\n";
+	}
+}
+
