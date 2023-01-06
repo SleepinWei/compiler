@@ -4,9 +4,9 @@ class GrammarEntry;
 
 class Node {
 public:
-	Node() { isTerminal = false; };
-	Node(string type_, string place_,bool isTerminal_):type(type_),place(place_),isTerminal(isTerminal_) {
-		
+	Node() { isTerminal = false; width = 0; };
+	Node(string type_, string place_,bool isTerminal_,int width_ = 0):type(type_),place(place_),isTerminal(isTerminal_) {
+		width = width_;
 	}
 	~Node() {};
 
@@ -16,6 +16,7 @@ public:
 	string code;
 	string place; // actual value: 123 
 	string type; // corresponding symbol in grammar : NUM
+	int width;
 
 	string var_type;
 	bool isTerminal;
@@ -35,3 +36,32 @@ struct Quad {
 		this->dst = dst;
 	}
 };
+
+struct SymbolEntry{
+	string type;
+	int offset;
+};
+
+struct SymbolTable{
+	SymbolTable* previous = nullptr;
+	int offset = 0;
+	int width = 0;
+	std::map<string,SymbolEntry> symbols; // (name, type, offset)
+};
+
+SymbolTable* mktable(SymbolTable* previous) {
+	auto newTable = new SymbolTable;
+	newTable->previous = previous;
+}
+
+void enter(SymbolTable* table, string name, string type, int offset) {
+	table->symbols.insert({ name, {type,offset} });
+}
+
+void addWidth(SymbolTable* table,int width){
+	table->width += width;
+}
+
+SymbolTable* enterproc(SymbolTable* table) {
+
+}
