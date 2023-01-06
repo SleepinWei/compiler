@@ -188,6 +188,7 @@ void Generator::Assignment(const GrammarEntry* rule,Node* root) {
 		if (rule->symbols.size() == 1) {
 			// shift = add 
 			root->place = root->children[0]->place;
+			root->var_type = root->children[0]->var_type;
 		}
 		else {
 			std::cout << "Shift expression use other rules" << "\n";
@@ -270,7 +271,6 @@ void Generator::Assignment(const GrammarEntry* rule,Node* root) {
 		if (rule->symbols[0].type == "IDENTIFIER"){
 			root->place = root->children[0]->place;
 			// 从表中查询类型
-			//root->var_type = root->children[0]->var_type;
 			//TODO:
 		}
 		else if(rule->symbols[0].type == "CONSTANT") {

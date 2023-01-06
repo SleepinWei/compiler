@@ -1,6 +1,7 @@
 #pragma once
 #include"component.h"
 class GrammarEntry;
+#include<map>
 
 class Node {
 public:
@@ -49,19 +50,21 @@ struct SymbolTable{
 	std::map<string,SymbolEntry> symbols; // (name, type, offset)
 };
 
-SymbolTable* mktable(SymbolTable* previous) {
-	auto newTable = new SymbolTable;
-	newTable->previous = previous;
-}
-
-void enter(SymbolTable* table, string name, string type, int offset) {
-	table->symbols.insert({ name, {type,offset} });
-}
-
-void addWidth(SymbolTable* table,int width){
-	table->width += width;
-}
-
-SymbolTable* enterproc(SymbolTable* table) {
-
-}
+//SymbolTable* mktable(SymbolTable* previous) {
+//	auto newTable = new SymbolTable;
+//	newTable->previous = previous;
+//	return newTable;
+//}
+//
+//void enter(SymbolTable* table, string name, string type, int offset) {
+//	table->symbols.insert({ name, {type,offset} });
+//}
+//
+//void addWidth(SymbolTable* table,int width){
+//	table->width += width;
+//}
+//
+//SymbolTable* enterproc(SymbolTable* table) {
+//	// TODO
+//	return nullptr;
+//}

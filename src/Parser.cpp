@@ -7,6 +7,7 @@
 #include <algorithm>
 #include<queue>
 #include"Generator.h"
+#include"Node.h"
 
 using std::string;
 extern Generator generator;
@@ -781,7 +782,10 @@ void outputTree(std::ofstream& f, Node* root) {
         f << "place:" << root->place << "\\n";
     }
     if (root->var_type != "") {
-        f << "var_type:" << root->var_type << "";
+        f << "var_type:" << root->var_type << "\\n";
+    }
+    if (root->width != 0) {
+        f << "width:" << root->width << "";
     }
     f << "\"];\n";
     for (auto& child : root->children) {
