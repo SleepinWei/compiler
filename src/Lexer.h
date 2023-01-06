@@ -141,7 +141,16 @@ public:
 				}
 				++pos;
 			}
-            inputs.push_back(new Node(NUM,token,true));
+            auto newNode = new Node(NUM, token, true);
+            if (dotCnt == 0) {
+                newNode->width = 4;
+                newNode->var_type = "INT";
+            }
+            else if (dotCnt ==1){
+                newNode->width = 8;
+                newNode->var_type = "DOUBLE";
+            }
+            inputs.push_back(newNode);
         }
         else {
             // 

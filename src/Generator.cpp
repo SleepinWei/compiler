@@ -53,10 +53,12 @@ void Generator::BoolExpression(const GrammarEntry* rule, Node* root)
 void Generator::Statement(const GrammarEntry* rule, Node* root) {
 	if (rule->state.type == "type_specifier") {
 		root->var_type = rule->symbols[0].type;
+		root->width = root->children[0]->width;
 	}
 	else if (rule->state.type == "declaration_specifiers"){
 		if (root->children[0]->type == "type_specifier") {
 			root->var_type = root->children[0]->var_type;
+			root->width = root->children[0]->width;
 		}
 	}
 	else if (rule->state.type == "declaration") {
@@ -66,12 +68,13 @@ void Generator::Statement(const GrammarEntry* rule, Node* root) {
 		}
 		else {
 			// declaration = declaration_specifers init_declarator_list ; 
-
+			//TODO:	
 		}
 	}
 	else if (rule->state.type == "init_declarator_list") {
 		if (rule->symbols.size() == 1) {
 			//root-> type
+			root->place = root->children[0]->place;
 		}
 	}
 	else if (rule->state.type == "initializer") {
@@ -114,6 +117,7 @@ void Generator::Assignment(const GrammarEntry* rule,Node* root) {
 		if (rule->symbols.size() == 1) {
 			// exp = assign_exp 
 			root->place = root->children[0]->place;
+			root->var_type = root->children[0]->var_type;
 		}
 		else {
 			// exp = exp , assign_exp 
@@ -123,16 +127,19 @@ void Generator::Assignment(const GrammarEntry* rule,Node* root) {
 		if (rule->symbols.size() == 1) {
 			// assign = conditional 
 			root->place = root->children[0]->place;
+			root->var_type = root->children[0]->var_type;
 		}
 		else {
 			// assign = unary assign_op assign_expression
 			root->place = root->children[0]->place;
-			quads.push_back({ root->children[1]->place,root->place,root->children[2]->place,root->place });
+			quads.push_back({ root->children[1]->place,root->children[2]->place,QUAD_EMPTY,root->place });
 		}
 	}
 	else if (rule->state.type == "inclusive_or_expression" || rule->state.type == "logical_and_expression" || rule->state.type == "logicial_and_expression"
 		|| rule->state.type == "logical_or_expression" || rule->state.type == "conditional_expression" ) {
 		root->place = root->children[0]->place;
+		root->var_type = root->children[0]->var_type;
+
 		if (rule->symbols.size() > 1) {
 			std::cout << "use other rules\n";
 		}
@@ -141,6 +148,7 @@ void Generator::Assignment(const GrammarEntry* rule,Node* root) {
 		if (rule->symbols.size() == 1) {
 			// shift = add 
 			root->place = root->children[0]->place;
+			root->var_type = root->children[0]->var_type;
 		}
 		else {
 			std::cout << "Exclusive_or_expression use other rules" << "\n";
@@ -150,6 +158,7 @@ void Generator::Assignment(const GrammarEntry* rule,Node* root) {
 		if (rule->symbols.size() == 1) {
 			// and = equality
 			root->place = root->children[0]->place;
+			root->var_type = root->children[0]->var_type;
 		}
 		else {
 			std::cout << "And expression use other rules" << "\n";
@@ -159,6 +168,7 @@ void Generator::Assignment(const GrammarEntry* rule,Node* root) {
 		if (rule->symbols.size() == 1) {
 			// equality = relational
 			root->place = root->children[0]->place;
+			root->var_type = root->children[0]->var_type;
 		}
 		else {
 			std::cout << "equality expression use other rules" << "\n";
@@ -168,6 +178,7 @@ void Generator::Assignment(const GrammarEntry* rule,Node* root) {
 		if (rule->symbols.size() == 1) {
 			// relational = shift
 			root->place = root->children[0]->place;
+			root->var_type = root->children[0]->var_type;
 		}
 		else {
 			std::cout << "Relational expression use other rules" << "\n";
@@ -186,10 +197,17 @@ void Generator::Assignment(const GrammarEntry* rule,Node* root) {
 		if (rule->symbols.size() == 3) {
 			// additive_expression = additive_expression +/- multiplicative_expression
 			root->place = newtemp();
+			if (root->children[0]->var_type == "DOUBLE" || root->children[2]->var_type == "DOUBLE") {
+				root->var_type = "DOUBLE";
+			}
+			else {
+				root->var_type = "INT";
+			}
 			quads.push_back({ root->children[1]->place,root->children[0]->place,root->children[2]->place,root->place });
 		}
 		else if (rule->symbols.size() == 1) {
 			// add = mult
+			root->var_type = root->children[0]->var_type;
 			root->place = root->children[0]->place;
 		}
 	}
@@ -197,10 +215,17 @@ void Generator::Assignment(const GrammarEntry* rule,Node* root) {
 		if (rule->symbols.size() == 1) {
 			// mult = cast
 			root->place = root->children[0]->place;
+			root->var_type = root->children[0]->var_type;
 		}
 		else {
 			// mult = mult * cast
 			root->place = newtemp();
+			if (root->children[0]->var_type == "DOUBLE" || root->children[2]->var_type == "DOUBLE") {
+				root->var_type = "DOUBLE";
+			}
+			else {
+				root->var_type = "INT";
+			}
 			quads.push_back({ root->children[1]->place,root->children[0]->place,root->children[2]->place,root->place });
 		}
 	}
@@ -208,16 +233,20 @@ void Generator::Assignment(const GrammarEntry* rule,Node* root) {
 		if (rule->symbols.size() == 1) {
 			// cast  = unary 
 			root->place = root->children[0]->place;
+			root->var_type = root->children[0]->var_type;
 		}
 		else {
+			//cast = (typename) cast_expression
 			root->place = newtemp();
 			quads.push_back({ "type_cast",root->children[1]->place,root->children[3]->place,root->place });
+			root->var_type = root->children[1]->place;
 		}
 	}
 	else if (rule->state.type == "unary_expression") {
 		if (rule->symbols.size() == 1) {
 			// unary = postfix 
 			root->place = root->children[0]->place;
+			root->var_type = root->children[0]->var_type;
 		}
 		else {
 			std::cout << "Unary_expression use other rules" << '\n';
@@ -225,19 +254,28 @@ void Generator::Assignment(const GrammarEntry* rule,Node* root) {
 	}
 	else if (rule->state.type == "unary_operator") {
 		root->place = root->children[0]->place;
+		root->var_type = root->children[0]->var_type;
 	}
 	else if (rule->state.type == "postfix_expression") {
 		if (rule->symbols.size() == 1) {
 			// postfix = primary 
 			root->place = root->children[0]->place;
+			root->var_type = root->children[0]->var_type;
 		}
 		else {
 			std::cout << "Postfix_expression use other rules" << '\n';
 		}
 	}
 	else if (rule->state.type == "primary_expression") {
-		if (rule->symbols[0].type == "IDENTIFIER" || rule->symbols[0].type == "CONSTANT") {
+		if (rule->symbols[0].type == "IDENTIFIER"){
 			root->place = root->children[0]->place;
+			// 从表中查询类型
+			//root->var_type = root->children[0]->var_type;
+			//TODO:
+		}
+		else if(rule->symbols[0].type == "CONSTANT") {
+			root->place = root->children[0]->place;
+			root->var_type = root->children[0]->var_type;
 		}
 		else {
 			std::cout << "Primary_expression use other rules" << '\n';
