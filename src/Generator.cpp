@@ -326,7 +326,7 @@ void Generator::output(const string& filename) {
 
 	for (int i = 0; i < quads.size(); ++i) {
 		const auto& quad = quads[i];
-		fout << "(" << i<<")" << " : (" << quad.op << " ," << quad.arg1 << " ," << quad.arg2 << " ," << quad.dst << ")\n";
+        fout << "(" << i + 100<<")" << " : (" << quad.op << " ," << quad.arg1 << " ," << quad.arg2 << " ," << quad.dst << ")\n";
 	}
 
 	fout << "-----------------------\n";

@@ -12,11 +12,12 @@ CONFIG -= app_bundle
 SOURCES += \
         mainwindow.cpp \
         src/Generator.cpp \
-        src/LexicalAnalyzer.cpp \
         src/Node.cpp \
         src/Parser.cpp \
         src/main.cpp \
         ui/AssetItem.cpp
+
+QMAKE_CXXFLAGS += -fpermissive
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

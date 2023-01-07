@@ -1,5 +1,0 @@
-Action Table
-Move: read INT, push state 11
-Conclude: use rule type_specifier := INT 
-Conclude: use rule declaration_specifiers := type_specifier 
-Move: read IDENTIFIER, push state 52

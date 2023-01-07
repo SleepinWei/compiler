@@ -26,6 +26,17 @@ Conclude: use rule declaration_specifiers := type_specifier
 Move: read IDENTIFIER, push state 96
 Conclude: use rule direct_declarator := IDENTIFIER 
 Conclude: use rule declarator := direct_declarator 
+Conclude: use rule init_declarator := declarator 
+Conclude: use rule init_declarator_list := init_declarator 
+Move: read ;, push state 658
+Conclude: use rule declaration := declaration_specifiers init_declarator_list ; 
+Conclude: use rule declaration_list := declaration_list declaration 
+Move: read INT, push state 11
+Conclude: use rule type_specifier := INT 
+Conclude: use rule declaration_specifiers := type_specifier 
+Move: read IDENTIFIER, push state 96
+Conclude: use rule direct_declarator := IDENTIFIER 
+Conclude: use rule declarator := direct_declarator 
 Move: read =, push state 84
 Move: read CONSTANT, push state 110
 Conclude: use rule primary_expression := CONSTANT 
@@ -34,6 +45,29 @@ Conclude: use rule unary_expression := postfix_expression
 Conclude: use rule cast_expression := unary_expression 
 Conclude: use rule multiplicative_expression := cast_expression 
 Conclude: use rule additive_expression := multiplicative_expression 
+Move: read +, push state 348
+Move: read CONSTANT, push state 644
+Conclude: use rule primary_expression := CONSTANT 
+Conclude: use rule postfix_expression := primary_expression 
+Conclude: use rule unary_expression := postfix_expression 
+Conclude: use rule cast_expression := unary_expression 
+Conclude: use rule multiplicative_expression := cast_expression 
+Move: read *, push state 366
+Move: read CONSTANT, push state 644
+Conclude: use rule primary_expression := CONSTANT 
+Conclude: use rule postfix_expression := primary_expression 
+Conclude: use rule unary_expression := postfix_expression 
+Conclude: use rule cast_expression := unary_expression 
+Conclude: use rule multiplicative_expression := multiplicative_expression * cast_expression 
+Conclude: use rule additive_expression := additive_expression + multiplicative_expression 
+Move: read +, push state 348
+Move: read CONSTANT, push state 644
+Conclude: use rule primary_expression := CONSTANT 
+Conclude: use rule postfix_expression := primary_expression 
+Conclude: use rule unary_expression := postfix_expression 
+Conclude: use rule cast_expression := unary_expression 
+Conclude: use rule multiplicative_expression := cast_expression 
+Conclude: use rule additive_expression := additive_expression + multiplicative_expression 
 Conclude: use rule shift_expression := additive_expression 
 Conclude: use rule relational_expression := shift_expression 
 Conclude: use rule equality_expression := relational_expression 
@@ -50,58 +84,6 @@ Conclude: use rule init_declarator_list := init_declarator
 Move: read ;, push state 658
 Conclude: use rule declaration := declaration_specifiers init_declarator_list ; 
 Conclude: use rule declaration_list := declaration_list declaration 
-Move: read IDENTIFIER, push state 117
-Conclude: use rule primary_expression := IDENTIFIER 
-Conclude: use rule postfix_expression := primary_expression 
-Conclude: use rule unary_expression := postfix_expression 
-Move: read =, push state 382
-Conclude: use rule assignment_operator := = 
-Move: read IDENTIFIER, push state 246
-Conclude: use rule primary_expression := IDENTIFIER 
-Conclude: use rule postfix_expression := primary_expression 
-Conclude: use rule unary_expression := postfix_expression 
-Conclude: use rule cast_expression := unary_expression 
-Conclude: use rule multiplicative_expression := cast_expression 
-Conclude: use rule additive_expression := multiplicative_expression 
-Move: read +, push state 348
-Move: read CONSTANT, push state 644
-Conclude: use rule primary_expression := CONSTANT 
-Conclude: use rule postfix_expression := primary_expression 
-Conclude: use rule unary_expression := postfix_expression 
-Conclude: use rule cast_expression := unary_expression 
-Conclude: use rule multiplicative_expression := cast_expression 
-Conclude: use rule additive_expression := additive_expression + multiplicative_expression 
-Move: read +, push state 348
-Move: read CONSTANT, push state 644
-Conclude: use rule primary_expression := CONSTANT 
-Conclude: use rule postfix_expression := primary_expression 
-Conclude: use rule unary_expression := postfix_expression 
-Conclude: use rule cast_expression := unary_expression 
-Conclude: use rule multiplicative_expression := cast_expression 
-Move: read *, push state 366
-Move: read CONSTANT, push state 644
-Conclude: use rule primary_expression := CONSTANT 
-Conclude: use rule postfix_expression := primary_expression 
-Conclude: use rule unary_expression := postfix_expression 
-Conclude: use rule cast_expression := unary_expression 
-Conclude: use rule multiplicative_expression := multiplicative_expression * cast_expression 
-Conclude: use rule additive_expression := additive_expression + multiplicative_expression 
-Conclude: use rule shift_expression := additive_expression 
-Conclude: use rule relational_expression := shift_expression 
-Conclude: use rule equality_expression := relational_expression 
-Conclude: use rule and_expression := equality_expression 
-Conclude: use rule exclusive_or_expression := and_expression 
-Conclude: use rule inclusive_or_expression := exclusive_or_expression 
-Conclude: use rule logical_and_expression := inclusive_or_expression 
-Conclude: use rule logical_or_expression := logical_and_expression 
-Conclude: use rule conditional_expression := logical_or_expression 
-Conclude: use rule assignment_expression := conditional_expression 
-Conclude: use rule assignment_expression := unary_expression assignment_operator assignment_expression 
-Conclude: use rule expression := assignment_expression 
-Move: read ;, push state 360
-Conclude: use rule expression_statement := expression ; 
-Conclude: use rule statement := expression_statement 
-Conclude: use rule statement_list := statement 
 Move: read WHILE, push state 124
 Conclude: use rule m_quad := @ 
 Move: read (, push state 642
@@ -136,13 +118,126 @@ Conclude: use rule expression := assignment_expression
 Move: read ), push state 1204
 Conclude: use rule m_quad_jz := @ 
 Move: read {, push state 154
-Move: read INT, push state 11
-Conclude: use rule type_specifier := INT 
-Conclude: use rule declaration_specifiers := type_specifier 
-Move: read IDENTIFIER, push state 96
-Conclude: use rule direct_declarator := IDENTIFIER 
-Conclude: use rule declarator := direct_declarator 
-Move: read =, push state 84
+Move: read IDENTIFIER, push state 117
+Conclude: use rule primary_expression := IDENTIFIER 
+Conclude: use rule postfix_expression := primary_expression 
+Conclude: use rule unary_expression := postfix_expression 
+Move: read =, push state 382
+Conclude: use rule assignment_operator := = 
+Move: read IDENTIFIER, push state 246
+Conclude: use rule primary_expression := IDENTIFIER 
+Conclude: use rule postfix_expression := primary_expression 
+Conclude: use rule unary_expression := postfix_expression 
+Conclude: use rule cast_expression := unary_expression 
+Conclude: use rule multiplicative_expression := cast_expression 
+Conclude: use rule additive_expression := multiplicative_expression 
+Move: read +, push state 348
+Move: read CONSTANT, push state 644
+Conclude: use rule primary_expression := CONSTANT 
+Conclude: use rule postfix_expression := primary_expression 
+Conclude: use rule unary_expression := postfix_expression 
+Conclude: use rule cast_expression := unary_expression 
+Conclude: use rule multiplicative_expression := cast_expression 
+Conclude: use rule additive_expression := additive_expression + multiplicative_expression 
+Conclude: use rule shift_expression := additive_expression 
+Conclude: use rule relational_expression := shift_expression 
+Conclude: use rule equality_expression := relational_expression 
+Conclude: use rule and_expression := equality_expression 
+Conclude: use rule exclusive_or_expression := and_expression 
+Conclude: use rule inclusive_or_expression := exclusive_or_expression 
+Conclude: use rule logical_and_expression := inclusive_or_expression 
+Conclude: use rule logical_or_expression := logical_and_expression 
+Conclude: use rule conditional_expression := logical_or_expression 
+Conclude: use rule assignment_expression := conditional_expression 
+Conclude: use rule assignment_expression := unary_expression assignment_operator assignment_expression 
+Conclude: use rule expression := assignment_expression 
+Move: read ;, push state 360
+Conclude: use rule expression_statement := expression ; 
+Conclude: use rule statement := expression_statement 
+Conclude: use rule statement_list := statement 
+Move: read }, push state 734
+Conclude: use rule compound_statement := { statement_list } 
+Conclude: use rule statement := compound_statement 
+Conclude: use rule iteration_statement := WHILE m_quad ( expression ) m_quad_jz statement 
+Conclude: use rule statement := iteration_statement 
+Conclude: use rule statement_list := statement 
+Move: read IF, push state 118
+Move: read (, push state 340
+Move: read IDENTIFIER, push state 270
+Conclude: use rule primary_expression := IDENTIFIER 
+Conclude: use rule postfix_expression := primary_expression 
+Conclude: use rule unary_expression := postfix_expression 
+Conclude: use rule cast_expression := unary_expression 
+Conclude: use rule multiplicative_expression := cast_expression 
+Conclude: use rule additive_expression := multiplicative_expression 
+Conclude: use rule shift_expression := additive_expression 
+Conclude: use rule relational_expression := shift_expression 
+Move: read >, push state 556
+Move: read CONSTANT, push state 864
+Conclude: use rule primary_expression := CONSTANT 
+Conclude: use rule postfix_expression := primary_expression 
+Conclude: use rule unary_expression := postfix_expression 
+Conclude: use rule cast_expression := unary_expression 
+Conclude: use rule multiplicative_expression := cast_expression 
+Conclude: use rule additive_expression := multiplicative_expression 
+Conclude: use rule shift_expression := additive_expression 
+Conclude: use rule relational_expression := relational_expression > shift_expression 
+Conclude: use rule equality_expression := relational_expression 
+Conclude: use rule and_expression := equality_expression 
+Conclude: use rule exclusive_or_expression := and_expression 
+Conclude: use rule inclusive_or_expression := exclusive_or_expression 
+Conclude: use rule logical_and_expression := inclusive_or_expression 
+Conclude: use rule logical_or_expression := logical_and_expression 
+Conclude: use rule conditional_expression := logical_or_expression 
+Conclude: use rule assignment_expression := conditional_expression 
+Conclude: use rule expression := assignment_expression 
+Move: read ), push state 968
+Conclude: use rule m_quad_jz := @ 
+Move: read {, push state 1369
+Move: read IDENTIFIER, push state 117
+Conclude: use rule primary_expression := IDENTIFIER 
+Conclude: use rule postfix_expression := primary_expression 
+Conclude: use rule unary_expression := postfix_expression 
+Move: read =, push state 382
+Conclude: use rule assignment_operator := = 
+Move: read IDENTIFIER, push state 246
+Conclude: use rule primary_expression := IDENTIFIER 
+Conclude: use rule postfix_expression := primary_expression 
+Conclude: use rule unary_expression := postfix_expression 
+Conclude: use rule cast_expression := unary_expression 
+Conclude: use rule multiplicative_expression := cast_expression 
+Conclude: use rule additive_expression := multiplicative_expression 
+Move: read -, push state 349
+Move: read CONSTANT, push state 644
+Conclude: use rule primary_expression := CONSTANT 
+Conclude: use rule postfix_expression := primary_expression 
+Conclude: use rule unary_expression := postfix_expression 
+Conclude: use rule cast_expression := unary_expression 
+Conclude: use rule multiplicative_expression := cast_expression 
+Conclude: use rule additive_expression := additive_expression - multiplicative_expression 
+Conclude: use rule shift_expression := additive_expression 
+Conclude: use rule relational_expression := shift_expression 
+Conclude: use rule equality_expression := relational_expression 
+Conclude: use rule and_expression := equality_expression 
+Conclude: use rule exclusive_or_expression := and_expression 
+Conclude: use rule inclusive_or_expression := exclusive_or_expression 
+Conclude: use rule logical_and_expression := inclusive_or_expression 
+Conclude: use rule logical_or_expression := logical_and_expression 
+Conclude: use rule conditional_expression := logical_or_expression 
+Conclude: use rule assignment_expression := conditional_expression 
+Conclude: use rule assignment_expression := unary_expression assignment_operator assignment_expression 
+Conclude: use rule expression := assignment_expression 
+Move: read ;, push state 360
+Conclude: use rule expression_statement := expression ; 
+Conclude: use rule statement := expression_statement 
+Conclude: use rule statement_list := statement 
+Move: read }, push state 1503
+Conclude: use rule compound_statement := { statement_list } 
+Conclude: use rule statement := compound_statement 
+Conclude: use rule selection_statement := IF ( expression ) m_quad_jz statement 
+Conclude: use rule statement := selection_statement 
+Conclude: use rule statement_list := statement_list statement 
+Move: read RETURN, push state 120
 Move: read CONSTANT, push state 110
 Conclude: use rule primary_expression := CONSTANT 
 Conclude: use rule postfix_expression := primary_expression 
@@ -160,17 +255,10 @@ Conclude: use rule logical_and_expression := inclusive_or_expression
 Conclude: use rule logical_or_expression := logical_and_expression 
 Conclude: use rule conditional_expression := logical_or_expression 
 Conclude: use rule assignment_expression := conditional_expression 
-Conclude: use rule initializer := assignment_expression 
-Conclude: use rule init_declarator := declarator = initializer 
-Conclude: use rule init_declarator_list := init_declarator 
-Move: read ;, push state 658
-Conclude: use rule declaration := declaration_specifiers init_declarator_list ; 
-Conclude: use rule declaration_list := declaration 
-Move: read }, push state 733
-Conclude: use rule compound_statement := { declaration_list } 
-Conclude: use rule statement := compound_statement 
-Conclude: use rule iteration_statement := WHILE m_quad ( expression ) m_quad_jz statement 
-Conclude: use rule statement := iteration_statement 
+Conclude: use rule expression := assignment_expression 
+Move: read ;, push state 639
+Conclude: use rule jump_statement := RETURN expression ; 
+Conclude: use rule statement := jump_statement 
 Conclude: use rule statement_list := statement_list statement 
 Move: read }, push state 657
 Conclude: use rule compound_statement := { declaration_list statement_list } 
