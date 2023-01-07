@@ -5,6 +5,7 @@
 #include "src/Lexer.h"
 #include <QMainWindow>
 #include "ui_mainwindow.h"
+#include <QProcess>
 
 namespace Ui {
 class MainWindow;
@@ -21,11 +22,13 @@ public:
 public slots:
     void loadGrammar();
     void loadAsset(QListWidgetItem *item);
+    void genAndShowTree();
 
 private:
     Ui::MainWindow *ui;
     Parser *mParser = 0;
     Lexer *lexer = 0;
+    QProcess *procImg = 0;
 };
 
 #endif // MAINWINDOW_H

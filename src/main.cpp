@@ -1,3 +1,5 @@
+
+#define QT_DEBUG
 #ifdef QT_DEBUG
 #include <QApplication>
 #include "mainwindow.h"
@@ -7,13 +9,12 @@
 //#include <QApplication>
 //#include "mainwindow.h"
 //#include <QCoreApplication>
-
 #include"Parser.h"
 #include"Lexer.h"
-#include"Generator.h"
 #include<iostream>
 #include<fstream>
 
+#include"Generator.h"
 Generator generator;
 
 int main(int argc, char *argv[])

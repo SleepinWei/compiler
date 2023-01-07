@@ -12,6 +12,8 @@ CONFIG -= app_bundle
 SOURCES += \
         mainwindow.cpp \
         src/Generator.cpp \
+        src/LexicalAnalyzer.cpp \
+        src/Node.cpp \
         src/Parser.cpp \
         src/main.cpp \
         ui/AssetItem.cpp
@@ -24,8 +26,11 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     mainwindow.h \
     src/Generator.h \
+    src/Lexer.h \
+    src/Node.h \
     src/Parser.h \
     src/component.h \
+    src/token.h \
     ui/AssetItem.h
 
 FORMS += \

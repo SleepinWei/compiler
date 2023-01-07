@@ -113,6 +113,9 @@ jump_statement
 labeled_statement
 logical_and_expression
 logical_or_expression
+m_quad
+m_quad_j
+m_quad_jz
 multiplicative_expression
 parameter_declaration
 parameter_list
@@ -147,11 +150,12 @@ unary_operator
 ~
 --------------------------------------
 unary_expression->postfix_expression  | INC_OP unary_expression  | DEC_OP unary_expression  | unary_operator cast_expression  | SIZEOF unary_expression  | SIZEOF ( type_name ) 
+m_quad_j->@ 
 struct_declaration->specifier_qualifier_list struct_declarator_list ; 
 expression->assignment_expression  | expression , assignment_expression 
 program->translation_unit 
-struct_or_union->STRUCT  | UNION 
 primary_expression->IDENTIFIER  | CONSTANT  | STRING_LITERAL  | ( expression ) 
+struct_or_union->STRUCT  | UNION 
 expression_statement->;  | expression ; 
 postfix_expression->primary_expression  | postfix_expression [ expression ]  | postfix_expression ( )  | postfix_expression ( argument_expression_list )  | postfix_expression . IDENTIFIER  | postfix_expression PTR_OP IDENTIFIER  | postfix_expression INC_OP  | postfix_expression DEC_OP 
 storage_class_specifier->TYPEDEF  | EXTERN  | STATIC  | AUTO  | REGISTER 
@@ -163,8 +167,8 @@ statement->labeled_statement  | compound_statement  | expression_statement  | se
 struct_declarator->declarator  | : constant_expression  | declarator : constant_expression 
 conditional_expression->logical_or_expression  | logical_or_expression ? expression : conditional_expression 
 multiplicative_expression->cast_expression  | multiplicative_expression * cast_expression  | multiplicative_expression / cast_expression  | multiplicative_expression % cast_expression 
-constant_expression->conditional_expression 
 additive_expression->multiplicative_expression  | additive_expression + multiplicative_expression  | additive_expression - multiplicative_expression 
+constant_expression->conditional_expression 
 compound_statement->{ }  | { statement_list }  | { declaration_list }  | { declaration_list statement_list } 
 direct_declarator->IDENTIFIER  | ( declarator )  | direct_declarator [ constant_expression ]  | direct_declarator [ ]  | direct_declarator ( parameter_type_list )  | direct_declarator ( identifier_list )  | direct_declarator ( ) 
 shift_expression->additive_expression  | shift_expression LEFT_OP additive_expression  | shift_expression RIGHT_OP additive_expression 
@@ -178,14 +182,14 @@ logical_or_expression->logical_and_expression  | logical_or_expression OR_OP log
 translation_unit->external_declaration  | translation_unit external_declaration 
 assignment_expression->conditional_expression  | unary_expression assignment_operator assignment_expression 
 assignment_operator->=  | MUL_ASSIGN  | DIV_ASSIGN  | MOD_ASSIGN  | ADD_ASSIGN  | SUB_ASSIGN  | LEFT_ASSIGN  | RIGHT_ASSIGN  | AND_ASSIGN  | XOR_ASSIGN  | OR_ASSIGN 
+declaration->declaration_specifiers ;  | declaration_specifiers init_declarator_list ; 
+init_declarator->declarator  | declarator = initializer 
+struct_declarator_list->struct_declarator  | struct_declarator_list , struct_declarator 
 function_definition->declaration_specifiers declarator declaration_list compound_statement  | declaration_specifiers declarator compound_statement  | declarator declaration_list compound_statement  | declarator compound_statement 
 statement_list->statement  | statement_list statement 
-struct_declarator_list->struct_declarator  | struct_declarator_list , struct_declarator 
-init_declarator->declarator  | declarator = initializer 
-declaration->declaration_specifiers ;  | declaration_specifiers init_declarator_list ; 
 declaration_specifiers->storage_class_specifier  | storage_class_specifier declaration_specifiers  | type_specifier  | type_specifier declaration_specifiers  | type_qualifier  | type_qualifier declaration_specifiers 
-declaration_list->declaration  | declaration_list declaration 
 init_declarator_list->init_declarator  | init_declarator_list , init_declarator 
+declaration_list->declaration  | declaration_list declaration 
 type_specifier->VOID  | CHAR  | SHORT  | INT  | LONG  | FLOAT  | DOUBLE  | SIGNED  | UNSIGNED  | struct_or_union_specifier  | enum_specifier  | TYPE_NAME 
 jump_statement->GOTO IDENTIFIER ;  | CONTINUE ;  | BREAK ;  | RETURN ;  | RETURN expression ; 
 direct_abstract_declarator->( abstract_declarator )  | [ ]  | [ constant_expression ]  | direct_abstract_declarator [ ]  | direct_abstract_declarator [ constant_expression ]  | ( )  | ( parameter_type_list )  | direct_abstract_declarator ( )  | direct_abstract_declarator ( parameter_type_list ) 
@@ -208,5 +212,7 @@ initializer->assignment_expression  | { initializer_list }  | { initializer_list
 identifier_list->IDENTIFIER  | identifier_list , IDENTIFIER 
 initializer_list->initializer  | initializer_list , initializer 
 labeled_statement->IDENTIFIER : statement  | CASE constant_expression : statement  | DEFAULT : statement 
-selection_statement->IF ( expression ) statement  | IF ( expression ) statement ELSE statement  | SWITCH ( expression ) statement 
-iteration_statement->WHILE ( expression ) statement  | DO statement WHILE ( expression ) ;  | FOR ( expression_statement expression_statement ) statement  | FOR ( expression_statement expression_statement expression ) statement 
+selection_statement->IF ( expression ) m_quad_jz statement  | IF ( expression ) m_quad_jz statement m_quad_j ELSE m_quad statement  | SWITCH ( expression ) statement 
+iteration_statement->WHILE m_quad ( expression ) m_quad_jz statement  | DO m_quad statement WHILE ( expression ) ;  | FOR ( expression_statement expression_statement ) statement  | FOR ( expression_statement m_quad expression_statement m_quad_jz m_quad_j expression ) m_quad_j statement 
+m_quad->@ 
+m_quad_jz->@ 
