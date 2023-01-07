@@ -324,8 +324,9 @@ void Generator::Assignment(const GrammarEntry* rule,Node* root) {
 void Generator::output(const string& filename) {
 	std::ofstream fout(filename);
 
-	for (auto quad : quads) {
-		fout << "(" << quad.op << " ," << quad.arg1 << " ," << quad.arg2 << " ," << quad.dst << ")\n";
+	for (int i = 0; i < quads.size(); ++i) {
+		const auto& quad = quads[i];
+		fout << "(" << i<<")" << " : (" << quad.op << " ," << quad.arg1 << " ," << quad.arg2 << " ," << quad.dst << ")\n";
 	}
 
 	fout << "-----------------------\n";
