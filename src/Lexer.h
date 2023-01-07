@@ -21,11 +21,11 @@ public:
     {
         cerr << s << endl;
     }
-    //预处理，剔除编辑性字符和注释
-    void Preprocess(string s) {
+
+    string Preprocess(string s) {
         size_t len = s.length();
         filtered_comment = "";
-        for (unsigned int i = 0; i <= len; i++) {
+        for (unsigned int i = 0; i < len; i++) {
             if (s[i] == '/' && s[i + 1] == '/')  // 略过单行注释
                 while (s[i] != '\n')
                     i++;
@@ -40,10 +40,8 @@ public:
             }
             filtered_comment += s[i];
         }
-
-        filtered_comment = regex_replace(filtered_comment, regex("\\s"), " ");  // 空白全变空格
+        return filtered_comment;
     }
-
 public:
     //map<string, int> word;
     //vector<string> word_list = { "else", "if", "int", "return", "void", "while", "(", ")", "{", "}",
@@ -178,14 +176,13 @@ public:
         std::ifstream f(filename);
         ostringstream ss;
         ss << f.rdbuf();
-        string src = ss.str();
+        string src = Preprocess(ss.str());
         int pos = 0;
         while (pos < src.length()) {
             readOneToken(src, pos);
         }
-        inputs.push_back(new Node(END,END,true));
+        inputs.push_back(new Node(END, END, true));
     }
-
     void print(const std::string& filename) {
         ofstream f(filename);
         for (auto& token : inputs) {

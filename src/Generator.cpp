@@ -1,7 +1,7 @@
 #include"Node.h"
 #include"Generator.h"
 #include<string>
-
+Generator::Generator(){ tempCnt = 0; symbolTableStack.push(mktable(nullptr)); }
 void Generator::analyze(const GrammarEntry* rule, Node* root) {
 	Statement(rule, root);
 	Assignment(rule, root);
@@ -16,23 +16,32 @@ string Generator::newtemp() {
 	++tempCnt;
 	return temp;
 }
-
 void Generator::BoolExpression(const GrammarEntry* rule, Node* root)
 {
 	auto state = rule->state;
 	auto symbols = rule->symbols;
-	if (state.type == "m_quad")
+	if (root->children.size() == 2)
 	{
-		;// root->quad = nextquad();
+		if (state.type == "unary_expression" && symbols[0].type == "unary_operator" && symbols[1].type == "cast_expression")
+		{
+			if (root->children[0]->children[0]->type == "!") {
+				root->place = newtemp();
+				quads.push_back(Quad("!", root->children[1]->place, QUAD_EMPTY, root->place));
+			}
+		}
 	}
 	else if (root->children.size() == 3)
 	{
 		if (state.type == "relational_expression" && symbols[0].type == "relational_expression" && symbols[2].type == "shift_expression")
-		{	
+		{
 			root->place = newtemp();
 			quads.push_back(Quad(symbols[1].type, root->children[0]->place, root->children[2]->place, root->place));
 		}
-		
+		else if (state.type == "equality_expression" && symbols[0].type == "equality_expression" && symbols[2].type == "relational_expression")
+		{
+			root->place = newtemp();
+			quads.push_back(Quad(symbols[1].type, root->children[0]->place, root->children[2]->place, root->place));
+		}
 	}
 	else if (root->children.size() == 4)
 	{

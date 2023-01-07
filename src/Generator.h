@@ -7,11 +7,12 @@
 #include"component.h"
 
 class Node;
+#include"Node.h"
 
 class Generator {
 public:
 	static Generator generator;
-	Generator() { tempCnt = 0; symbolTableStack.push(mktable(nullptr)); }
+    Generator();
 	~Generator() = default;
 
 public:
