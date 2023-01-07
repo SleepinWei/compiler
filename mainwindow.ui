@@ -55,7 +55,28 @@
      </font>
     </property>
     <property name="text">
-     <string>读入文法</string>
+     <string>运行</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_2">
+    <property name="geometry">
+     <rect>
+      <x>990</x>
+      <y>420</y>
+      <width>121</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>显示语法树</string>
+    </property>
+    <property name="checkable">
+     <bool>false</bool>
     </property>
    </widget>
   </widget>
@@ -65,7 +86,7 @@
      <x>0</x>
      <y>0</y>
      <width>1218</width>
-     <height>19</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>
