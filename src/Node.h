@@ -50,21 +50,7 @@ struct SymbolTable{
 	std::map<string,SymbolEntry> symbols; // (name, type, offset)
 };
 
-//SymbolTable* mktable(SymbolTable* previous) {
-//	auto newTable = new SymbolTable;
-//	newTable->previous = previous;
-//	return newTable;
-//}
-//
-//void enter(SymbolTable* table, string name, string type, int offset) {
-//	table->symbols.insert({ name, {type,offset} });
-//}
-//
-//void addWidth(SymbolTable* table,int width){
-//	table->width += width;
-//}
-//
-//SymbolTable* enterproc(SymbolTable* table) {
-//	// TODO
-//	return nullptr;
-//}
+SymbolTable* mktable(SymbolTable* previous);
+void enter(SymbolTable* table, string name, string type, int offset);
+void addWidth(SymbolTable* table, int width);
+SymbolTable* enterproc(SymbolTable* table);

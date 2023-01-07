@@ -3,6 +3,7 @@
 #include<string>
 #include<typeinfo>
 #include<assert.h>
+#include<stack>
 #include"component.h"
 
 class Node;
@@ -10,7 +11,7 @@ class Node;
 class Generator {
 public:
 	static Generator generator;
-	Generator() { tempCnt = 0; }
+	Generator() { tempCnt = 0; symbolTableStack.push(mktable(nullptr)); }
 	~Generator() = default;
 
 public:
@@ -19,6 +20,8 @@ public:
 	const int QUAD_BEGIN = 100; 
 	vector<Quad> quads;
 	const string QUAD_EMPTY = "-";
+
+	std::stack<SymbolTable*> symbolTableStack;
 
 	// temp
 	int tempCnt;
@@ -41,6 +44,7 @@ public:
 	void BoolExpression(const GrammarEntry* rule, Node* root);
 
 	void output(const string& filename);
+
 	void Iteration(const GrammarEntry* rule, Node* root);
 
 	void Mquad(const GrammarEntry* rule, Node* root);

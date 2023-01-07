@@ -68,7 +68,16 @@ void Generator::Statement(const GrammarEntry* rule, Node* root) {
 		}
 		else {
 			// declaration = declaration_specifers init_declarator_list ; 
-			//TODO:	
+			// add to symbol stack
+			enter(symbolTableStack.top(), root->children[1]->place,root->children[0]->var_type,symbolTableStack.top()->offset);
+			int width = 0; 
+			if (root->children[0]->var_type == "DOUBLE") {
+				width = 8;
+			}
+			else if(root->children[0]->var_type == "INT") {
+				width = 4;
+			}
+			addWidth(symbolTableStack.top(), width);
 		}
 	}
 	else if (rule->state.type == "init_declarator_list") {
@@ -80,6 +89,7 @@ void Generator::Statement(const GrammarEntry* rule, Node* root) {
 	else if (rule->state.type == "initializer") {
 		if (rule->symbols.size() == 1) {
 			root->place = root->children[0]->place;
+			root->var_type = root->children[0]->var_type;
 		}
 		else {
 			// initializer = { init_list } 
@@ -89,9 +99,10 @@ void Generator::Statement(const GrammarEntry* rule, Node* root) {
 		if (rule->symbols.size() == 1) {
 			//init_declarator = declarator
 			root->place = root->children[0]->place;
+			root->var_type = root->children[0]->var_type;
 		}
 		else {
-			// init_declarator = declarator = initialzier
+			// init_declarator => declarator = initialzier
 			root->place = root->children[0]->place;
 			quads.push_back({ "=",root->children[2]->place,QUAD_EMPTY,root->children[0]->place });
 		}
@@ -132,6 +143,17 @@ void Generator::Assignment(const GrammarEntry* rule,Node* root) {
 		else {
 			// assign = unary assign_op assign_expression
 			root->place = root->children[0]->place;
+			auto symbols= symbolTableStack.top()->symbols;
+			if (symbols.find(root->place) == symbols.end()) {
+				// not found! 
+				std::cout << "ERROR: variable " << root->place << " is referred before declaration!\n";
+			}
+			else {
+				auto var_type = symbols[root->place].type;
+				if (var_type != root->children[2]->var_type) {
+					;
+				}
+			}
 			quads.push_back({ root->children[1]->place,root->children[2]->place,QUAD_EMPTY,root->place });
 		}
 	}
@@ -268,12 +290,19 @@ void Generator::Assignment(const GrammarEntry* rule,Node* root) {
 		}
 	}
 	else if (rule->state.type == "primary_expression") {
-		if (rule->symbols[0].type == "IDENTIFIER"){
+		if (rule->symbols[0].type == "IDENTIFIER") {
 			root->place = root->children[0]->place;
-			// 从表中查询类型
-			//TODO:
-		}
-		else if(rule->symbols[0].type == "CONSTANT") {
+			auto symbols = symbolTableStack.top()->symbols;
+			if (symbols.find(root->place) == symbols.end()) {
+				// not found! 
+				std::cout << "ERROR: variable " << root->place << " is referred before declaration!\n";
+			}
+			else {
+				auto var_type = symbols[root->place].type;
+				root->var_type = var_type;
+			}
+		} 
+		else if (rule->symbols[0].type == "CONSTANT") {
 			root->place = root->children[0]->place;
 			root->var_type = root->children[0]->var_type;
 		}
@@ -288,6 +317,15 @@ void Generator::output(const string& filename) {
 
 	for (auto quad : quads) {
 		fout << "(" << quad.op << " ," << quad.arg1 << " ," << quad.arg2 << " ," << quad.dst << ")\n";
+	}
+
+	fout << "-----------------------\n";
+	fout << "Symbol Stack:\n";
+	auto table = symbolTableStack.top();
+	fout << "offset: " << table->offset << "\n";
+	fout << "width: " << table->width << "\n";
+	for (auto iter = table->symbols.begin(); iter != table->symbols.end(); ++iter) {
+		fout << "[" << iter->first << ", " << iter->second.offset << ", " << iter->second.type << "]\n";
 	}
 }
 void Generator::Iteration(const GrammarEntry* rule, Node* root) {
