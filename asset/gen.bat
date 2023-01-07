@@ -1,1 +1,1 @@
-d:/me/graphviz/dot.exe ./tree.dot -T png -o ./tree.png
+dot.exe ./tree.dot -T png -o ./tree.png

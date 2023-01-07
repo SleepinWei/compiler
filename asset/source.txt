@@ -1,4 +1,7 @@
 int main(){
+	int b;
+	int a = 1;
+	a = a + 10 + 20 * 30;
 	while(x<y) {
 		int b=1;
 	}
