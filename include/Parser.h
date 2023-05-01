@@ -26,7 +26,7 @@ public:
     ~GrammarInfo();
 };
 
-using DFA = std::map<std::tuple<int, std::string>, TableEntry*>;
+using DFA = std::map<std::tuple<int, std::string>, TableEntry>;
 
 class SyntaxTree {
 public:
