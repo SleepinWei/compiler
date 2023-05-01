@@ -665,24 +665,6 @@ void Parser::printTable(const std::string& filename) {
     }
 }
 
-//Action* Parser::findAction(int s,string in) {
-    //for (auto& a : actions) {
-        //if (a.state == s && a.inString == in) {
-            //return &a;
-        //}
-     //}
-    //return nullptr;
-//}
-
-//Goto* Parser::findGoto(int s, std::string sym) {
-    //for (auto& g : gotos) {
-        //if (g.state == s && g.inState == sym) {
-            //return &g;
-        //}
-    //}
-    //return nullptr;
-//}
-
 void Parser::analyze(const std::vector<Node*>& inputs, const std::string& filename) {
     inputPos = 0;
     stateStack.push(0);
@@ -771,6 +753,10 @@ void Parser::analyze(const std::vector<Node*>& inputs, const std::string& filena
             break;
         }
     }
+}
+
+void Parser::save(const string& path)
+{
 }
 
 void outputTree(std::ofstream& f, Node* root) {

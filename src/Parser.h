@@ -33,9 +33,9 @@ public:
     // parse tree
     Node* root;
     // 
-    std::stack<int> stateStack;
-    std::stack<Node*> nodeStack;
-    std::stack<Symbol> symbolStack;
+    std::stack<int> stateStack; // stack of dfa state
+    std::stack<Node*> nodeStack; // stack of syntax tree
+    std::stack<Symbol> symbolStack; // stack of processed symbols 
     int inputPos; // inputString position
 public:
     ~Parser();
@@ -58,9 +58,9 @@ public:
     void calFirstVN();
 
     // analyze
-    //Action* findAction(int s,std::string in);
-    //Goto* findGoto(int s, std::string sym);
     void analyze(const std::vector<Node*>& symbols, const std::string& filename);
+
+    void save(const string& path);
 };
 
 class Loader{
