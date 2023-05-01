@@ -15,7 +15,6 @@
 #include<fstream>
 
 #include"Generator.h"
-Generator generator;
 
 int main(int argc, char *argv[])
 {
@@ -32,30 +31,30 @@ int main(int argc, char *argv[])
     lex.print("./asset/lex.txt");
     std::cout << "Lex Analysis Done" << '\n';
 
-    Parser parser;
-    //parser.readGrammar("./asset/grammar.txt");
-    parser.readGrammarY("./asset/c99.txt");
-    parser.printGrammar("./asset/printed_grammar.txt");
+    Parser& parser = Parser::GetInstance();
+    Generator& generator = Generator::GetInstance();
 
-    parser.calFirstVN();
-    parser.printVNFirst("./asset/firstVN.txt");
+    GrammarInfo* info = parser.readGrammarY("./asset/c99.txt");
+    parser.printGrammar(info,"./asset/printed_grammar.txt");
+
+    parser.calFirstVN(info);
+    parser.printVNFirst(info->firstVN,"./asset/firstVN.txt");
     std::cout << "First Done\n";
 
-    parser.constructCluster();
-    parser.printCluster("./asset/cluster.txt");
-    std::cout << "Cluster Done\n";
-
-    parser.constructTable();
-    parser.printTable("./asset/table.txt");
-    //parser.constructDFA("./asset/dfa.dot");
+    DFA dfa = parser.genDFA(info);
+    parser.printTable(dfa,"./asset/table.txt");
     std::cout << "Table Done\n";
 
-    parser.analyze(lex.inputs,"./asset/output.txt");
-    //parser.printTree("./asset/tree.dot");
-    std::cout << "AST Done" << '\n';
+    auto [tree, ir] = parser.analyze(lex.inputs,"./asset/output.txt",dfa);
+    std::cout << "Analyzation Done" << '\n';
 
-    generator.output("./asset/quads.txt");
+    generator.output(ir,"./asset/quads.txt");
     std::cout << "Generation Done\n";
+
+    if(ir)
+		delete ir; 
+    if (tree)
+        delete tree;
 
     return 0;
 #endif
