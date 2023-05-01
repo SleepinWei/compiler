@@ -465,10 +465,10 @@ DFA Parser::genDFA(GrammarInfo* info) {
                 assert(pos != -1);
 
                 //Action action;
-                TableEntry entry;
-                entry.useStack = true;
-                entry.destState = pos;
-                entry.gen = nullptr;
+                TableEntry* entry = new TableEntry();
+                entry->useStack = true;
+                entry->destState = pos;
+                entry->gen = nullptr;
 
                 table.insert({ std::tuple<int,std::string>{itemIndex,sym},entry});
 			}
@@ -491,14 +491,14 @@ void Parser::constructTable(Cluster& cluster,DFA& table) {
             if (item.dotPos == item.entry->symbols.size() || item.entry->symbols[0].type == EMPTY) {
                 // [A -> alpha dot, a]
 
-                TableEntry entry;
-                entry.destState = -1;
-                entry.gen = item.entry;
-                entry.isAcc = false;
+                TableEntry* entry = new TableEntry();
+                entry->destState = -1;
+                entry->gen = item.entry;
+                entry->isAcc = false;
 
                 if (item.entry->state.type == START && item.dotPos == 1 && item.peek.type == END) {
                     // S' -> S dot, #
-                    entry.isAcc = true;
+                    entry->isAcc = true;
                 }
 				//if (std::find(actions.begin(), actions.end(), action) == actions.end()) {
                     //actions.emplace_back(action);
@@ -542,9 +542,124 @@ void Parser::printTable(DFA& table,const std::string& filename) {
     for (auto iter = table.begin(); iter != table.end(); ++iter) {
         auto& t = iter->first;
         auto& v = iter->second;
-        f << std::get<0>(t) << ' ' << std::get<1>(t) << (v.useStack ? "s" : "r") << v.destState << ' ' << (int)v.gen
-            << ' ' << (v.isAcc ? "acc" : "") << '\n';
+        f << std::get<0>(t) << ' ' << std::get<1>(t) << (v->useStack ? "s" : "r") << v->destState << ' ' << (int)v->gen
+            << ' ' << (v->isAcc ? "acc" : "") << '\n';
     }
+}
+
+bool tryAnalyze(SyntaxTree* syntaxTree, IR* ir, const std::vector<Node*>& inputs, 
+    const std::string& filename, const DFA& table,
+    int inputPos, std::stack<int>& stateStack,
+	std::stack<Node*>& nodeStack, std::stack<Symbol>& symbolStack,
+    std::ostream& f
+) {
+		Generator& generator = Generator::GetInstance();
+		if (inputPos >= inputs.size()) {
+            std::cout << "inputPos > size of inputs\n";
+            return false;
+        }
+        string iSym = inputs[inputPos]->type; // ai 
+        int topState = stateStack.top();
+
+        //Action* act = findAction(topState, iSym);
+        auto pos = table.find({topState, iSym});
+        //Goto* g = findGoto(topState, iSym);
+        if (pos != table.end()) {
+            auto tableEntry = pos->second;
+            if (tableEntry->isAcc) {
+                syntaxTree->setRoot(nodeStack.top());
+                nodeStack.pop();
+				std::cout << "remaining node in stack: " << nodeStack.size() << '\n';
+                f << "Done!";
+                std::cout<<"Regulation Process Done";
+                // release resources
+                //return std::make_tuple(nullptr,nullptr);
+                return true;
+            }
+            else if (tableEntry->useStack) {
+                // ÒÆ½ø
+                stateStack.push(tableEntry->destState);
+                symbolStack.push(Symbol(iSym, true, false));
+				nodeStack.push(inputs[inputPos]);
+
+                if(iSym !=END)
+					++inputPos; // move to next ;
+                // output 
+                f << "Move: " << "read " << iSym << ", " << "push state " << tableEntry->destState<< '\n';
+                
+                bool isSuccess = tryAnalyze(syntaxTree, ir, inputs, filename, table, inputPos, stateStack, nodeStack, symbolStack, f);
+                if (isSuccess) {
+                    return isSuccess;
+                }
+                else if(tableEntry->next){
+                    // ¸´Ô­×´Ì¬    
+                    tableEntry = tableEntry->next;
+                    inputPos -= 1; 
+                    stateStack.pop();
+                    stateStack.push(tableEntry->destState);
+					bool isSuccess2 = tryAnalyze(syntaxTree, ir, inputs, filename, table, inputPos, stateStack, nodeStack, symbolStack, f);
+                    if (isSuccess2) {
+                        return isSuccess2;
+                    }
+                    else {
+                        stateStack.pop();
+                        symbolStack.pop();
+                        nodeStack.pop();
+                        return false;
+                    }
+                }
+            }
+            else {
+                // ¹éÔ¼
+                const GrammarEntry* rule = tableEntry->gen;
+                const Symbol& A = rule->state;
+                int r = rule->symbols.size();
+                if (rule->symbols[0].type == EMPTY) {
+                    r = 0;
+                }
+                for (int i = 0; i < r; i++) {
+                    stateStack.pop();
+                }
+                int newTop = stateStack.top();
+                //Goto* g = findGoto(newTop, A.type);
+                auto giter = table.find({newTop,A.type});
+                if (giter!=table.end()) {
+                    int newS = giter->second->destState;
+                    stateStack.push(newS);
+                    //TODO:if_then_else Óï¾ä
+                    auto resultNode = new Node(rule->state.type,"", false);
+
+                    for (int i = 0; i < r; ++i) {
+						auto top = symbolStack.top();
+						symbolStack.pop();
+
+						auto topNode = nodeStack.top();
+						nodeStack.pop();
+						resultNode->children.insert(resultNode->children.begin(),topNode);
+                    }
+                    symbolStack.push(A);
+                    nodeStack.push(resultNode);
+
+                    f << "Conclude: " << "use rule ";
+                    rule->print(f);
+                    f << " At State : " << stateStack.top() << '\n';
+
+                    generator.analyze(ir,rule, resultNode);
+                    return true;
+                }
+                else {
+                    // error
+                    std::cout << "Error: No matching GOTO At state " << newTop << " Read State " << A.type << "\n";
+                    return false;
+                }
+            }
+        }
+        else {
+            // error 
+            std::cout << "Error No Matching Action: At state ";
+            std::cout << topState << " Read Symbol "<< iSym<< '\n';
+            return false;
+        }
 }
 
 std::tuple<SyntaxTree*,IR*> Parser::analyze(const std::vector<Node*>& inputs, const std::string& filename, const DFA& table) {
@@ -575,31 +690,29 @@ std::tuple<SyntaxTree*,IR*> Parser::analyze(const std::vector<Node*>& inputs, co
         //Goto* g = findGoto(topState, iSym);
         if (pos != table.end()) {
             auto tableEntry = pos->second;
-            if (tableEntry.isAcc) {
+            if (tableEntry->isAcc) {
                 syntaxTree->setRoot(nodeStack.top());
                 nodeStack.pop();
 				std::cout << "remaining node in stack: " << nodeStack.size() << '\n';
                 f << "Done!";
                 std::cout<<"Regulation Process Done";
                 // release resources
-                delete ir; 
-                delete syntaxTree;
-                return std::make_tuple(nullptr,nullptr);
+                return std::make_tuple(syntaxTree,ir);
             }
-            else if (tableEntry.useStack) {
+            else if (tableEntry->useStack) {
                 // ÒÆ½ø
-                stateStack.push(tableEntry.destState);
+                stateStack.push(tableEntry->destState);
                 symbolStack.push(Symbol(iSym, true, false));
 				nodeStack.push(inputs[inputPos]);
 
                 if(iSym !=END)
 					++inputPos; // move to next ;
                 // output 
-                f << "Move: " << "read " << iSym << ", " << "push state " << tableEntry.destState<< '\n';
+                f << "Move: " << "read " << iSym << ", " << "push state " << tableEntry->destState<< '\n';
             }
             else {
                 // ¹éÔ¼
-                const GrammarEntry* rule = tableEntry.gen;
+                const GrammarEntry* rule = tableEntry->gen;
                 const Symbol& A = rule->state;
                 int r = rule->symbols.size();
                 if (rule->symbols[0].type == EMPTY) {
@@ -612,7 +725,7 @@ std::tuple<SyntaxTree*,IR*> Parser::analyze(const std::vector<Node*>& inputs, co
                 //Goto* g = findGoto(newTop, A.type);
                 auto giter = table.find({newTop,A.type});
                 if (giter!=table.end()) {
-                    int newS = giter->second.destState;
+                    int newS = giter->second->destState;
                     stateStack.push(newS);
                     //TODO:if_then_else Óï¾ä
                     auto resultNode = new Node(rule->state.type,"", false);
