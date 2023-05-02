@@ -38,17 +38,36 @@ struct Quad {
 	}
 };
 
-struct SymbolEntry{
+// ·ûºÅ±í±íÏî
+struct SymbolEntryVar{
 	string type;
 	int offset;
+};
+
+struct SymbolEntryConst {
+	string type;
+	string val; 
+};
+
+struct SymbolEntryFunction {
+
 };
 
 struct SymbolTable{
 	SymbolTable* previous = nullptr;
 	int offset = 0;
 	int width = 0;
-	std::map<string,SymbolEntry> symbols; // (name, type, offset)
+	std::map<string,SymbolEntryVar> symbols; // (name, type, offset)
+	std::map<string, SymbolEntryConst> consts; 
 };
+
+struct FunctionEntry{
+	int addr; 
+	string ret_type; 
+	vector<string> args; 
+};
+
+using FunctionTable = std::map<string, FunctionEntry>;
 
 SymbolTable* mktable(SymbolTable* previous);
 void enter(SymbolTable* table, string name, string type, int offset);

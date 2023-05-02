@@ -59,6 +59,8 @@ int main(int argc, char *argv[])
 
     //if(ir)
 		//delete ir; 
+    delete ir; 
+    delete tree; 
     //if (tree)
         //delete tree;
 

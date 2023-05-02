@@ -13,12 +13,30 @@ class IR {
 public:
 	IR() {
 		tempCnt = 0; 
-		symbolTableStack.push(mktable(nullptr));
+		globalTable = mktable(nullptr);
+		functionTable = nullptr;
+		curTable = globalTable;
+	}
+
+	~IR() {
+		for (auto& iter : symbolTables) {
+			delete iter.second; 
+		}
+		if (globalTable)
+			delete globalTable;
+		if (functionTable) {
+			delete functionTable;
+		}
 	}
 public:
 	int tempCnt;
 	vector<Quad> quads; 
-	std::stack<SymbolTable*> symbolTableStack;
+	//std::stack<SymbolTable*> symbolTableStack;
+
+	SymbolTable* curTable; 
+	std::map<string, SymbolTable*> symbolTables; 
+	SymbolTable* globalTable; 
+	FunctionTable* functionTable; 
 
 	const int QUAD_BEGIN = 100; 
 	const string QUAD_EMPTY = "-";

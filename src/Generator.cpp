@@ -70,7 +70,7 @@ void Generator::BoolExpression(IR* ir, const GrammarEntry* rule, Node* root)
 }
 
 void Generator::Statement(IR* ir, const GrammarEntry* rule, Node* root) {
-	auto& symbolTableStack = ir->symbolTableStack;
+	auto& curTable = ir->curTable;
 	auto& quads = ir->quads;
 	auto QUAD_EMPTY = ir->QUAD_EMPTY;
 
@@ -92,7 +92,7 @@ void Generator::Statement(IR* ir, const GrammarEntry* rule, Node* root) {
 		else {
 			// declaration = declaration_specifers init_declarator_list ; 
 			// add to symbol stack
-			enter(symbolTableStack.top(), root->children[1]->place,root->children[0]->var_type,symbolTableStack.top()->offset);
+			enter(curTable, root->children[1]->place,root->children[0]->var_type,curTable->offset);
 			int width = 0; 
 			if (root->children[0]->var_type == "DOUBLE") {
 				width = 8;
@@ -100,7 +100,7 @@ void Generator::Statement(IR* ir, const GrammarEntry* rule, Node* root) {
 			else if(root->children[0]->var_type == "INT") {
 				width = 4;
 			}
-			addWidth(symbolTableStack.top(), width);
+			addWidth(curTable, width);
 		}
 	}
 	else if (rule->state.type == "init_declarator_list") {
@@ -147,7 +147,8 @@ void Generator::Statement(IR* ir, const GrammarEntry* rule, Node* root) {
 }
 void Generator::Assignment(IR* ir, const GrammarEntry* rule,Node* root) {
 
-	auto& symbolTableStack = ir->symbolTableStack;
+	//auto& symbolTableStack = ir->symbolTableStack;
+	auto curTable = ir->curTable;
 	auto& quads = ir->quads;
 	auto QUAD_EMPTY = ir->QUAD_EMPTY;
 // 最高级为 assignment_expression
@@ -170,7 +171,7 @@ void Generator::Assignment(IR* ir, const GrammarEntry* rule,Node* root) {
 		else {
 			// assign = unary assign_op assign_expression
 			root->place = root->children[0]->place;
-			auto symbols= symbolTableStack.top()->symbols;
+			auto symbols= curTable->symbols;
 			if (symbols.find(root->place) == symbols.end()) {
 				// not found! 
 				std::cout << "ERROR: variable " << root->place << " is referred before declaration!\n";
@@ -319,7 +320,7 @@ void Generator::Assignment(IR* ir, const GrammarEntry* rule,Node* root) {
 	else if (rule->state.type == "primary_expression") {
 		if (rule->symbols[0].type == "IDENTIFIER") {
 			root->place = root->children[0]->place;
-			auto symbols = symbolTableStack.top()->symbols;
+			auto symbols = curTable->symbols;
 			if (symbols.find(root->place) == symbols.end()) {
 				// not found! 
 				std::cout << "ERROR: variable " << root->place << " is referred before declaration!\n";
@@ -341,7 +342,8 @@ void Generator::Assignment(IR* ir, const GrammarEntry* rule,Node* root) {
 
 void Generator::output(IR* ir, const string& filename) {
 
-	auto& symbolTableStack = ir->symbolTableStack;
+	//auto& symbolTableStack = ir->symbolTableStack;
+	auto curTable = ir->curTable;
 	auto& quads = ir->quads;
 	auto QUAD_EMPTY = ir->QUAD_EMPTY;
 	std::ofstream fout(filename);
@@ -352,8 +354,18 @@ void Generator::output(IR* ir, const string& filename) {
 	}
 
 	fout << "-----------------------\n";
-	fout << "Symbol Stack:\n";
-	auto table = symbolTableStack.top();
+	fout << "Symbol Table:\n";
+	//auto table = curTable;
+	for(auto& iter : ir->symbolTables){
+		auto table = iter.second; 
+		fout << "offset: " << table->offset << "\n";
+		fout << "width: " << table->width << "\n";
+		for (auto iter = table->symbols.begin(); iter != table->symbols.end(); ++iter) {
+			fout << "[" << iter->first << ", " << iter->second.offset << ", " << iter->second.type << "]\n";
+		}
+	}
+	fout << "GLobal Symbol Table: \n";
+	auto table = ir->globalTable; 
 	fout << "offset: " << table->offset << "\n";
 	fout << "width: " << table->width << "\n";
 	for (auto iter = table->symbols.begin(); iter != table->symbols.end(); ++iter) {
@@ -362,7 +374,8 @@ void Generator::output(IR* ir, const string& filename) {
 }
 void Generator::Iteration(IR* ir, const GrammarEntry* rule, Node* root) {
 
-		auto& symbolTableStack = ir->symbolTableStack;
+		//auto& symbolTableStack = ir->symbolTableStack;
+	auto curTable = ir->curTable;
 	auto& quads = ir->quads;
 	auto QUAD_EMPTY = ir->QUAD_EMPTY;
 if (rule->state.type != "iteration_statement")
@@ -397,7 +410,8 @@ if (rule->state.type != "iteration_statement")
 
 void Generator::Mquad(IR* ir, const GrammarEntry* rule, Node* root) {
 
-		auto& symbolTableStack = ir->symbolTableStack;
+		//auto& symbolTableStack = ir->symbolTableStack;
+	auto curTable = ir->curTable;
 	auto& quads = ir->quads;
 	auto QUAD_EMPTY = ir->QUAD_EMPTY;
 if (rule->state.type == "m_quad") {
@@ -416,7 +430,8 @@ if (rule->state.type == "m_quad") {
 
 void Generator::Selection(IR* ir, const GrammarEntry* rule, Node* root) {
 
-		auto& symbolTableStack = ir->symbolTableStack;
+		//auto& symbolTableStack = ir->symbolTableStack;
+	auto curTable = ir->curTable;
 	auto& quads = ir->quads;
 	auto QUAD_EMPTY = ir->QUAD_EMPTY;
 if (rule->state.type != "selection_statement")
