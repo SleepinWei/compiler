@@ -1,1 +1,0 @@
-dot.exe ./tree.dot -T png -o ./tree.png

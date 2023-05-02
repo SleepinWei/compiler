@@ -8,11 +8,55 @@
 #include<queue>
 #include"Generator.h"
 #include"Node.h"
+#include"Generator.h"
 
 using std::string;
-extern Generator generator;
 
-void Parser::readGrammarY(const std::string& filename) {
+SyntaxTree::SyntaxTree() {
+    this->root = nullptr;
+}
+
+void SyntaxTree::destroy(Node* root) {
+    if (root == nullptr)
+        return;
+    for (auto& child : root->children) {
+        destroy(child);
+    }
+    delete root; 
+    root = nullptr;
+}
+
+SyntaxTree::~SyntaxTree() {
+    if (!root) {
+        return;
+    }
+    destroy(root);
+}
+
+Node* SyntaxTree::getRoot() {
+    return root;
+}
+
+void SyntaxTree::setRoot(Node* _root) {
+    root = _root;
+}
+
+GrammarInfo::~GrammarInfo() {
+    for (auto iter = grammar.begin(); iter != grammar.end(); ++iter) {
+        for (auto _iter = iter->second.begin(); _iter != iter->second.end(); ++_iter) {
+            if (*_iter != nullptr) {
+                delete* _iter;
+            }
+        }
+    }
+}
+GrammarInfo* Parser::readGrammarY(const std::string& filename) {
+    
+    GrammarInfo* grammarInfo = new GrammarInfo();
+    auto& grammar = grammarInfo->grammar;
+    auto& grammarSymbols = grammarInfo->grammarSymbols;
+    auto& firstVn = grammarInfo->firstVN;
+
 	std::ifstream f(filename);
     while(f.peek()!=EOF){
         // input state
@@ -70,102 +114,21 @@ void Parser::readGrammarY(const std::string& filename) {
             }
         }
 
-        //if(symbols.size()){
-        //    GrammarEntry gEntry(state,symbols);
-
-        //    //if (state.type == "<Program>") {
-        //    //    startEntry = gEntry;
-        //    //}
-        //    this->grammar.push_back(gEntry);
-            //for (auto& entry : grammar) {
-                //if (entry.state.type == "<Program>") {
-		startEntry = grammar[START][0];
-                //}
-            //}
-        //}
+		grammarInfo->startEntry = grammar[START][0];
     }
 
     //calFirstVN();
+    return grammarInfo;
 }
 
-void Parser::readGrammar(const std::string& filename){
-    std::ifstream f(filename);
-    while(f.peek()!=EOF){
-        // input state
-        std::string state_type;
-        f >> state_type;
 
-        if (state_type == "")
-            break;
-        Symbol state = Loader::loadSymbol(state_type);
-        grammarSymbols.insert(state_type);
+void Parser::printGrammar(GrammarInfo* grammarInfo, const std::string &filename){
 
-        vector<Symbol> symbols;
+	auto& grammar = grammarInfo->grammar;
+    auto& grammarSymbols = grammarInfo->grammarSymbols;
+    auto& firstVn = grammarInfo->firstVN;
 
-        std::string equal;
-        f >> equal;
-        assert(equal == "=");
-
-        // input the rest
-        //string rest;
-        //std::getline(f,rest);
-        //std::stringstream stream(rest);
-
-        while(f.peek()!=EOF){
-            string symbol_type;
-            f >> symbol_type;
-            
-            if (symbol_type == "") {
-                break;
-            }
-
-            if(symbol_type == "|" || symbol_type == ";") {
-               // create a new entry
-               auto gEntry = new GrammarEntry(state,symbols);
-               //this->grammar.push_back(gEntry);
-               if (grammar.find(state_type) == grammar.end()) {
-                   // if not found, insert a state_type
-                   grammar.insert({ state_type,std::vector<GrammarEntry*>{gEntry} });
-               }
-               else {
-                   grammar[state_type].push_back(gEntry);
-               }
-               if (symbol_type == ";")
-                   break;
-
-               // clear symbols
-               vector<Symbol>().swap(symbols);
-            }else{
-               // add to current entry
-                Symbol symbol = Loader::loadSymbol(symbol_type);
-                symbols.push_back(symbol);
-
-                if (symbol.type != EMPTY) {
-                    grammarSymbols.insert(symbol.type);
-                }
-            }
-        }
-
-        //if(symbols.size()){
-        //    GrammarEntry gEntry(state,symbols);
-
-        //    //if (state.type == "<Program>") {
-        //    //    startEntry = gEntry;
-        //    //}
-        //    this->grammar.push_back(gEntry);
-            //for (auto& entry : grammar) {
-                //if (entry.state.type == "<Program>") {
-		startEntry = grammar["<Program>"][0];
-                //}
-            //}
-        //}
-    }
-
-    //calFirstVN();
-}
-
-void Parser::printGrammar(const std::string &filename){
-    std::ofstream f(filename);
+	std::ofstream f(filename);
     f << "Symbols:\n";
     for(auto sym:grammarSymbols){
         f << sym << '\n';
@@ -228,27 +191,19 @@ static void removeDup(std::vector<T> &v)
     v.erase(end, v.end());
 }
 
-void deleteTree(Node* root) {
-    for (auto child : root->children) {
-        deleteTree(child);
-    }
-    if (!root->isTerminal) {
-        delete root;
-    }
+Parser& Parser::GetInstance() {
+    static Parser parser;
+    return parser;
 }
 
 Parser::~Parser() {
-    for (auto iter = grammar.begin(); iter != grammar.end(); ++iter) {
-        for (auto _iter = iter->second.begin(); _iter != iter->second.end(); ++_iter) {
-            if (*_iter != nullptr) {
-                delete *_iter;
-            }
-        }
-    }
 }
 
-void Parser::calFirstVN(){
+void Parser::calFirstVN(GrammarInfo* grammarInfo){
 
+    auto& firstVN = grammarInfo->firstVN;
+    auto& grammar = grammarInfo->grammar;
+    auto& grammarSymbols = grammarInfo->grammarSymbols;
     std::unordered_map<std::string,std::set<std::string>,std::hash<std::string>>().swap(firstVN);
 
     //for (const GrammarEntry &g : grammar)
@@ -293,18 +248,7 @@ void Parser::calFirstVN(){
     }
 }
 
-//void Parser::printFirst(const std::string& filename) {
-	//std::ofstream f(filename);
-    //for (auto iter = firstMap.begin(); iter != firstMap.end(); ++iter) {
-        //f << iter->first.type << ": ";
-        //for (auto& sym : iter->second) {
-            //f << sym.type << ", ";
-        //}
-        //f << '\n';
-    //}
-//}
-
-void Parser::printVNFirst(const std::string& filename) {
+void Parser::printVNFirst(GrammarInfo::FirstVN& firstVN, const std::string& filename) {
 	std::ofstream f(filename);
     for (auto iter = firstVN.begin(); iter != firstVN.end(); ++iter) {
         f << iter->first<< ": ";
@@ -315,7 +259,7 @@ void Parser::printVNFirst(const std::string& filename) {
     }
 }
 
-void Parser::printCluster(const std::string& filename) {
+void Parser::printCluster(Cluster& cluster, const std::string& filename) {
     std::ofstream f(filename);
     int index = 0;
     for (auto& itemset : cluster) {
@@ -327,7 +271,7 @@ void Parser::printCluster(const std::string& filename) {
     }
 }
 
-std::set<std::string> Parser::calFirst(const std::vector<Symbol> &rhs, size_t ofst, const Symbol &peek)
+std::set<std::string> Parser::calFirst(GrammarInfo::FirstVN& firstVN,const std::vector<Symbol> &rhs, size_t ofst, const Symbol &peek)
 {
     std::set<std::string> result;
     bool finalempty = true;
@@ -364,10 +308,11 @@ std::set<std::string> Parser::calFirst(const std::vector<Symbol> &rhs, size_t of
     return result;
 }
 
-void Parser::closure(std::set<Item>& itemSet)
+void Parser::closure(GrammarInfo* grammarInfo, std::set<Item>& itemSet)
 {
-    //bool change = true;
-    //std::set<Item> resultSet = itemSet;
+    auto& grammar = grammarInfo->grammar;
+    auto& firstVN = grammarInfo->firstVN;
+
     std::queue<Item> candidate;
     for (const Item& it : itemSet) {
         candidate.push(it);
@@ -387,12 +332,8 @@ void Parser::closure(std::set<Item>& itemSet)
 			continue;
 		// A-> alpha dot B beta 
 		const Symbol& nxtnt = itm.entry->symbols[itm.dotPos];// B 
-		auto calResult = calFirst(itm.entry->symbols, itm.dotPos + 1, itm.peek);
+		auto calResult = calFirst(firstVN, itm.entry->symbols, itm.dotPos + 1, itm.peek);
 
-		//int i_ = 1;
-		//for (const GrammarEntry &ety : grammar) {
-			//if (ety.state.type != nxtnt.type)
-				//continue;
 			// find B->dot C
 		auto& vec = grammar[nxtnt.type];
 		for (auto iter = vec.begin(); iter != vec.end(); ++iter) {
@@ -407,8 +348,7 @@ void Parser::closure(std::set<Item>& itemSet)
 				newitm.peek.isEmpty = (fb == EMPTY);
 				newitm.peek.isTerminal = true;
 				newitm.peek.type = fb;
-				//if (notFound(itemSet, newitm)) {
-					//itemSet.emplace_back(newitm);
+
                 auto found_pos = itemSet.find(newitm);
 				if(found_pos == itemSet.end()){
 					itemSet.insert(newitm);
@@ -416,12 +356,10 @@ void Parser::closure(std::set<Item>& itemSet)
 				}
 			}
 		}
-        //}
-        //change = (resultSet.size() > isz);
     }
 }
 
-std::set<Item> Parser::GO(const std::set<Item>& itemSet, const std::string& X) {
+std::set<Item> Parser::GO(GrammarInfo* grammarInfo, const std::set<Item>& itemSet, const std::string& X) {
     assert(X != EMPTY);
     std::set<Item> result;
 
@@ -451,15 +389,7 @@ std::set<Item> Parser::GO(const std::set<Item>& itemSet, const std::string& X) {
     }
 
     // compute closure
-    closure(result);
-
-    int debug = 0;
-    if (debug){
-        std::ofstream out("./asset/go.txt");
-        for (auto& item : result) {
-            item.print(out);
-        }
-	}
+    closure(grammarInfo, result);
 
     return result;
 }
@@ -484,17 +414,23 @@ void print(std::ofstream& f, const std::vector<Item>& itemSet) {
 	f << "}\n";
 }
 
-void Parser::constructCluster() {
+DFA Parser::genDFA(GrammarInfo* info) {
+    DFA table;
+
     Item startItem;
     startItem.dotPos = 0;
-    startItem.entry = startEntry;
+    startItem.entry = info->startEntry;
     startItem.peek = Symbol(END, true, false);
 
     std::set<Item> startItemSet = { startItem };
-    closure(startItemSet);
-    std::vector<std::set<Item>>().swap(cluster);
+    closure(info, startItemSet);
+
+    // construct initial val
+    auto cluster = Cluster();
     cluster.emplace_back(startItemSet);
-    //std::vector<std::vector<Item>>{startItemSet}.swap(cluster);
+
+    const auto& grammar = info->grammar;
+    const auto& grammarSymbols = info->grammarSymbols;
 
     bool change = true;
     std::ofstream f("./asset/go.txt");
@@ -508,11 +444,11 @@ void Parser::constructCluster() {
 		auto itemIndex = candidate.front();
 		candidate.pop();
 
-		for(const auto& sym:grammarSymbols){
+		for(const auto& sym: grammarSymbols){
 			//string sym = sym_iter->type;
             const auto& itemSet = cluster[itemIndex];
 
-			std::set<Item> goSet = GO(itemSet, sym);
+			std::set<Item> goSet = GO(info,itemSet, sym);
 
 			if (goSet.size()) {
 				int pos = FoundCluster(cluster, goSet);
@@ -538,57 +474,23 @@ void Parser::constructCluster() {
 			}
 		}
 	}
+
+    constructTable(cluster,table);
+
+    this->printCluster(cluster, "./asset/cluster.txt");
+
+    return table;
 }
 
-void Parser::constructTable() {
+void Parser::constructTable(Cluster& cluster,DFA& table) {
     for (int citer= 0; citer< cluster.size();++citer) {
         // cluster iter
-        // std::cout << citer << '\n';
         auto& itemSet = cluster[citer];
         // Action table
-        //for (int iiter = 0; iiter < itemSet.size(); iiter++) {
         for(const auto& item:itemSet){
-            // item iter
-            // std::cout << iiter << '\n';
-            //auto& item = itemSet[iiter];
-    //        if (item.dotPos < item.entry->symbols.size() && item.entry->symbols[0].type != EMPTY){
-				//// compute GO(Ik,a)
-    //            // sym : a
-    //            Symbol _s = item.entry->symbols[item.dotPos];
-    //            if (!_s.isTerminal) {
-    //                continue;
-    //            }
-    //            string sym = _s.type;
-    //            if (sym == "@empty") {
-    //                continue;
-    //            }
-				//auto goSet = GO(itemSet, sym);
-    //            if (goSet.size() == 0) {
-    //                continue;
-    //            }
-    //            int pos = FoundCluster(cluster, goSet);
-
-    //            Action action;
-    //            action.state = citer;
-    //            action.inString = sym;
-    //            action.useStack = true;
-    //            action.j = pos;
-    //            action.gen = nullptr;
-    //            // 
-    //            if (std::find(actions.begin(), actions.end(), action) == actions.end()) {
-    //                actions.emplace_back(action);
-    //            }
-    //        }
-           //else 
             if (item.dotPos == item.entry->symbols.size() || item.entry->symbols[0].type == EMPTY) {
                 // [A -> alpha dot, a]
 
-                /*Action action;
-                action.state = citer;
-                action.inString = item.peek.type;
-                action.useStack = false;
-                action.gen = item.entry;
-                action.j = -1;*/
                 TableEntry entry;
                 entry.destState = -1;
                 entry.gen = item.entry;
@@ -601,34 +503,20 @@ void Parser::constructTable() {
 				//if (std::find(actions.begin(), actions.end(), action) == actions.end()) {
                     //actions.emplace_back(action);
                 //}
-                table.insert({ {citer,item.peek.type},entry});
-            }
-        }
-        // GOTO table
-        /*for (auto& sym : grammarSymbols) {
-            if (sym.isTerminal) {
-                continue;
-            }
-			auto goSet = GO(itemSet, sym.type);
-			if (goSet.size() == 0) {
-				continue;
-			}
-			int pos = FoundCluster(cluster, goSet);
-            if (pos != -1) {
-                Goto g;
-                g.state = citer;
-                g.inState = sym.type;
-                g.gotoState = pos;
-                if (std::find(gotos.begin(), gotos.end(), g) == gotos.end()) {
-                    gotos.emplace_back(g);
+                if (table.find({ citer,item.peek.type }) != table.end()) {
+                    std::cout << citer << ' ' << item.peek.type << " found!\n";
+                    table[{ citer, item.peek.type }] = entry;
+                }
+                else {
+                    table.insert({ {citer,item.peek.type},entry });
                 }
             }
-        }*/
+        }
     }
 }
 
 
-void Parser::constructDFA(const std::string& filename) {
+void Parser::printDFA(const std::string& filename) {
     std::ofstream f(filename);
     f << "digraph btree{\n";
     f << "size = \" 50, 50\"; \n";
@@ -645,30 +533,98 @@ void Parser::constructDFA(const std::string& filename) {
     system(".\\asset\\gen.bat");
 }
 
-void Parser::printTable(const std::string& filename) {
+void Parser::printTable(GrammarInfo* grammarInfo, DFA& table,const std::string& filename) {
     std::ofstream f(filename);
-	f << "Table\n";
-    //for (auto& a : actions) {
-        //f << a.state << ' ' << a.inString << ' ' << (a.useStack ? "s" : "r") << a.j << ' ' << (int)a.gen 
-            //<< ' ' << (a.isAcc ? "acc" : "") << '\n';
-    //}
-    //f << "----------------------\n";
-	//f << "GOTO Table\n";
-    //for (auto& g : gotos) {
-        //f << g.state << ' ' << g.inState << ' ' << g.gotoState << '\n';
-    //}
+	//f << "Table\n";
     for (auto iter = table.begin(); iter != table.end(); ++iter) {
         auto& t = iter->first;
         auto& v = iter->second;
-        f << std::get<0>(t) << ' ' << std::get<1>(t) << (v.useStack ? "s" : "r") << v.destState << ' ' << (int)v.gen
-            << ' ' << (v.isAcc ? "acc" : "") << '\n';
+        int rule_index = 0;
+        if (v.useStack == false) {
+            auto& grammar = grammarInfo->grammar;
+            // 在 grammar 中找到 v.gen 存储的位置
+            for (auto& iter : grammar) {
+                auto& entry_vec = iter.second;
+                int flag = false;
+                for(int i = 0;i<entry_vec.size();++i){
+                    auto& entry = entry_vec[i];
+                    if (entry == v.gen) {
+                        rule_index = i;
+                        flag = true;
+                        break;
+                    }
+                }
+                if (flag) {
+                    break; 
+                }
+            }
+        }
+        f << std::get<0>(t) << ' ' << std::get<1>(t) << ' ' << (v.useStack ? "s" : "r") << ' '; 
+        if (v.useStack) {
+            f << v.destState << ' '; 
+        }
+        else {
+            f << v.gen->state.type << ' ' << rule_index << ' ';
+        }
+        f << (v.isAcc ? "1" : "0") << '\n';
     }
+
+    f << "-1\n";
 }
 
-void Parser::analyze(const std::vector<Node*>& inputs, const std::string& filename) {
-    inputPos = 0;
+DFA Parser::loadTable(GrammarInfo* info, const std::string filename)
+{
+    std::ifstream f(filename);
+    DFA dfa; 
+    while (true) {
+        int lhs; 
+        string in_symbol; 
+        string type; 
+        string entry_lhs; 
+        int destState; 
+        int isAcc; 
+        int rule_index;
+        
+        f >> lhs; 
+        if (lhs == -1) {
+            break;
+        }
+        TableEntry entry; 
+        f >> in_symbol >> type; 
+        if (type == "r") {
+            entry.useStack = false;
+            f >> entry_lhs >> rule_index >> isAcc;
+            entry.destState = -1;
+            entry.gen = info->grammar[entry_lhs][rule_index];
+			entry.isAcc = isAcc;
+            dfa.insert({ { lhs,in_symbol }, entry });
+        }
+        else if (type == "s") {
+            entry.useStack = true;
+            f >> destState >> isAcc;
+            entry.isAcc = isAcc;
+            entry.destState = destState;
+            dfa.insert({ { lhs,in_symbol }, entry});
+        }
+        else {
+            std::cout << "No matching type for input, must be 'r' or 's'\n";
+        }
+    }
+    return dfa; 
+}
+
+std::tuple<SyntaxTree*,IR*> Parser::analyze(const std::vector<Node*>& inputs, const std::string& filename, const DFA& table) {
+    // initialization
+    std::stack<int> stateStack;
     stateStack.push(0);
-    // construct a node for every non-op state
+    std::stack<Node*> nodeStack;
+    std::stack<Symbol> symbolStack;
+
+    SyntaxTree* syntaxTree= new SyntaxTree();
+    Generator& generator = Generator::GetInstance();
+    IR* ir = IR::Create();
+
+    int inputPos = 0;
 
     std::ofstream f(filename);
     f << "Action Table\n";
@@ -686,12 +642,13 @@ void Parser::analyze(const std::vector<Node*>& inputs, const std::string& filena
         if (pos != table.end()) {
             auto tableEntry = pos->second;
             if (tableEntry.isAcc) {
-                this->root = nodeStack.top();
+                syntaxTree->setRoot(nodeStack.top());
                 nodeStack.pop();
 				std::cout << "remaining node in stack: " << nodeStack.size() << '\n';
                 f << "Done!";
-                std::cout<<"Regulation Process Done";
-                return;
+                std::cout<<"Regulation Process Done\n";
+                // release resources
+                return std::make_tuple(syntaxTree,ir);
             }
             else if (tableEntry.useStack) {
                 // 移进
@@ -737,8 +694,9 @@ void Parser::analyze(const std::vector<Node*>& inputs, const std::string& filena
 
                     f << "Conclude: " << "use rule ";
                     rule->print(f);
+                    f << " At State : " << stateStack.top() << '\n';
 
-                    generator.analyze(rule, resultNode);
+                    generator.analyze(ir,rule, resultNode);
                 }
                 else {
                     // error
@@ -753,10 +711,8 @@ void Parser::analyze(const std::vector<Node*>& inputs, const std::string& filena
             break;
         }
     }
-}
-
-void Parser::save(const string& path)
-{
+    f.close();
+    return std::make_tuple(syntaxTree,ir);
 }
 
 void outputTree(std::ofstream& f, Node* root) {
@@ -780,7 +736,8 @@ void outputTree(std::ofstream& f, Node* root) {
     }
 }
 
-void Parser::printTree(const std::string& filename) {
+void Parser::printTree(SyntaxTree* tree, const std::string& filename) {
+
     std::ofstream f(filename);
     f << "digraph btree{\n";
     f << "size = \" 50, 50\"; \n";
@@ -789,7 +746,7 @@ void Parser::printTree(const std::string& filename) {
     f << "node [shape=box, fontsize=22, fontname=Consolas];\n";
     f << "edge [style=bold]\n";
 
-    outputTree(f, this->root);
+    outputTree(f, tree->getRoot());
 
     f << "}\n";
     f.close();

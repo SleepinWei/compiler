@@ -1,7 +1,7 @@
 #include"Node.h"
-SymbolTable* mktable(SymbolTable* previous) {
-	auto newTable = new SymbolTable;
-	newTable->previous = previous;
+SymbolTable* mktable(SymbolTable* parent) {
+	auto newTable = new SymbolTable();
+	newTable->parent = parent;
 	return newTable;
 }
 
