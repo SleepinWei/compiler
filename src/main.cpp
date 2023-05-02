@@ -17,6 +17,8 @@
 #include"Generator.h"
 #include"Node.h"
 
+//#define GEN_GRAMMAR
+
 int main(int argc, char *argv[])
 {
 #ifdef QT_DEBUG
@@ -42,12 +44,15 @@ int main(int argc, char *argv[])
     parser.printVNFirst(info->firstVN,"./asset/firstVN.txt");
     std::cout << "First Done\n";
 
-    //DFA dfa = parser.genDFA(info);
-    //parser.printTable(info, dfa,"./asset/table.txt");
-    //std::cout << "Table Done\n";
+#ifdef GEN_GRAMMAR
+    DFA dfa = parser.genDFA(info);
+    parser.printTable(info, dfa,"./asset/table.txt");
+    std::cout << "Table Done\n";
 
+#else
     DFA dfa = parser.loadTable(info, "./asset/table.txt");
     std::cout << "Read Done\n";
+#endif
 
     SyntaxTree* tree = nullptr;
     IR* ir = nullptr;

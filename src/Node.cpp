@@ -1,6 +1,6 @@
 #include"Node.h"
 SymbolTable* mktable(SymbolTable* parent) {
-	auto newTable = new SymbolTable;
+	auto newTable = new SymbolTable();
 	newTable->parent = parent;
 	return newTable;
 }

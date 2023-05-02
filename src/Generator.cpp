@@ -99,30 +99,36 @@ void Generator::Function(IR* ir, const GrammarEntry* rule, Node* root)
 		auto newTable = mktable(ir->curTable);
 		ir->curTable = newTable;
 	}
-	else if (lhs == "direct_declarator" && rule->symbols.size() == 4) {
-		// direct_declarator -> direct_declarator ( parameter_type_list )
+	else if (lhs == "direct_declarator" && (rule->symbols.size() == 4 || rule->symbols.size() ==3) ) {
+		// rhs 无参数时长度为3，有参数时多一个 parameter_list
+
+		// direct_declarator -> direct_declarator ( [parameter_type_list] )
 		// register a function entry 
 		const auto& rhs = rule->symbols;
 		string func_name = root->children[0]->place;
 		FunctionEntry entry; 
 		// parameters
-		Node* parameter_list = root->children[2]->children[0];
-		vector<string> parameters;
-		getParameterList(parameter_list, parameters);
-		entry.args = parameters;
+		if (rule->symbols.size() == 4) {
+			Node* parameter_list = root->children[2]->children[0];
+			vector<string> parameters;
+			getParameterList(parameter_list, parameters);
+			entry.args = parameters;
+		}
 		entry.addr = ir->nextquad(); // 函数标号地址
 
 		ir->functionTable->insert({ func_name,entry });
 	}
-	else if (lhs == "function_definition" && rule->symbols.size() == 4) {
+	else if (lhs == "function_definition" && rule->symbols.size() ==4) {
 		const auto& rhs = rule->symbols; 
 		if (rhs[0].type == "declaration_specifiers") {
 			// function_definition -> declaration_spec declarator compound_statement
 			// 退出当前函数表
 
 			// 获取函数名（作用域名）
+			int func_name_index = 2;
+
 			// function_definition -> declarator -> direct_declarator -> direc_declarator
-			string func_name = root->children[2]->children[0]->children[0]->place; 
+			string func_name = root->children[func_name_index]->children[0]->children[0]->place; 
 			// add to function table 
 			ir->functionTable->operator[](func_name).ret_type = root->children[0]->var_type;
 			// add to symbol tables 
