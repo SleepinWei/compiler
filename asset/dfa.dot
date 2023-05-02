@@ -1,9 +1,0 @@
-digraph dfa{
-size = " 50, 50"; 
-fontname = "Microsoft YaHei";
-fontsize = 10; 
-node [shape = circle, fontname = "Microsfot YaHei", fontsize = 10];
-edge [fontname = "Microsoft YaHei", fontsize = 10];
-0;
-1;
-}
