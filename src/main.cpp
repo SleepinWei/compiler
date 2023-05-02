@@ -15,6 +15,7 @@
 #include<fstream>
 
 #include"Generator.h"
+#include"Node.h"
 
 int main(int argc, char *argv[])
 {
@@ -34,7 +35,7 @@ int main(int argc, char *argv[])
     Parser& parser = Parser::GetInstance();
     Generator& generator = Generator::GetInstance();
 
-    GrammarInfo* info = parser.readGrammarY("./asset/c99.txt");
+    GrammarInfo* info = parser.readGrammarY("./asset/c99_backup.txt");
     parser.printGrammar(info,"./asset/printed_grammar.txt");
 
     parser.calFirstVN(info);
@@ -45,17 +46,22 @@ int main(int argc, char *argv[])
     parser.printTable(dfa,"./asset/table.txt");
     std::cout << "Table Done\n";
 
-    auto [tree, ir] = parser.analyze(lex.inputs,"./asset/output.txt",dfa);
+    SyntaxTree* tree = nullptr;
+    IR* ir = nullptr;
+    auto&& result = parser.analyze(lex.inputs,"./asset/output.txt",dfa);
+    tree = std::get<0>(result);
+    ir = std::get<1>(result);
+    std::cout << tree << ' ' << ir << '\n';
     std::cout << "Analyzation Done" << '\n';
 
     generator.output(ir,"./asset/quads.txt");
     std::cout << "Generation Done\n";
 
-    if(ir)
-		delete ir; 
-    if (tree)
-        delete tree;
+    //if(ir)
+		//delete ir; 
+    //if (tree)
+        //delete tree;
 
-    return 0;
 #endif
+    return 0;
 }

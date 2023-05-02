@@ -363,16 +363,16 @@ expression_statement
 	;
 
 selection_statement
-	: IF '(' expression ')' m_quad_jz statement
-	| IF '(' expression ')' m_quad_jz statement m_quad_j ELSE m_quad statement
+	: IF '(' expression ')' statement
+	| IF '(' expression ')' statement ELSE statement
 	| SWITCH '(' expression ')' statement
 	;
 
 iteration_statement
-	: WHILE m_quad '(' expression ')' m_quad_jz statement
-	| DO m_quad statement WHILE '(' expression ')' ';'
+	: WHILE '(' expression ')' statement
+	| DO statement WHILE '(' expression ')' ';'
 	| FOR '(' expression_statement expression_statement ')' statement
-	| FOR '(' expression_statement m_quad expression_statement m_quad_jz m_quad_j expression ')' m_quad_j statement
+	| FOR '(' expression_statement expression_statement expression ')' statement
 	;
 
 jump_statement
@@ -398,16 +398,4 @@ function_definition
 	| declaration_specifiers declarator compound_statement
 	| declarator declaration_list compound_statement
 	| declarator compound_statement
-	;
-	
-m_quad
-	: @
-	;
-	
-m_quad_jz
-	: @
-	;
-	
-m_quad_j
-	: @
 	;

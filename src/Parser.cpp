@@ -503,7 +503,12 @@ void Parser::constructTable(Cluster& cluster,DFA& table) {
 				//if (std::find(actions.begin(), actions.end(), action) == actions.end()) {
                     //actions.emplace_back(action);
                 //}
-                table.insert({ {citer,item.peek.type},entry});
+                if (table.find({ citer,item.peek.type }) != table.end()) {
+                    std::cout << citer << ' ' << item.peek.type << " found!\n";
+                }
+                else {
+                    table.insert({ {citer,item.peek.type},entry });
+                }
             }
         }
     }
@@ -580,11 +585,9 @@ std::tuple<SyntaxTree*,IR*> Parser::analyze(const std::vector<Node*>& inputs, co
                 nodeStack.pop();
 				std::cout << "remaining node in stack: " << nodeStack.size() << '\n';
                 f << "Done!";
-                std::cout<<"Regulation Process Done";
+                std::cout<<"Regulation Process Done\n";
                 // release resources
-                delete ir; 
-                delete syntaxTree;
-                return std::make_tuple(nullptr,nullptr);
+                return std::make_tuple(syntaxTree,ir);
             }
             else if (tableEntry.useStack) {
                 // ÒÆ½ø
