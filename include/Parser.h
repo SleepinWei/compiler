@@ -61,7 +61,9 @@ public:
     void printCluster(Cluster& cluster, const std::string& filename);
     void printGrammar(GrammarInfo* grammarInfo, const std::string& filename);
     void printDFA(const std::string& filename);
-    void printTable(DFA& table, const std::string& filename);
+    void printTable(GrammarInfo* info, DFA& table, const std::string& filename);
+
+    DFA loadTable(GrammarInfo* info, const std::string filename);
 
     void closure(GrammarInfo* grammarInfo, std::set<Item>& itemSet);
 

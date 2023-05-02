@@ -18,6 +18,20 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\component.h" />
+    <ClInclude Include="include\Generator.h" />
+    <ClInclude Include="include\Lexer.h" />
+    <ClInclude Include="include\Node.h" />
+    <ClInclude Include="include\Parser.h" />
+    <ClInclude Include="include\token.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Generator.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Node.cpp" />
+    <ClCompile Include="src\Parser.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -116,6 +130,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,6 +146,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,21 +155,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="src\component.h" />
-    <ClInclude Include="src\Generator.h" />
-    <ClInclude Include="src\Lexer.h" />
-    <ClInclude Include="src\Node.h" />
-    <ClInclude Include="src\Parser.h" />
-    <ClInclude Include="src\token.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\Generator.cpp" />
-    <ClCompile Include="src\LexicalAnalyzer.cpp" />
-    <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\Node.cpp" />
-    <ClCompile Include="src\Parser.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

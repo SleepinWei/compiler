@@ -13,9 +13,9 @@ using namespace std;
 class Lexer {
 public:
     ~Lexer() {
-        for (auto n : inputs) {
-            delete n;
-        }
+        //for (auto n : inputs) {
+        //    delete n;
+        //}
     }
     void Error(string s)
     {

@@ -505,6 +505,7 @@ void Parser::constructTable(Cluster& cluster,DFA& table) {
                 //}
                 if (table.find({ citer,item.peek.type }) != table.end()) {
                     std::cout << citer << ' ' << item.peek.type << " found!\n";
+                    table[{ citer, item.peek.type }] = entry;
                 }
                 else {
                     table.insert({ {citer,item.peek.type},entry });
@@ -532,24 +533,84 @@ void Parser::printDFA(const std::string& filename) {
     system(".\\asset\\gen.bat");
 }
 
-void Parser::printTable(DFA& table,const std::string& filename) {
+void Parser::printTable(GrammarInfo* grammarInfo, DFA& table,const std::string& filename) {
     std::ofstream f(filename);
-	f << "Table\n";
-    //for (auto& a : actions) {
-        //f << a.state << ' ' << a.inString << ' ' << (a.useStack ? "s" : "r") << a.j << ' ' << (int)a.gen 
-            //<< ' ' << (a.isAcc ? "acc" : "") << '\n';
-    //}
-    //f << "----------------------\n";
-	//f << "GOTO Table\n";
-    //for (auto& g : gotos) {
-        //f << g.state << ' ' << g.inState << ' ' << g.gotoState << '\n';
-    //}
+	//f << "Table\n";
     for (auto iter = table.begin(); iter != table.end(); ++iter) {
         auto& t = iter->first;
         auto& v = iter->second;
-        f << std::get<0>(t) << ' ' << std::get<1>(t) << (v.useStack ? "s" : "r") << v.destState << ' ' << (int)v.gen
-            << ' ' << (v.isAcc ? "acc" : "") << '\n';
+        int rule_index = 0;
+        if (v.useStack == false) {
+            auto& grammar = grammarInfo->grammar;
+            // 在 grammar 中找到 v.gen 存储的位置
+            for (auto& iter : grammar) {
+                auto& entry_vec = iter.second;
+                int flag = false;
+                for(int i = 0;i<entry_vec.size();++i){
+                    auto& entry = entry_vec[i];
+                    if (entry == v.gen) {
+                        rule_index = i;
+                        flag = true;
+                        break;
+                    }
+                }
+                if (flag) {
+                    break; 
+                }
+            }
+        }
+        f << std::get<0>(t) << ' ' << std::get<1>(t) << ' ' << (v.useStack ? "s" : "r") << ' '; 
+        if (v.useStack) {
+            f << v.destState << ' '; 
+        }
+        else {
+            f << v.gen->state.type << ' ' << rule_index << ' ';
+        }
+        f << (v.isAcc ? "1" : "0") << '\n';
     }
+
+    f << "-1\n";
+}
+
+DFA Parser::loadTable(GrammarInfo* info, const std::string filename)
+{
+    std::ifstream f(filename);
+    DFA dfa; 
+    while (true) {
+        int lhs; 
+        string in_symbol; 
+        string type; 
+        string entry_lhs; 
+        int destState; 
+        int isAcc; 
+        int rule_index;
+        
+        f >> lhs; 
+        if (lhs == -1) {
+            break;
+        }
+        TableEntry entry; 
+        f >> in_symbol >> type; 
+        if (type == "r") {
+            entry.useStack = false;
+            f >> entry_lhs >> rule_index >> isAcc;
+            entry.destState = -1;
+            entry.gen = info->grammar[entry_lhs][rule_index];
+			entry.isAcc = isAcc;
+            dfa.insert({ { lhs,in_symbol }, entry });
+        }
+        else if (type == "s") {
+            entry.useStack = true;
+            f >> destState >> isAcc;
+            entry.isAcc = isAcc;
+            entry.destState = destState;
+            dfa.insert({ { lhs,in_symbol }, entry});
+        }
+        else {
+            std::cout << "No matching type for input, must be 'r' or 's'\n";
+        }
+    }
+    return dfa; 
 }
 
 std::tuple<SyntaxTree*,IR*> Parser::analyze(const std::vector<Node*>& inputs, const std::string& filename, const DFA& table) {

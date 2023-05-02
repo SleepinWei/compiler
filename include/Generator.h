@@ -14,7 +14,7 @@ public:
 	IR() {
 		tempCnt = 0; 
 		globalTable = mktable(nullptr);
-		functionTable = nullptr;
+		functionTable = new FunctionTable();
 		curTable = globalTable;
 	}
 
@@ -81,6 +81,7 @@ private:
 
 	void BoolExpression(IR* ir, const GrammarEntry* rule, Node* root);
 
+	void Function(IR* ir, const GrammarEntry* rule, Node* root);
 
 	void Iteration(IR* ir, const GrammarEntry* rule, Node* root);
 

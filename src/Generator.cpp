@@ -14,6 +14,7 @@ void Generator::analyze(IR* ir, const GrammarEntry* rule, Node* root) {
 	BoolExpression(ir, rule, root);
 	Iteration(ir, rule, root);
 	Mquad(ir, rule, root);
+	Function(ir, rule, root);
 	Selection(ir, rule, root);
 }
 
@@ -65,6 +66,49 @@ void Generator::BoolExpression(IR* ir, const GrammarEntry* rule, Node* root)
 		{
 			root->place = ir->newtemp();
 			quads.push_back(Quad("OR_OP", e1->place, e2->place, root->place));
+		}
+	}
+}
+
+void getParameterList(Node* root, vector<string>& result) {
+	//getParameterList();
+}
+
+void Generator::Function(IR* ir, const GrammarEntry* rule, Node* root)
+{
+	const string& lhs = rule->state.type; 
+	if (lhs == "m_func_enter") {
+		// 进入函数定义阶段，创建函数表，但此时无名称（无法获得函数名）
+		auto newTable = mktable(ir->curTable);
+		ir->curTable = newTable;
+	}
+	else if (lhs == "direct_declarator" && rule->symbols.size() == 4) {
+		// direct_declarator -> direct_declarator ( parameter_type_list )
+		// register a function entry 
+		const auto& rhs = rule->symbols;
+		string func_name = root->children[0]->place;
+		FunctionEntry entry; 
+		// parameters
+		Node* parameter_list = root->children[2]->children[0];
+
+		ir->functionTable->insert({ func_name,entry });
+	}
+	else if (lhs == "function_definition" && rule->symbols.size() == 3) {
+		const auto& rhs = rule->symbols; 
+		if (rhs[0].type == "declaration_specifiers") {
+			// function_definition -> declaration_spec declarator compound_statement
+			// 退出当前函数表
+
+			// 获取函数名（作用域名）
+			// function_definition -> declarator -> direct_declarator -> direc_declarator
+			string func_name = root->children[1]->children[0]->children[0]->place; 
+			// add to function table 
+
+			//ir->functionTable->insert({func_name,functionEntry});
+			// add to symbol tables 
+			ir->symbolTables.insert({func_name, ir->curTable});
+			// change current table. 	
+			ir->curTable = ir->curTable->parent; 
 		}
 	}
 }

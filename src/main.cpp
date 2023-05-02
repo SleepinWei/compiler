@@ -42,16 +42,19 @@ int main(int argc, char *argv[])
     parser.printVNFirst(info->firstVN,"./asset/firstVN.txt");
     std::cout << "First Done\n";
 
-    DFA dfa = parser.genDFA(info);
-    parser.printTable(dfa,"./asset/table.txt");
-    std::cout << "Table Done\n";
+    //DFA dfa = parser.genDFA(info);
+    //parser.printTable(info, dfa,"./asset/table.txt");
+    //std::cout << "Table Done\n";
+
+    DFA dfa = parser.loadTable(info, "./asset/table.txt");
+    std::cout << "Read Done\n";
 
     SyntaxTree* tree = nullptr;
     IR* ir = nullptr;
     auto&& result = parser.analyze(lex.inputs,"./asset/output.txt",dfa);
     tree = std::get<0>(result);
     ir = std::get<1>(result);
-    std::cout << tree << ' ' << ir << '\n';
+    parser.printTree(tree, "./asset/tree.dot");
     std::cout << "Analyzation Done" << '\n';
 
     generator.output(ir,"./asset/quads.txt");

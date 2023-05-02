@@ -49,12 +49,8 @@ struct SymbolEntryConst {
 	string val; 
 };
 
-struct SymbolEntryFunction {
-
-};
-
 struct SymbolTable{
-	SymbolTable* previous = nullptr;
+	SymbolTable* parent = nullptr;
 	int offset = 0;
 	int width = 0;
 	std::map<string,SymbolEntryVar> symbols; // (name, type, offset)
@@ -69,7 +65,7 @@ struct FunctionEntry{
 
 using FunctionTable = std::map<string, FunctionEntry>;
 
-SymbolTable* mktable(SymbolTable* previous);
+SymbolTable* mktable(SymbolTable* parent);
 void enter(SymbolTable* table, string name, string type, int offset);
 void addWidth(SymbolTable* table, int width);
 SymbolTable* enterproc(SymbolTable* table);
