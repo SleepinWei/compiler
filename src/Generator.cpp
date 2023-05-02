@@ -1,6 +1,12 @@
 #include"Node.h"
 #include"Generator.h"
 #include<string>
+std::map<string, int> Generator::TYPE_WIDTH {
+	{"INT",4},
+	{"DOUBLE",8},
+	{"FLOAT",4}
+};
+
 Generator& Generator::GetInstance()
 {
 	static Generator generator;
@@ -71,7 +77,18 @@ void Generator::BoolExpression(IR* ir, const GrammarEntry* rule, Node* root)
 }
 
 void getParameterList(Node* root, vector<string>& result) {
-	//getParameterList();
+	if (root->type != "parameter_list") {
+		return;
+	}
+	Node* para_decl = nullptr;
+	if (root->children.size() == 3) {
+		getParameterList(root->children[0], result);
+		para_decl = root->children[2];
+	}
+	else {
+		para_decl = root->children[0];
+	}
+	result.push_back(para_decl->children[0]->var_type);
 }
 
 void Generator::Function(IR* ir, const GrammarEntry* rule, Node* root)
@@ -90,10 +107,14 @@ void Generator::Function(IR* ir, const GrammarEntry* rule, Node* root)
 		FunctionEntry entry; 
 		// parameters
 		Node* parameter_list = root->children[2]->children[0];
+		vector<string> parameters;
+		getParameterList(parameter_list, parameters);
+		entry.args = parameters;
+		entry.addr = ir->nextquad(); // 函数标号地址
 
 		ir->functionTable->insert({ func_name,entry });
 	}
-	else if (lhs == "function_definition" && rule->symbols.size() == 3) {
+	else if (lhs == "function_definition" && rule->symbols.size() == 4) {
 		const auto& rhs = rule->symbols; 
 		if (rhs[0].type == "declaration_specifiers") {
 			// function_definition -> declaration_spec declarator compound_statement
@@ -101,10 +122,9 @@ void Generator::Function(IR* ir, const GrammarEntry* rule, Node* root)
 
 			// 获取函数名（作用域名）
 			// function_definition -> declarator -> direct_declarator -> direc_declarator
-			string func_name = root->children[1]->children[0]->children[0]->place; 
+			string func_name = root->children[2]->children[0]->children[0]->place; 
 			// add to function table 
-
-			//ir->functionTable->insert({func_name,functionEntry});
+			ir->functionTable->operator[](func_name).ret_type = root->children[0]->var_type;
 			// add to symbol tables 
 			ir->symbolTables.insert({func_name, ir->curTable});
 			// change current table. 	
@@ -127,6 +147,13 @@ void Generator::Statement(IR* ir, const GrammarEntry* rule, Node* root) {
 			root->var_type = root->children[0]->var_type;
 			root->width = root->children[0]->width;
 		}
+	}
+	else if (rule->state.type == "parameter_declaration" && rule->symbols.size() == 2) {
+		// parameter_declaration -> declaration_specifiers declarator
+		auto specifier = root->children[0];
+		string var_type = specifier->var_type;
+		enter(curTable, root->children[1]->place, var_type, curTable->offset);
+		addWidth(curTable, Generator::TYPE_WIDTH[var_type]);
 	}
 	else if (rule->state.type == "declaration") {
 		if (rule->symbols.size() == 1) {
@@ -401,6 +428,7 @@ void Generator::output(IR* ir, const string& filename) {
 	fout << "Symbol Table:\n";
 	//auto table = curTable;
 	for(auto& iter : ir->symbolTables){
+		fout << "Table " << iter.first << " : \n";
 		auto table = iter.second; 
 		fout << "offset: " << table->offset << "\n";
 		fout << "width: " << table->width << "\n";
@@ -414,6 +442,17 @@ void Generator::output(IR* ir, const string& filename) {
 	fout << "width: " << table->width << "\n";
 	for (auto iter = table->symbols.begin(); iter != table->symbols.end(); ++iter) {
 		fout << "[" << iter->first << ", " << iter->second.offset << ", " << iter->second.type << "]\n";
+	}
+	fout << "-----------------------\n";
+	fout << "Function Table: \n";
+	auto functionTable = ir->functionTable;
+	for (auto iter : *functionTable) {
+		auto entry = iter.second;
+		fout << iter.first << " : " << "addr: " << entry.addr << " type: " << entry.ret_type << "(";
+		for (auto arg : entry.args) {
+			fout << arg << ", ";
+		}
+		fout << ") \n";
 	}
 }
 void Generator::Iteration(IR* ir, const GrammarEntry* rule, Node* root) {

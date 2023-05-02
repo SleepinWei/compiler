@@ -715,10 +715,6 @@ std::tuple<SyntaxTree*,IR*> Parser::analyze(const std::vector<Node*>& inputs, co
     return std::make_tuple(syntaxTree,ir);
 }
 
-void Parser::save(const string& path)
-{
-}
-
 void outputTree(std::ofstream& f, Node* root) {
     f << (int)root << "[label=\"";
     if (root->type != "") {

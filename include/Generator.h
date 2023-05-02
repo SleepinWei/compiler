@@ -62,15 +62,14 @@ public:
 };
 
 class Generator {
+public:
+	static std::map<string, int> TYPE_WIDTH; 
 private:
 	Generator() = default;
 	~Generator() = default;
 
 public:
 	static Generator& GetInstance(); 
-
-public:
-
 	void analyze(IR* ir, const GrammarEntry* rule, Node* root);
 	void output(IR* ir, const string& filename);
 
@@ -89,3 +88,4 @@ private:
 
 	void Selection(IR* ir, const GrammarEntry* rule, Node* root);
 };
+

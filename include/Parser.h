@@ -76,7 +76,6 @@ public:
     // analyze
     std::tuple<SyntaxTree*,IR*> analyze(const std::vector<Node*>& inputs, const std::string& filename, const DFA& dfa);
 
-    void save(const string& path);
     void printTree(SyntaxTree* tree, const std::string& filename);
 };
 
