@@ -42,6 +42,8 @@ struct Quad {
 struct SymbolEntryVar{
 	string type;
 	int offset;
+	bool is_array; 
+	vector<int> dims;  // array dims 
 };
 
 struct SymbolEntryConst {
@@ -66,6 +68,6 @@ struct FunctionEntry{
 using FunctionTable = std::map<string, FunctionEntry>;
 
 SymbolTable* mktable(SymbolTable* parent);
-void enter(SymbolTable* table, string name, string type, int offset);
+void enter(SymbolTable* table, string name, string type, int offset,bool is_array = false, vector<int> dims = vector<int>());
 void addWidth(SymbolTable* table, int width);
 SymbolTable* enterproc(SymbolTable* table);

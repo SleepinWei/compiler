@@ -5,8 +5,8 @@ SymbolTable* mktable(SymbolTable* parent) {
 	return newTable;
 }
 
-void enter(SymbolTable* table, string name, string type, int offset) {
-	table->symbols.insert({ name, {type,offset} });
+void enter(SymbolTable* table, string name, string type, int offset, bool is_array, vector<int> dims) {
+	table->symbols.insert({ name, {type,offset,is_array,dims} });
 }
 
 void addWidth(SymbolTable* table, int width) {

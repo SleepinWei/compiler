@@ -101,22 +101,23 @@ void Generator::Function(IR* ir, const GrammarEntry* rule, Node* root)
 	}
 	else if (lhs == "direct_declarator" && (rule->symbols.size() == 4 || rule->symbols.size() ==3) ) {
 		// rhs 无参数时长度为3，有参数时多一个 parameter_list
+		if (rule->symbols[1].type == "(") {
+			// direct_declarator -> direct_declarator ( [parameter_type_list] )
+			// register a function entry 
+			const auto& rhs = rule->symbols;
+			string func_name = root->children[0]->place;
+			FunctionEntry entry;
+			// parameters
+			if (rule->symbols.size() == 4) {
+				Node* parameter_list = root->children[2]->children[0];
+				vector<string> parameters;
+				getParameterList(parameter_list, parameters);
+				entry.args = parameters;
+			}
+			entry.addr = ir->nextquad(); // 函数标号地址
 
-		// direct_declarator -> direct_declarator ( [parameter_type_list] )
-		// register a function entry 
-		const auto& rhs = rule->symbols;
-		string func_name = root->children[0]->place;
-		FunctionEntry entry; 
-		// parameters
-		if (rule->symbols.size() == 4) {
-			Node* parameter_list = root->children[2]->children[0];
-			vector<string> parameters;
-			getParameterList(parameter_list, parameters);
-			entry.args = parameters;
+			ir->functionTable->insert({ func_name,entry });
 		}
-		entry.addr = ir->nextquad(); // 函数标号地址
-
-		ir->functionTable->insert({ func_name,entry });
 	}
 	else if (lhs == "function_definition" && rule->symbols.size() ==4) {
 		const auto& rhs = rule->symbols; 
@@ -144,6 +145,8 @@ void Generator::Statement(IR* ir, const GrammarEntry* rule, Node* root) {
 	auto& quads = ir->quads;
 	auto QUAD_EMPTY = ir->QUAD_EMPTY;
 
+	const auto& lhs = rule->state.type;
+
 	if (rule->state.type == "type_specifier") {
 		root->var_type = rule->symbols[0].type;
 		root->width = root->children[0]->width;
@@ -169,15 +172,59 @@ void Generator::Statement(IR* ir, const GrammarEntry* rule, Node* root) {
 		else {
 			// declaration = declaration_specifers init_declarator_list ; 
 			// add to symbol stack
-			enter(curTable, root->children[1]->place,root->children[0]->var_type,curTable->offset);
-			int width = 0; 
-			if (root->children[0]->var_type == "DOUBLE") {
-				width = 8;
+			string var_name = root->children[1]->place;
+			int left_bracket = -1;
+			for (int i = 0; i < var_name.size();++i) {
+				if (var_name[i] == '[') {
+					left_bracket= i;
+					break;
+				}
 			}
-			else if(root->children[0]->var_type == "INT") {
-				width = 4;
+			if (left_bracket== -1) {
+				// is variable
+				enter(curTable, var_name, root->children[0]->var_type, curTable->offset);
+				int width = 0;
+				if (root->children[0]->var_type == "DOUBLE") {
+					width = 8;
+				}
+				else if (root->children[0]->var_type == "INT") {
+					width = 4;
+				}
+				addWidth(curTable, width);
 			}
-			addWidth(curTable, width);
+			else {
+				// is array  可以是多维数组
+				int right_bracket = 0;
+				vector<int> dims = vector<int>(); 
+				int overall_size = 1;
+				string arr_name = var_name.substr(0, left_bracket);
+
+				while (right_bracket < var_name.size() - 1) {
+					bool found = false;
+					for (right_bracket = left_bracket + 1; right_bracket < var_name.size(); ++right_bracket) {
+						if (var_name[right_bracket] == ']') {
+							found = true;
+							break;
+						}
+					}
+
+					if (!found) {
+						break;
+					}
+
+					// 记录数组的维度
+					string arr_size_string = var_name.substr(left_bracket + 1, right_bracket - left_bracket - 1);
+					int arr_size = std::stoi(arr_size_string);
+					overall_size *= arr_size;
+					dims.push_back(arr_size);
+
+					left_bracket = right_bracket + 1;
+				}
+
+				string el_type = root->children[0]->var_type;
+				enter(curTable,arr_name , el_type ,curTable->offset,true,dims);
+				addWidth(curTable,Generator::TYPE_WIDTH[el_type] * overall_size);
+			}
 		}
 	}
 	else if (rule->state.type == "init_declarator_list") {
@@ -212,6 +259,14 @@ void Generator::Statement(IR* ir, const GrammarEntry* rule, Node* root) {
 			// direct = identifier
 			root->place = root->children[0]->place;
 		}
+		else if (rule->symbols.size() == 4 && rule->symbols[1].type == "[" ) {
+			// 数组定义
+			// direct_declarator -> direct_declarator [ constant_expression ]
+			const string& arr_name = root->children[0]->place;
+			string arr_size = root->children[2]->place;
+			root->place = arr_name + "[" + arr_size + "]";
+			// TODO: constant_expression 必须为整数且为常数的判断
+		}
 	}
 	else if (rule->state.type == "declarator") {
 		if (rule->symbols.size() == 1) {
@@ -220,6 +275,17 @@ void Generator::Statement(IR* ir, const GrammarEntry* rule, Node* root) {
 	}
 	else if (rule->state.type == "assignment_operator") {
 		root->place = root->children[0]->place;
+	}
+	else if (lhs == "jump_statement") {
+		auto& rhs0 = root->children[0]->place; 
+		if (rhs0 == "return") {
+			// jump_statement -> return [expression] ; 
+			string expression = "";
+			if (root->children.size() == 3) {
+				expression = root->children[1]->place;
+			}
+			quads.push_back({"RET",QUAD_EMPTY,QUAD_EMPTY,expression});
+		}
 	}
 }
 void Generator::Assignment(IR* ir, const GrammarEntry* rule,Node* root) {
@@ -262,7 +328,7 @@ void Generator::Assignment(IR* ir, const GrammarEntry* rule,Node* root) {
 			quads.push_back({ root->children[1]->place,root->children[2]->place,QUAD_EMPTY,root->place });
 		}
 	}
-	else if (rule->state.type == "inclusive_or_expression" || rule->state.type == "logical_and_expression" || rule->state.type == "logicial_and_expression"
+	else if (rule->state.type == "constant_expression" || rule->state.type == "inclusive_or_expression" || rule->state.type == "logical_and_expression" || rule->state.type == "logicial_and_expression"
 		|| rule->state.type == "logical_or_expression" || rule->state.type == "conditional_expression" ) {
 		root->place = root->children[0]->place;
 		root->var_type = root->children[0]->var_type;
