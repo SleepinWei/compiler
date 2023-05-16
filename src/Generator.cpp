@@ -76,7 +76,16 @@ void Generator::BoolExpression(IR* ir, const GrammarEntry* rule, Node* root)
 	}
 }
 
-void getParameterList(Node* root, vector<string>& result) {
+/// <summary>
+/// 递归遍历 syntax tree 获得 parameter_type_list 中的所有 parameters
+/// </summary>
+/// <param name="root"></param>
+/// <param name="result"></param>
+struct Parameter {
+	string type;
+	string name; 
+};
+void getParameterList(Node* root, vector<Parameter>& result) {
 	if (root->type != "parameter_list") {
 		return;
 	}
@@ -88,7 +97,7 @@ void getParameterList(Node* root, vector<string>& result) {
 	else {
 		para_decl = root->children[0];
 	}
-	result.push_back(para_decl->children[0]->var_type);
+	result.push_back({ para_decl->children[0]->var_type, para_decl->children[1]->place});
 }
 
 void Generator::Function(IR* ir, const GrammarEntry* rule, Node* root)
@@ -110,9 +119,17 @@ void Generator::Function(IR* ir, const GrammarEntry* rule, Node* root)
 			// parameters
 			if (rule->symbols.size() == 4) {
 				Node* parameter_list = root->children[2]->children[0];
-				vector<string> parameters;
+				vector<Parameter> parameters;
 				getParameterList(parameter_list, parameters);
-				entry.args = parameters;
+
+				int cumulative_offset = 0; 
+				for (const auto& para : parameters) {
+					entry.args.emplace_back(para.type);
+					// 计算形式参数的 offset，负数
+					int size = Generator::TYPE_WIDTH[para.type];
+					cumulative_offset -= size; 
+					enter(ir->curTable, para.name, para.type, cumulative_offset, size);
+				}
 			}
 			entry.addr = ir->nextquad(); // 函数标号地址
 
@@ -140,6 +157,62 @@ void Generator::Function(IR* ir, const GrammarEntry* rule, Node* root)
 	}
 }
 
+/// <summary>
+/// 根据变量名 和 变量类型解析具体类型，主要在处理多维数组
+/// 生成的 entry 中的 offset 默认为 0
+/// </summary>
+/// <param name="var_name"></param>
+/// <param name="var_type"></param>
+/// <returns></returns>
+SymbolEntryVar parseVariable(string var_name,string var_type) {
+	SymbolEntryVar result;
+
+	int left_bracket = -1;
+	for (int i = 0; i < var_name.size(); ++i) {
+		if (var_name[i] == '[') {
+			left_bracket = i;
+			break;
+		}
+	}
+	if (left_bracket == -1) {
+		// is variable
+		result = {var_name, var_type, 0, Generator::TYPE_WIDTH[var_type],false,{} };
+	}
+	else {
+		// is array  可以是多维数组
+		int right_bracket = 0;
+		vector<int> dims = vector<int>();
+		int overall_size = 1;
+		string arr_name = var_name.substr(0, left_bracket);
+
+		while (right_bracket < var_name.size() - 1) {
+			bool found = false;
+			for (right_bracket = left_bracket + 1; right_bracket < var_name.size(); ++right_bracket) {
+				if (var_name[right_bracket] == ']') {
+					found = true;
+					break;
+				}
+			}
+
+			if (!found) {
+				break;
+			}
+
+			// 记录数组的维度
+			string arr_size_string = var_name.substr(left_bracket + 1, right_bracket - left_bracket - 1);
+			int arr_size = std::stoi(arr_size_string);
+			overall_size *= arr_size;
+			dims.push_back(arr_size);
+
+			left_bracket = right_bracket + 1;
+		}
+
+		int size = Generator::TYPE_WIDTH[var_type] * overall_size;
+		result = { arr_name, var_type, 0, size, true, dims };
+	}
+	return result;
+}
+
 void Generator::Statement(IR* ir, const GrammarEntry* rule, Node* root) {
 	auto& curTable = ir->curTable;
 	auto& quads = ir->quads;
@@ -159,10 +232,9 @@ void Generator::Statement(IR* ir, const GrammarEntry* rule, Node* root) {
 	}
 	else if (rule->state.type == "parameter_declaration" && rule->symbols.size() == 2) {
 		// parameter_declaration -> declaration_specifiers declarator
-		auto specifier = root->children[0];
-		string var_type = specifier->var_type;
-		enter(curTable, root->children[1]->place, var_type, curTable->offset);
-		addWidth(curTable, Generator::TYPE_WIDTH[var_type]);
+		//auto specifier = root->children[0];
+		//string var_type = specifier->var_type;
+		//enter(curTable, root->children[1]->place, var_type, ,Generator::TYPE_WIDTH[var_type]);
 	}
 	else if (rule->state.type == "declaration") {
 		if (rule->symbols.size() == 1) {
@@ -172,59 +244,11 @@ void Generator::Statement(IR* ir, const GrammarEntry* rule, Node* root) {
 		else {
 			// declaration = declaration_specifers init_declarator_list ; 
 			// add to symbol stack
-			string var_name = root->children[1]->place;
-			int left_bracket = -1;
-			for (int i = 0; i < var_name.size();++i) {
-				if (var_name[i] == '[') {
-					left_bracket= i;
-					break;
-				}
-			}
-			if (left_bracket== -1) {
-				// is variable
-				enter(curTable, var_name, root->children[0]->var_type, curTable->offset);
-				int width = 0;
-				if (root->children[0]->var_type == "DOUBLE") {
-					width = 8;
-				}
-				else if (root->children[0]->var_type == "INT") {
-					width = 4;
-				}
-				addWidth(curTable, width);
-			}
-			else {
-				// is array  可以是多维数组
-				int right_bracket = 0;
-				vector<int> dims = vector<int>(); 
-				int overall_size = 1;
-				string arr_name = var_name.substr(0, left_bracket);
+			SymbolEntryVar entry = parseVariable(root->children[1]->place, root->children[0]->var_type);
+			entry.offset = curTable->offset;
 
-				while (right_bracket < var_name.size() - 1) {
-					bool found = false;
-					for (right_bracket = left_bracket + 1; right_bracket < var_name.size(); ++right_bracket) {
-						if (var_name[right_bracket] == ']') {
-							found = true;
-							break;
-						}
-					}
-
-					if (!found) {
-						break;
-					}
-
-					// 记录数组的维度
-					string arr_size_string = var_name.substr(left_bracket + 1, right_bracket - left_bracket - 1);
-					int arr_size = std::stoi(arr_size_string);
-					overall_size *= arr_size;
-					dims.push_back(arr_size);
-
-					left_bracket = right_bracket + 1;
-				}
-
-				string el_type = root->children[0]->var_type;
-				enter(curTable,arr_name , el_type ,curTable->offset,true,dims);
-				addWidth(curTable,Generator::TYPE_WIDTH[el_type] * overall_size);
-			}
+			curTable->symbols.insert({ entry.name,entry });
+			addWidth(curTable,entry.size);
 		}
 	}
 	else if (rule->state.type == "init_declarator_list") {
@@ -500,20 +524,35 @@ void Generator::output(IR* ir, const string& filename) {
 	fout << "Symbol Table:\n";
 	//auto table = curTable;
 	for(auto& iter : ir->symbolTables){
+		fout << "***************************************\n";
 		fout << "Table " << iter.first << " : \n";
 		auto table = iter.second; 
 		fout << "offset: " << table->offset << "\n";
 		fout << "width: " << table->width << "\n";
+		
 		for (auto iter = table->symbols.begin(); iter != table->symbols.end(); ++iter) {
-			fout << "[" << iter->first << ", " << iter->second.offset << ", " << iter->second.type << "]\n";
+			fout << "[" << iter->first << ", " << iter->second.offset << ", " << iter->second.type;
+			if (iter->second.is_array) {
+				for (auto size : iter->second.dims) {
+					fout << "[" << size << "]";
+				}
+			}
+			fout << "]\n";
 		}
 	}
+	fout << "***************************************\n";
 	fout << "GLobal Symbol Table: \n";
 	auto table = ir->globalTable; 
 	fout << "offset: " << table->offset << "\n";
 	fout << "width: " << table->width << "\n";
 	for (auto iter = table->symbols.begin(); iter != table->symbols.end(); ++iter) {
-		fout << "[" << iter->first << ", " << iter->second.offset << ", " << iter->second.type << "]\n";
+		fout << "[" << iter->first << ", " << iter->second.offset << ", " << iter->second.type;
+		if (iter->second.is_array) {
+			for (auto size : iter->second.dims) {
+				fout << "[" << size << "]";
+			}
+		}
+		fout << "]\n";
 	}
 	fout << "-----------------------\n";
 	fout << "Function Table: \n";

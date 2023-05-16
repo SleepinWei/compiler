@@ -40,8 +40,10 @@ struct Quad {
 
 // 符号表表项
 struct SymbolEntryVar{
+	string name; 
 	string type;
-	int offset;
+	int offset; // 对形式参数，为负值
+	int size; 
 	bool is_array; 
 	vector<int> dims;  // array dims 
 };
@@ -68,6 +70,6 @@ struct FunctionEntry{
 using FunctionTable = std::map<string, FunctionEntry>;
 
 SymbolTable* mktable(SymbolTable* parent);
-void enter(SymbolTable* table, string name, string type, int offset,bool is_array = false, vector<int> dims = vector<int>());
+void enter(SymbolTable* table, string name, string type, int offset,int size, bool is_array = false, vector<int> dims = vector<int>());
 void addWidth(SymbolTable* table, int width);
 SymbolTable* enterproc(SymbolTable* table);
