@@ -312,6 +312,35 @@ void Generator::Statement(IR* ir, const GrammarEntry* rule, Node* root) {
 		}
 	}
 }
+
+/// <summary>
+/// 函数调用时获得参数值
+/// </summary>
+/// <param name="root"></param>
+/// <param name="result"></param>
+struct ArgumentExpression {
+	bool isVariable; 
+	string name; 
+};
+void getArgumentExpressionList(Node* root, vector<ArgumentExpression>& result) {
+	if (root->type != "argument_expression_list") {
+		return;
+	}
+	Node* para_decl = nullptr;
+	if (root->children.size() == 3) {
+		getArgumentExpressionList(root->children[0], result);
+		para_decl = root->children[2];
+	}
+	else {
+		para_decl = root->children[0];
+	}
+	bool isVariable = true;
+	if (para_decl->var_type != "") {
+		isVariable = false;
+	}
+	result.push_back({isVariable, para_decl->place });
+}
+
 void Generator::Assignment(IR* ir, const GrammarEntry* rule,Node* root) {
 
 	//auto& symbolTableStack = ir->symbolTableStack;
@@ -479,6 +508,18 @@ void Generator::Assignment(IR* ir, const GrammarEntry* rule,Node* root) {
 			// postfix = primary 
 			root->place = root->children[0]->place;
 			root->var_type = root->children[0]->var_type;
+		}
+		else if (rule->symbols.size() == 4){ //|| rule->symbols.size() == 3) {
+			if (rule->symbols[1].type == "(") {
+				// postfix_expression = postfix_expression ( [argument_expression_list] ) 
+				vector<ArgumentExpression> arguments; 
+				getArgumentExpressionList(root->children[2], arguments);
+				// TODO: type checks 
+				for (auto r_iter = arguments.rbegin(); r_iter != arguments.rend(); ++r_iter) {
+					// emit a param expression 
+					ir->quads.push_back({ "param",QUAD_EMPTY,QUAD_EMPTY,r_iter->name });
+				}
+			}
 		}
 		else {
 			std::cout << "Postfix_expression use other rules" << '\n';
