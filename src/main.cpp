@@ -62,6 +62,7 @@ int main(int argc, char *argv[])
     parser.printTree(tree, "./asset/tree.dot");
     std::cout << "Analyzation Done" << '\n';
 
+    generator.postProcess(ir);
     generator.output(ir,"./asset/quads.txt");
     std::cout << "Generation Done\n";
 

@@ -38,7 +38,7 @@ public:
 	SymbolTable* globalTable; 
 	FunctionTable* functionTable; 
 
-	const int QUAD_BEGIN = 100; 
+	static const int QUAD_BEGIN = 100; 
 	const string QUAD_EMPTY = "-";
 
 public:
@@ -71,6 +71,7 @@ private:
 public:
 	static Generator& GetInstance(); 
 	void analyze(IR* ir, const GrammarEntry* rule, Node* root);
+	void postProcess(IR* ir);
 	void output(IR* ir, const string& filename);
 
 private:

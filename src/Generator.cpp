@@ -509,8 +509,8 @@ void Generator::Assignment(IR* ir, const GrammarEntry* rule,Node* root) {
 			root->place = root->children[0]->place;
 			root->var_type = root->children[0]->var_type;
 		}
-		else if (rule->symbols.size() == 4){ //|| rule->symbols.size() == 3) {
-			if (rule->symbols[1].type == "(") {
+		else if (rule->symbols.size() == 4 ||  rule->symbols.size() == 3) {
+			if (rule->symbols[1].type == "(" && rule->symbols.size() == 4) {
 				// postfix_expression = postfix_expression ( [argument_expression_list] ) 
 				vector<ArgumentExpression> arguments; 
 				getArgumentExpressionList(root->children[2], arguments);
@@ -520,6 +520,16 @@ void Generator::Assignment(IR* ir, const GrammarEntry* rule,Node* root) {
 					ir->quads.push_back({ "param",QUAD_EMPTY,QUAD_EMPTY,r_iter->name });
 				}
 			}
+			// emit quads for call 
+			string dest = QUAD_EMPTY;
+			string func_name = root->children[0]->place;
+			string ret_type = ir->functionTable->find(func_name)->second.ret_type;
+			if (ret_type != "void") {
+				dest = ir->newtemp();
+				// 如果有返回值，设置dest
+				root->place = dest; 
+			}
+			ir->quads.push_back({ "call",func_name,QUAD_EMPTY,dest});
 		}
 		else {
 			std::cout << "Postfix_expression use other rules" << '\n';
@@ -558,7 +568,12 @@ void Generator::output(IR* ir, const string& filename) {
 
 	for (int i = 0; i < quads.size(); ++i) {
 		const auto& quad = quads[i];
-        fout << "(" << i + 100<<")" << " : (" << quad.op << " ," << quad.arg1 << " ," << quad.arg2 << " ," << quad.dst << ")\n";
+		fout << "(" << i + 100 << ")" << " : (" << quad.op << " ," << quad.arg1 << " ," << quad.arg2 << " ," << quad.dst;
+		fout << ")";
+		if (quad.label != "") {
+			fout << "  " << quad.label;
+		}
+		fout << "\n";
 	}
 
 	fout << "-----------------------\n";
@@ -607,6 +622,14 @@ void Generator::output(IR* ir, const string& filename) {
 		fout << ") \n";
 	}
 }
+void Generator::postProcess(IR* ir)
+{
+	for (auto& f: *(ir->functionTable)) {
+		int index = f.second.addr - IR::QUAD_BEGIN;
+		ir->quads[index].label = f.first;
+	}
+}
+
 void Generator::Iteration(IR* ir, const GrammarEntry* rule, Node* root) {
 
 		//auto& symbolTableStack = ir->symbolTableStack;
