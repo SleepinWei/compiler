@@ -8,9 +8,9 @@ const vector<string> DestCode::registers = {
 
 string mapVarToAssembly(IR* ir,DestCode& dest_code, string var) {
 	string result = ""; 
-	if (var[0] >= '0' && var[0] <= '9') {
+	if (var[0] >= '0' && var[0] <= '9'){
 		// is number 
-		result = var; 
+		result = "$" + var;
 	}
 	else if (var[0] == 'T') {
 		// is temporary 
@@ -63,14 +63,15 @@ void CodeGen::codeGen(IR* ir, DestCode& dest_code)
 			ir->curTable = table;
 			fout << "\tsubl $" << table->width << ", %esp\n";
 		}
-		else if (op == "RET") {
+
+		if (op == "RET") {
 			// 
-			fout << "\tleave\n";
-			fout << "\tret";
 			if (dst != "-") {
-				fout << " " << dst;
+				string dst_assembly = mapVarToAssembly(ir,dest_code,dst);
+				fout << "\tmovl " << dst << ", %eax\n";
 			}
-			fout << "\n";
+			fout << "\tleave\n";
+			fout << "\tret\n";
 		}
 		else if (op == "call") {
 			fout << "\tcall ";
