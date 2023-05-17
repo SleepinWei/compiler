@@ -42,8 +42,14 @@ void Generator::BoolExpression(IR* ir, const GrammarEntry* rule, Node* root)
 		if (state.type == "unary_expression" && symbols[0].type == "unary_operator" && symbols[1].type == "cast_expression")
 		{
 			if (root->children[0]->children[0]->type == "!") {
-				root->place = ir->newtemp();
+				auto new_temp_name = ir->newtemp();
+				root->place = new_temp_name;
 				quads.push_back(Quad("!", root->children[1]->place, ir->QUAD_EMPTY, root->place));
+
+				//auto var_entry= ir->curTable->symbols.at(root->children[1]->place);
+				//auto var_type = var_entry.type;
+				//enter(ir->curTable, new_temp_name, var_type, ir->curTable->offset, var_entry.size);
+				//addWidth(ir->curTable, var_entry.size);
 			}
 		}
 	}
@@ -127,7 +133,7 @@ void Generator::Function(IR* ir, const GrammarEntry* rule, Node* root)
 					entry.args.emplace_back(para.type);
 					// 计算形式参数的 offset，负数
 					int size = Generator::TYPE_WIDTH[para.type];
-					cumulative_offset -= size; 
+					cumulative_offset += size; 
 					enter(ir->curTable, para.name, para.type, cumulative_offset, size);
 				}
 			}
@@ -245,7 +251,7 @@ void Generator::Statement(IR* ir, const GrammarEntry* rule, Node* root) {
 			// declaration = declaration_specifers init_declarator_list ; 
 			// add to symbol stack
 			SymbolEntryVar entry = parseVariable(root->children[1]->place, root->children[0]->var_type);
-			entry.offset = curTable->offset;
+			entry.offset = curTable->offset - entry.size;
 
 			curTable->symbols.insert({ entry.name,entry });
 			addWidth(curTable,entry.size);
@@ -524,8 +530,9 @@ void Generator::Assignment(IR* ir, const GrammarEntry* rule,Node* root) {
 			string dest = QUAD_EMPTY;
 			string func_name = root->children[0]->place;
 			string ret_type = ir->functionTable->find(func_name)->second.ret_type;
-			if (ret_type != "void") {
+			if (ret_type != "VOID") {
 				dest = ir->newtemp();
+				//enter(ir->curTable, dest, ret_type, ir->curTable->offset, TYPE_WIDTH[ret_type]);
 				// 如果有返回值，设置dest
 				root->place = dest; 
 			}

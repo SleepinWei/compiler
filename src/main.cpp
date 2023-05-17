@@ -11,6 +11,7 @@
 //#include <QCoreApplication>
 #include"Parser.h"
 #include"Lexer.h"
+#include"CodeGen.h"
 #include<iostream>
 #include<fstream>
 
@@ -66,8 +67,11 @@ int main(int argc, char *argv[])
     generator.output(ir,"./asset/quads.txt");
     std::cout << "Generation Done\n";
 
-    //if(ir)
-		//delete ir; 
+    DestCode code; 
+    code.fout = ofstream("./asset/codegen.s");
+    CodeGen::codeGen(ir, code);
+    std::cout << "CodeGen Done\n";
+
     delete ir; 
     delete tree; 
     //if (tree)

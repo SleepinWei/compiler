@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\CodeGen.h" />
     <ClInclude Include="include\component.h" />
     <ClInclude Include="include\Generator.h" />
     <ClInclude Include="include\Lexer.h" />
@@ -27,6 +28,7 @@
     <ClInclude Include="include\token.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\CodeGen.cpp" />
     <ClCompile Include="src\Generator.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Node.cpp" />

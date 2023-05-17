@@ -11,7 +11,7 @@ void enter(SymbolTable* table, string name, string type, int offset, int size, b
 
 void addWidth(SymbolTable* table, int width) {
 	table->width += width;
-	table->offset += width;
+	table->offset -= width;
 }
 
 SymbolTable* enterproc(SymbolTable* table) {
