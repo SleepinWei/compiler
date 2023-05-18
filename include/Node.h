@@ -59,6 +59,7 @@ struct SymbolTable{
 	SymbolTable* parent = nullptr;
 	int offset = 0;
 	int width = 0;
+	int param_width = 0;
 	std::map<string,SymbolEntryVar> symbols; // (name, type, offset)
 	std::map<string, SymbolEntryConst> consts; 
 };
