@@ -4,6 +4,7 @@
 #include<vector>
 #include<stack>
 #include<string>
+#include<iostream>
 using std::ofstream;
 using std::vector;
 using std::string;
@@ -26,7 +27,7 @@ public:
 public:
 	DestCode() {
 		for (auto reg : registers) {
-			allocation.insert({ reg,"" });
+			allocation.insert({ reg,""});
 		}
 		for (auto iter = DestCode::registers.rbegin(); iter != DestCode::registers.rend(); ++iter) {
 			free_regs.push(*iter);
@@ -44,7 +45,12 @@ public:
 	}
 
 	void releaseReg(string temp) {
-		auto reg = this->allocation[temp];
+		// temp : 临时变量名
+		if(t_allocation.find(temp) == t_allocation.end()){
+			std::cout <<"WARNING: "<< temp << " has already been released\n";
+			return;
+		}
+		auto reg = this->t_allocation[temp];
 		free_regs.push(reg);
 		allocation[reg] = ""; 
 		this->t_allocation.erase(temp);
