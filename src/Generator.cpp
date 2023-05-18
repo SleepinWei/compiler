@@ -133,8 +133,9 @@ void Generator::Function(IR* ir, const GrammarEntry* rule, Node* root)
 					entry.args.emplace_back(para.type);
 					// 计算形式参数的 offset，负数
 					int size = Generator::TYPE_WIDTH[para.type];
-					cumulative_offset += size; 
 					enter(ir->curTable, para.name, para.type, cumulative_offset, size);
+					cumulative_offset += size; 
+					ir->curTable->param_width += size; 
 				}
 			}
 			entry.addr = ir->nextquad(); // 函数标号地址
@@ -310,7 +311,7 @@ void Generator::Statement(IR* ir, const GrammarEntry* rule, Node* root) {
 		auto& rhs0 = root->children[0]->place; 
 		if (rhs0 == "return") {
 			// jump_statement -> return [expression] ; 
-			string expression = "";
+			string expression = "-";
 			if (root->children.size() == 3) {
 				expression = root->children[1]->place;
 			}
@@ -523,7 +524,7 @@ void Generator::Assignment(IR* ir, const GrammarEntry* rule,Node* root) {
 				// TODO: type checks 
 				for (auto r_iter = arguments.rbegin(); r_iter != arguments.rend(); ++r_iter) {
 					// emit a param expression 
-					ir->quads.push_back({ "param",QUAD_EMPTY,QUAD_EMPTY,r_iter->name });
+					ir->quads.push_back({ "param",r_iter->name,QUAD_EMPTY,QUAD_EMPTY });
 				}
 			}
 			// emit quads for call 
@@ -592,6 +593,7 @@ void Generator::output(IR* ir, const string& filename) {
 		auto table = iter.second; 
 		fout << "offset: " << table->offset << "\n";
 		fout << "width: " << table->width << "\n";
+		fout << "param width: " << table->param_width << "\n";
 		
 		for (auto iter = table->symbols.begin(); iter != table->symbols.end(); ++iter) {
 			fout << "[" << iter->first << ", " << iter->second.offset << ", " << iter->second.type;
@@ -608,6 +610,8 @@ void Generator::output(IR* ir, const string& filename) {
 	auto table = ir->globalTable; 
 	fout << "offset: " << table->offset << "\n";
 	fout << "width: " << table->width << "\n";
+	fout << "param width: " << table->param_width << "\n";
+
 	for (auto iter = table->symbols.begin(); iter != table->symbols.end(); ++iter) {
 		fout << "[" << iter->first << ", " << iter->second.offset << ", " << iter->second.type;
 		if (iter->second.is_array) {

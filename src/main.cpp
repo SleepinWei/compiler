@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
     Lexer lex;
     //string s((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
     //lex.Preprocess(s);
-    lex.analyze("./asset/source.txt");
+    lex.analyze("./asset/source.c");
     lex.print("./asset/lex.txt");
     std::cout << "Lex Analysis Done" << '\n';
 
@@ -39,10 +39,10 @@ int main(int argc, char *argv[])
     Generator& generator = Generator::GetInstance();
 
     GrammarInfo* info = parser.readGrammarY("./asset/c99_backup.txt");
-    parser.printGrammar(info,"./asset/printed_grammar.txt");
+    //parser.printGrammar(info,"./asset/printed_grammar.txt");
 
     parser.calFirstVN(info);
-    parser.printVNFirst(info->firstVN,"./asset/firstVN.txt");
+    //parser.printVNFirst(info->firstVN,"./asset/firstVN.txt");
     std::cout << "First Done\n";
 
 #ifdef GEN_GRAMMAR
