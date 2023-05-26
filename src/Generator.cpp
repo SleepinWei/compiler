@@ -637,7 +637,21 @@ void Generator::postProcess(IR* ir)
 {
 	for (auto& f: *(ir->functionTable)) {
 		int index = f.second.addr - IR::QUAD_BEGIN;
-		ir->quads[index].label = f.first;
+		ir->quads[index].label = f.first; // 函数 label 
+	}
+	
+	for (auto quad : ir->quads) {
+		// (jz, a, - ,p) : if a goto p 
+		// (j, -, -, p) : goto p 
+		if (quad.op == "jz" || quad.op == "j") {
+			int index = std::stoi(quad.dst);
+
+			string& label = ir->quads[index - IR::QUAD_BEGIN].label;
+			if (label == "") {
+				// 空 label，表明该 quad 无函数 label 
+				label = "L" + std::to_string(index);
+			}
+		}
 	}
 }
 

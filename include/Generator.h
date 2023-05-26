@@ -61,6 +61,16 @@ public:
 
 };
 
+class BasicBlock {
+public:
+	int start_index; 
+	int end_index;
+
+	vector<BasicBlock*> from; 
+	vector<BasicBlock*> to;
+};
+
+
 class Generator {
 public:
 	static std::map<string, int> TYPE_WIDTH; 

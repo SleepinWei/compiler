@@ -50,33 +50,45 @@ void CodeGen::codeGen(IR* ir, DestCode& dest_code)
 		string dst = iter->dst;
 		string label = iter->label;
 
+		fout << "// "<< iter - ir->quads.begin() << "(" << op << ", " << arg1 << ", " << arg2 << ", " << dst << ")" << ' ' << label << "\n";
+
 		string arg1_assembly = mapVarToAssembly(ir, dest_code, arg1);
 		string arg2_assembly = mapVarToAssembly(ir, dest_code, arg2);
 		string dst_assembly = mapVarToAssembly(ir,dest_code,dst,true);
 
 		if (label != "") {
-			// entering a function 
-			fout << "\t.globl " << label << '\n';
-			if (label == "main") {
-				fout << "_main:\n";
+			if (label[0] != 'L') {
+				// entering a function 
+				if (label == "main") {
+					// main function
+					fout << "\t.globl " << "_main" << '\n';
+					fout << "_main:\n";
+				}
+				else if (label[0] != 'L') {
+					// Functions
+					fout << "\t.globl " << label << '\n';
+					fout << label << ":\n";
+				}
+				
+				fout << "\tpush %ebp\n";
+				fout << "\tmovl %esp, %ebp\n";
+
+				// 空间分配
+				auto& table = ir->symbolTables.at(label); // 切换到对应的symboltable
+				ir->curTable = table;
+				fout << "\tsubl $" << table->width << ", %esp\n";
 			}
 			else {
+				// Label 
 				fout << label << ":\n";
 			}
-			fout << "\tpush %ebp\n";
-			fout << "\tmovl %esp, %ebp\n";
-
-			// 空间分配
-			auto& table = ir->symbolTables.at(label); // 切换到对应的symboltable
-			ir->curTable = table;
-			fout << "\tsubl $" << table->width << ", %esp\n";
 		}
 
 		static const std::map<string, string> inst_map{ 
 			{"+","addl"},
 			{"-","subl"},
-			{"*","mul"},
-			{"/","div"}
+			{"*","mull"},
+			{"/","divl"}
 		};
 
 		if (op == "RET") {
@@ -106,9 +118,43 @@ void CodeGen::codeGen(IR* ir, DestCode& dest_code)
 		else if (op == "=") {
 			fout << "\tmovl " << arg1_assembly << ", " << dst_assembly << "\n";
 		}
-		else if (op == "+" || op == "-" || op == "*" || op == "/") {
+		else if (op == "+" || op == "-") {
 			fout << "\tmovl " << arg1_assembly << ", " << dst_assembly << "\n";
 			fout << "\t" << inst_map.at(op) <<" "<< arg2_assembly << ", " << dst_assembly << "\n";
+		}
+		else if (op == "*" || op == "/") {
+			fout << "\tmovl " << arg1_assembly << ", " << "%eax" << "\n";
+			bool exist_edx = dest_code.allocation["%edx"] != "";
+			if (exist_edx) {
+				// 乘除结果存放在eax和edx中，需要保存edx值
+				fout << "\tpush " << "%edx\n";
+			}
+			fout << "\t" << inst_map.at(op) << " " << arg2_assembly << "\n";
+			if (exist_edx) {
+				fout << "\tpop %edx\n";
+			}
+		}
+		else if (op == "jz") {
+			int goto_index = std::stoi(dst);
+			string label = ir->quads[goto_index-IR::QUAD_BEGIN].label; 
+			if (label == "") {
+				// 
+				std::cout << "No Label for jz command\n"; 
+				continue;
+			}
+			fout << "\tmovl $0, %eax\n";
+			fout << "\tcmp " << arg1_assembly << ", %eax\n";
+			fout << "\tjz " << label << '\n';
+		}
+		else if (op == "j"){
+			int goto_index = std::stoi(dst);
+			string label = ir->quads[goto_index-IR::QUAD_BEGIN].label; 
+			if (label == "") {
+				// 
+				std::cout << "No Label for j command\n"; 
+				continue;
+			}
+			fout << "\tjmp " << label << '\n';
 		}
 	}
 }
