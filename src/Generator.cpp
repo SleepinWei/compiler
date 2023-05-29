@@ -128,7 +128,7 @@ void Generator::Function(IR* ir, const GrammarEntry* rule, Node* root)
 				vector<Parameter> parameters;
 				getParameterList(parameter_list, parameters);
 
-				int cumulative_offset = 0; 
+				int cumulative_offset = 0; // ebp + return_addr 占 8 个字节
 				for (const auto& para : parameters) {
 					entry.args.emplace_back(para.type);
 					// 计算形式参数的 offset，负数

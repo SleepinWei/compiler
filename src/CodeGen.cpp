@@ -24,8 +24,15 @@ string mapVarToAssembly(IR* ir,DestCode& dest_code, string var,bool isDst = fals
 	}
 	else {
 		// is variable
+		auto symbols = ir->curTable->symbols;
+
+		if (symbols.find(var) == symbols.end()) {
+			//std::cout << "[Error] " << "variable "<< var<< " is not found!\n";
+			// 找不到，可能是函数名或者 QUAD_EMPTY
+			return ""; 
+		}
 		int offset = ir->curTable->symbols[var].offset;
-		if (offset > 0) {
+		if (offset >= 0) {
 			offset += 8; // ebp + return address 共8字节
 		}
 		result = std::to_string(offset)+"(%ebp)";
@@ -52,20 +59,17 @@ void CodeGen::codeGen(IR* ir, DestCode& dest_code)
 
 		fout << "// "<< iter - ir->quads.begin() << "(" << op << ", " << arg1 << ", " << arg2 << ", " << dst << ")" << ' ' << label << "\n";
 
-		string arg1_assembly = mapVarToAssembly(ir, dest_code, arg1);
-		string arg2_assembly = mapVarToAssembly(ir, dest_code, arg2);
-		string dst_assembly = mapVarToAssembly(ir,dest_code,dst,true);
 
 		if (label != "") {
 			if (label[0] != 'L') {
 				// entering a function 
 				if (label == "main") {
-					// main function
+					 //main function
 					fout << "\t.globl " << "_main" << '\n';
 					fout << "_main:\n";
 				}
-				else if (label[0] != 'L') {
-					// Functions
+				else {
+					 //Functions
 					fout << "\t.globl " << label << '\n';
 					fout << label << ":\n";
 				}
@@ -77,12 +81,19 @@ void CodeGen::codeGen(IR* ir, DestCode& dest_code)
 				auto& table = ir->symbolTables.at(label); // 切换到对应的symboltable
 				ir->curTable = table;
 				fout << "\tsubl $" << table->width << ", %esp\n";
+				if (label == "main") {
+					fout << "\tcall ___main\n";
+				}
 			}
 			else {
 				// Label 
 				fout << label << ":\n";
 			}
 		}
+
+		string arg1_assembly = mapVarToAssembly(ir, dest_code, arg1);
+		string arg2_assembly = mapVarToAssembly(ir, dest_code, arg2);
+		string dst_assembly = mapVarToAssembly(ir,dest_code,dst,true);
 
 		static const std::map<string, string> inst_map{ 
 			{"+","addl"},
@@ -102,6 +113,8 @@ void CodeGen::codeGen(IR* ir, DestCode& dest_code)
 				fout << " $" << ir->curTable->param_width;
 			}
 			fout << "\n";
+			// move out; 
+			ir->curTable = ir->curTable->parent;
 		}
 		else if (op == "call") {
 			fout << "\tcall ";
