@@ -8,6 +8,7 @@
 #include"token.h"
 #include"component.h"
 #include"Node.h"
+#include"Utility.h"
 using namespace std;
 
 class Lexer {
@@ -150,8 +151,24 @@ public:
             }
             inputs.push_back(newNode);
         }
+        else if (s[pos] =='"') {
+            // STRING LITERAL 
+            ++pos; 
+            while (s[pos] != '"') {
+                // 
+                token += s[pos];
+                ++pos;
+                if (pos == s.length()) {
+                    // error, no matching
+                    OUTPUT(ERROR, " No \" in file\n");
+                    return;
+                }
+            }
+            inputs.push_back(new Node("STRING_LITERAL", token, true));
+            ++pos;
+        }
         else {
-            // 
+            // other reserved words
             token += s[pos];
             ++pos;
             if (pos < s.length() && reservedWord.find(token + s[pos]) != reservedWord.end())

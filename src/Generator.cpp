@@ -560,6 +560,10 @@ void Generator::Assignment(IR* ir, const GrammarEntry* rule,Node* root) {
 			root->place = root->children[0]->place;
 			root->var_type = root->children[0]->var_type;
 		}
+		else if (rule->symbols[0].type == "STRING_LITERAL") {
+			root->place = root->children[0]->place;
+			root->var_type = root->children[0]->type;
+		}
 		else {
 			std::cout << "Primary_expression use other rules" << '\n';
 		}

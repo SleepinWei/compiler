@@ -35,6 +35,9 @@
     <ClInclude Include="include\CodeGen.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="include\Utility.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Generator.cpp">
