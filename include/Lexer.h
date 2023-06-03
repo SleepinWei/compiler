@@ -164,7 +164,7 @@ public:
                     return;
                 }
             }
-            inputs.push_back(new Node("STRING_LITERAL", token, true));
+            inputs.push_back(new Node("STRING_LITERAL", "\"" + token + "\"", true));
             ++pos;
         }
         else {

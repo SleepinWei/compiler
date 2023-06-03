@@ -21,6 +21,9 @@ public:
 
 	string var_type;
 	bool isTerminal;
+
+	vector<int> truelist;
+	vector<int> falselist;
 	//GrammarEntry* entry;
 };
 

@@ -505,6 +505,8 @@ void Parser::constructTable(Cluster& cluster,DFA& table) {
                 //}
                 if (table.find({ citer,item.peek.type }) != table.end()) {
                     std::cout << citer << ' ' << item.peek.type << " found!\n";
+                    auto pos = table.find({ citer,item.peek.type });
+                    std::cout << pos->second.destState << '\n';
                     table[{ citer, item.peek.type }] = entry;
                 }
                 else {
@@ -607,7 +609,7 @@ DFA Parser::loadTable(GrammarInfo* info, const std::string filename)
             dfa.insert({ { lhs,in_symbol }, entry});
         }
         else {
-            std::cout << "No matching type for input, must be 'r' or 's'\n";
+            std::cerr << "No matching type for input, must be 'r' or 's'\n";
         }
     }
     return dfa; 
@@ -623,6 +625,7 @@ std::tuple<SyntaxTree*,IR*> Parser::analyze(const std::vector<Node*>& inputs, co
     SyntaxTree* syntaxTree= new SyntaxTree();
     Generator& generator = Generator::GetInstance();
     IR* ir = IR::Create();
+    generator.preprocess(ir);
 
     int inputPos = 0;
 
@@ -700,15 +703,20 @@ std::tuple<SyntaxTree*,IR*> Parser::analyze(const std::vector<Node*>& inputs, co
                 }
                 else {
                     // error
-                    std::cout << "Error: No matching GOTO At state " << newTop << " Read State " << A.type << "\n";
+                    std::cerr << "Error: No matching GOTO At state " << newTop << " Read State " << A.type << "\n";
+					delete syntaxTree;
+					IR::Destroy(ir);
+					return {nullptr, nullptr};
                 }
             }
         }
         else {
             // error 
-            std::cout << "Error No Matching Action: At state ";
-            std::cout << topState << " Read Symbol "<< iSym<< '\n';
-            break;
+            std::cerr << "Error No Matching Action: At state ";
+            std::cerr << topState << " Read Symbol "<< iSym<< '\n';
+            delete syntaxTree;
+            IR::Destroy(ir);
+            return {nullptr, nullptr};
         }
     }
     f.close();
@@ -718,13 +726,25 @@ std::tuple<SyntaxTree*,IR*> Parser::analyze(const std::vector<Node*>& inputs, co
 void outputTree(std::ofstream& f, Node* root) {
     f << (int)root << "[label=\"";
     if (root->type != "") {
-        f << root->type << "\\n";
+        string type = root->type; 
+        if (type[0] == '"') {
+            type = type.substr(1, type.length() - 2);
+        }
+        f << type << "\\n";
     }
     if (root->place != "") {
-        f << "place:" << root->place << "\\n";
+        string place = root->place;
+        if (place[0] == '"') {
+            place = place.substr(1, place.length() - 2);
+        }
+        f << "place:" << place << "\\n";
     }
     if (root->var_type != "") {
-        f << "var_type:" << root->var_type << "\\n";
+        string var_type= root->var_type;
+        if (var_type[0] == '"') {
+            var_type= var_type.substr(1, var_type.length() - 2);
+        }
+        f << "var_type:" << var_type<< "\\n";
     }
     if (root->width != 0) {
         f << "width:" << root->width << "";

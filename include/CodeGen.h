@@ -47,7 +47,7 @@ public:
 	void releaseReg(string temp) {
 		// temp : 临时变量名
 		if(t_allocation.find(temp) == t_allocation.end()){
-			std::cout <<"WARNING: "<< temp << " has already been released\n";
+			std::cerr <<"WARNING: "<< temp << " has already been released\n";
 			return;
 		}
 		auto reg = this->t_allocation[temp];

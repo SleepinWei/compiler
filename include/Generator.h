@@ -9,6 +9,8 @@
 class Node;
 #include"Node.h"
 
+using StringTable = std::map<string, string>; // string value -> label
+
 class IR {
 public:
 	IR() {
@@ -38,6 +40,8 @@ public:
 	SymbolTable* globalTable; 
 	FunctionTable* functionTable; 
 
+	StringTable stringTable;
+
 	static const int QUAD_BEGIN = 100; 
 	const string QUAD_EMPTY = "-";
 
@@ -51,6 +55,9 @@ public:
 
 	int nextquad() { return quads.size() + QUAD_BEGIN; }
 	string newtemp();
+	vector<int> makelist(int nextquad) {
+		return vector<int>{nextquad};
+	}
 	void backpatch(std::vector <int>& list_, int q)
 	{
 		for (auto& i : list_)
@@ -74,12 +81,14 @@ public:
 class Generator {
 public:
 	static std::map<string, int> TYPE_WIDTH; 
+	static int getWidth(string type);
 private:
 	Generator() = default;
 	~Generator() = default;
 
 public:
 	static Generator& GetInstance(); 
+	void preprocess(IR* ir);
 	void analyze(IR* ir, const GrammarEntry* rule, Node* root);
 	void postProcess(IR* ir);
 	void output(IR* ir, const string& filename);

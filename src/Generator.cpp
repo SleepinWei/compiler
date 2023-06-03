@@ -4,7 +4,8 @@
 std::map<string, int> Generator::TYPE_WIDTH {
 	{"INT",4},
 	{"DOUBLE",8},
-	{"FLOAT",4}
+	{"FLOAT",4},
+	{"CHAR",1}
 };
 
 Generator& Generator::GetInstance()
@@ -58,7 +59,13 @@ void Generator::BoolExpression(IR* ir, const GrammarEntry* rule, Node* root)
 		if (state.type == "relational_expression" && symbols[0].type == "relational_expression" && symbols[2].type == "shift_expression")
 		{
 			root->place = ir->newtemp();
-			quads.push_back(Quad(symbols[1].type, root->children[0]->place, root->children[2]->place, root->place));
+			root->truelist = ir->makelist(ir->nextquad());
+			root->falselist = ir->makelist(ir->nextquad() + 1);
+
+			//quads.push_back(Quad(symbols[1].type, root->children[0]->place, root->children[2]->place, root->place));
+			string relation_op = symbols[1].type;
+			quads.push_back({"j" + relation_op, root->children[0]->place,root->children[2]->place,"0"});
+			quads.push_back({"j","-","-","0"});
 		}
 		else if (state.type == "equality_expression" && symbols[0].type == "equality_expression" && symbols[2].type == "relational_expression")
 		{
@@ -80,6 +87,18 @@ void Generator::BoolExpression(IR* ir, const GrammarEntry* rule, Node* root)
 			quads.push_back(Quad("OR_OP", e1->place, e2->place, root->place));
 		}
 	}
+}
+
+int Generator::getWidth(string type)
+{
+	int result = 0;
+	if (type[0] == '*') {
+		result = 4; 
+	}
+	else {
+		result = TYPE_WIDTH[type];
+	}
+	return result;
 }
 
 /// <summary>
@@ -132,7 +151,7 @@ void Generator::Function(IR* ir, const GrammarEntry* rule, Node* root)
 				for (const auto& para : parameters) {
 					entry.args.emplace_back(para.type);
 					// 计算形式参数的 offset，负数
-					int size = Generator::TYPE_WIDTH[para.type];
+					int size = Generator::getWidth(para.type);
 					enter(ir->curTable, para.name, para.type, cumulative_offset, size);
 					cumulative_offset += size; 
 					ir->curTable->param_width += size; 
@@ -174,6 +193,12 @@ void Generator::Function(IR* ir, const GrammarEntry* rule, Node* root)
 SymbolEntryVar parseVariable(string var_name,string var_type) {
 	SymbolEntryVar result;
 
+	if (var_name[0] == '*') {
+		// 指针
+		var_type = "*" + var_type;
+		var_name = var_name.substr(1);
+	}
+
 	int left_bracket = -1;
 	for (int i = 0; i < var_name.size(); ++i) {
 		if (var_name[i] == '[') {
@@ -183,7 +208,7 @@ SymbolEntryVar parseVariable(string var_name,string var_type) {
 	}
 	if (left_bracket == -1) {
 		// is variable
-		result = {var_name, var_type, 0, Generator::TYPE_WIDTH[var_type],false,{} };
+		result = {var_name, var_type, 0, Generator::getWidth(var_type),false,{} };
 	}
 	else {
 		// is array  可以是多维数组
@@ -214,7 +239,7 @@ SymbolEntryVar parseVariable(string var_name,string var_type) {
 			left_bracket = right_bracket + 1;
 		}
 
-		int size = Generator::TYPE_WIDTH[var_type] * overall_size;
+		int size = Generator::getWidth(var_type) * overall_size;
 		result = { arr_name, var_type, 0, size, true, dims };
 	}
 	return result;
@@ -282,7 +307,12 @@ void Generator::Statement(IR* ir, const GrammarEntry* rule, Node* root) {
 		else {
 			// init_declarator => declarator = initialzier
 			root->place = root->children[0]->place;
-			quads.push_back({ "=",root->children[2]->place,QUAD_EMPTY,root->children[0]->place });
+			string dst_name = root->children[0]->place;
+			if (dst_name[0] == '*') {
+				// is pointer
+				dst_name = dst_name.substr(1);
+			}
+			quads.push_back({ "=",root->children[2]->place,QUAD_EMPTY,dst_name});
 		}
 	}
 	else if (rule->state.type == "direct_declarator") {
@@ -302,6 +332,10 @@ void Generator::Statement(IR* ir, const GrammarEntry* rule, Node* root) {
 	else if (rule->state.type == "declarator") {
 		if (rule->symbols.size() == 1) {
 			root->place = root->children[0]->place;
+		}
+		else if (rule->symbols.size() == 2) {
+			// declarator -> pointer direct_declarator
+			root->place = "*" + root->children[1]->place;
 		}
 	}
 	else if (rule->state.type == "assignment_operator") {
@@ -360,6 +394,8 @@ void Generator::Assignment(IR* ir, const GrammarEntry* rule,Node* root) {
 			// exp = assign_exp 
 			root->place = root->children[0]->place;
 			root->var_type = root->children[0]->var_type;
+			root->truelist = root->children[0]->truelist;
+			root->falselist = root->children[0]->falselist;
 		}
 		else {
 			// exp = exp , assign_exp 
@@ -370,6 +406,8 @@ void Generator::Assignment(IR* ir, const GrammarEntry* rule,Node* root) {
 			// assign = conditional 
 			root->place = root->children[0]->place;
 			root->var_type = root->children[0]->var_type;
+			root->truelist = root->children[0]->truelist;
+			root->falselist = root->children[0]->falselist;
 		}
 		else {
 			// assign = unary assign_op assign_expression
@@ -377,7 +415,7 @@ void Generator::Assignment(IR* ir, const GrammarEntry* rule,Node* root) {
 			auto symbols= curTable->symbols;
 			if (symbols.find(root->place) == symbols.end()) {
 				// not found! 
-				std::cout << "ERROR: variable " << root->place << " is referred before declaration!\n";
+				std::cerr << "ERROR: variable " << root->place << " is referred before declaration!\n";
 			}
 			else {
 				auto var_type = symbols[root->place].type;
@@ -388,13 +426,15 @@ void Generator::Assignment(IR* ir, const GrammarEntry* rule,Node* root) {
 			quads.push_back({ root->children[1]->place,root->children[2]->place,QUAD_EMPTY,root->place });
 		}
 	}
-	else if (rule->state.type == "constant_expression" || rule->state.type == "inclusive_or_expression" || rule->state.type == "logical_and_expression" || rule->state.type == "logicial_and_expression"
+	else if (rule->state.type == "constant_expression" || rule->state.type == "inclusive_or_expression" || rule->state.type == "logical_and_expression" 
 		|| rule->state.type == "logical_or_expression" || rule->state.type == "conditional_expression" ) {
 		root->place = root->children[0]->place;
 		root->var_type = root->children[0]->var_type;
+		root->truelist = root->children[0]->truelist;
+		root->falselist = root->children[0]->falselist;
 
 		if (rule->symbols.size() > 1) {
-			std::cout << "use other rules\n";
+			std:: cerr << "use other rules\n";
 		}
 	}
 	else if (rule->state.type == "exclusive_or_expression") {
@@ -402,9 +442,11 @@ void Generator::Assignment(IR* ir, const GrammarEntry* rule,Node* root) {
 			// shift = add 
 			root->place = root->children[0]->place;
 			root->var_type = root->children[0]->var_type;
+			root->truelist = root->children[0]->truelist;
+			root->falselist = root->children[0]->falselist;
 		}
 		else {
-			std::cout << "Exclusive_or_expression use other rules" << "\n";
+			std::cerr << "Exclusive_or_expression use other rules" << "\n";
 		}
 	}
 	else if (rule->state.type == "and_expression") {
@@ -412,9 +454,11 @@ void Generator::Assignment(IR* ir, const GrammarEntry* rule,Node* root) {
 			// and = equality
 			root->place = root->children[0]->place;
 			root->var_type = root->children[0]->var_type;
+			root->truelist = root->children[0]->truelist;
+			root->falselist = root->children[0]->falselist;
 		}
 		else {
-			std::cout << "And expression use other rules" << "\n";
+			std::cerr << "And expression use other rules" << "\n";
 		}
 	}
 	else if (rule->state.type == "equality_expression") {
@@ -422,9 +466,11 @@ void Generator::Assignment(IR* ir, const GrammarEntry* rule,Node* root) {
 			// equality = relational
 			root->place = root->children[0]->place;
 			root->var_type = root->children[0]->var_type;
+			root->truelist = root->children[0]->truelist;
+			root->falselist = root->children[0]->falselist;
 		}
 		else {
-			std::cout << "equality expression use other rules" << "\n";
+			std::cerr << "equality expression use other rules" << "\n";
 		}
 	}
 	else if (rule->state.type == "relational_expression") {
@@ -432,10 +478,7 @@ void Generator::Assignment(IR* ir, const GrammarEntry* rule,Node* root) {
 			// relational = shift
 			root->place = root->children[0]->place;
 			root->var_type = root->children[0]->var_type;
-		}
-		else {
-			std::cout << "Relational expression use other rules" << "\n";
-		}
+		}	
 	}
 	else if (rule->state.type == "shift_expression") {
 		if (rule->symbols.size() == 1) {
@@ -444,7 +487,7 @@ void Generator::Assignment(IR* ir, const GrammarEntry* rule,Node* root) {
 			root->var_type = root->children[0]->var_type;
 		}
 		else {
-			std::cout << "Shift expression use other rules" << "\n";
+			std::cerr << "Shift expression use other rules" << "\n";
 		}
 	}
 	else if (rule->state.type == "additive_expression") {
@@ -503,7 +546,7 @@ void Generator::Assignment(IR* ir, const GrammarEntry* rule,Node* root) {
 			root->var_type = root->children[0]->var_type;
 		}
 		else {
-			std::cout << "Unary_expression use other rules" << '\n';
+			std::cerr << "Unary_expression use other rules" << '\n';
 		}
 	}
 	else if (rule->state.type == "unary_operator") {
@@ -516,31 +559,37 @@ void Generator::Assignment(IR* ir, const GrammarEntry* rule,Node* root) {
 			root->place = root->children[0]->place;
 			root->var_type = root->children[0]->var_type;
 		}
-		else if (rule->symbols.size() == 4 ||  rule->symbols.size() == 3) {
-			if (rule->symbols[1].type == "(" && rule->symbols.size() == 4) {
-				// postfix_expression = postfix_expression ( [argument_expression_list] ) 
-				vector<ArgumentExpression> arguments; 
-				getArgumentExpressionList(root->children[2], arguments);
-				// TODO: type checks 
-				for (auto r_iter = arguments.rbegin(); r_iter != arguments.rend(); ++r_iter) {
-					// emit a param expression 
-					ir->quads.push_back({ "param",r_iter->name,QUAD_EMPTY,QUAD_EMPTY });
+		else if (rule->symbols.size() == 4 || rule->symbols.size() == 3) {
+			if (rule->symbols[1].type == "(") {
+				if (rule->symbols.size() == 4) {
+					// postfix_expression = postfix_expression ( [argument_expression_list] ) 
+					vector<ArgumentExpression> arguments;
+					getArgumentExpressionList(root->children[2], arguments);
+					// TODO: type checks 
+					for (auto r_iter = arguments.rbegin(); r_iter != arguments.rend(); ++r_iter) {
+						// emit a param expression 
+						ir->quads.push_back({ "param",r_iter->name,QUAD_EMPTY,QUAD_EMPTY });
+					}
 				}
+				// emit quads for call 
+				string dest = QUAD_EMPTY;
+				string func_name = root->children[0]->place;
+				string ret_type = ir->functionTable->find(func_name)->second.ret_type;
+				if (ret_type != "VOID") {
+					dest = ir->newtemp();
+					//enter(ir->curTable, dest, ret_type, ir->curTable->offset, TYPE_WIDTH[ret_type]);
+					// 如果有返回值，设置dest
+					root->place = dest;
+				}
+				ir->quads.push_back({ "call",func_name,QUAD_EMPTY,dest });
 			}
-			// emit quads for call 
-			string dest = QUAD_EMPTY;
-			string func_name = root->children[0]->place;
-			string ret_type = ir->functionTable->find(func_name)->second.ret_type;
-			if (ret_type != "VOID") {
-				dest = ir->newtemp();
-				//enter(ir->curTable, dest, ret_type, ir->curTable->offset, TYPE_WIDTH[ret_type]);
-				// 如果有返回值，设置dest
-				root->place = dest; 
+			else if (rule->symbols[1].type == "[") {
+				//
+				root->place = root->children[0]->place + "[" + root->children[2]->place + "]";
 			}
-			ir->quads.push_back({ "call",func_name,QUAD_EMPTY,dest});
 		}
 		else {
-			std::cout << "Postfix_expression use other rules" << '\n';
+			std::cerr << "Postfix_expression use other rules" << '\n';
 		}
 	}
 	else if (rule->state.type == "primary_expression") {
@@ -549,7 +598,7 @@ void Generator::Assignment(IR* ir, const GrammarEntry* rule,Node* root) {
 			auto symbols = curTable->symbols;
 			if (symbols.find(root->place) == symbols.end()) {
 				// not found! 
-				std::cout << "ERROR: variable " << root->place << " is referred before declaration!\n";
+				std::cerr << "ERROR: variable " << root->place << " is referred before declaration!\n";
 			}
 			else {
 				auto var_type = symbols[root->place].type;
@@ -563,9 +612,17 @@ void Generator::Assignment(IR* ir, const GrammarEntry* rule,Node* root) {
 		else if (rule->symbols[0].type == "STRING_LITERAL") {
 			root->place = root->children[0]->place;
 			root->var_type = root->children[0]->type;
+
+			ir->stringTable.insert({ root->children[0]->place, "String" + std::to_string(ir->stringTable.size()) });
+			// 插入一个字符串常量项
+		}
+		else if (rule->symbols[0].type == "(") {
+			// primary_expression = ( expression ) 
+			root->place = root->children[1]->place;
+			root->var_type = root->children[1]->var_type;
 		}
 		else {
-			std::cout << "Primary_expression use other rules" << '\n';
+			std::cerr << "Primary_expression use other rules" << '\n';
 		}
 	}
 }
@@ -636,18 +693,26 @@ void Generator::output(IR* ir, const string& filename) {
 		}
 		fout << ") \n";
 	}
+	fout << "-----------------------\n";
+	fout << "String Literal Table: \n";
+	auto stringTable = ir->stringTable;
+	for (auto iter : stringTable) {
+		fout << "(" << iter.first << ',' << iter.second << ")\n";
+	}
 }
 void Generator::postProcess(IR* ir)
 {
 	for (auto& f: *(ir->functionTable)) {
 		int index = f.second.addr - IR::QUAD_BEGIN;
-		ir->quads[index].label = f.first; // 函数 label 
+		if (index >= 0) {
+			ir->quads[index].label = f.first; // 函数 label 
+		}
 	}
 	
 	for (auto quad : ir->quads) {
 		// (jz, a, - ,p) : if a goto p 
 		// (j, -, -, p) : goto p 
-		if (quad.op == "jz" || quad.op == "j") {
+		if (quad.op[0] == 'j') {
 			int index = std::stoi(quad.dst);
 
 			string& label = ir->quads[index - IR::QUAD_BEGIN].label;
@@ -668,11 +733,13 @@ void Generator::Iteration(IR* ir, const GrammarEntry* rule, Node* root) {
 if (rule->state.type != "iteration_statement")
 		return;
 	if (rule->symbols[0].type == "WHILE") {
-		// WHILE m_quad ( expression ) m_quad_jz statement
+		// WHILE m_quad ( expression ) m_quad statement
 		quads.push_back({ "j", QUAD_EMPTY, QUAD_EMPTY, root->children[1]->place });
-		int sbegin = std::stoi(root->children[5]->place) - ir->QUAD_BEGIN;
-		quads[sbegin].arg1 = root->children[3]->place;
-		quads[sbegin].dst = std::to_string(ir->nextquad());
+		//int sbegin = std::stoi(root->children[5]->place) - ir->QUAD_BEGIN;
+		//quads[sbegin].arg1 = root->children[3]->place;
+		//quads[sbegin].dst = std::to_string(ir->nextquad());
+		ir->backpatch(root->children[3]->truelist, std::stoi(root->children[5]->place));
+		ir->backpatch(root->children[3]->falselist, ir->nextquad());
 	}
 	else if (rule->symbols[0].type == "DO") {
 		// DO m_quad statement WHILE ( expression ) ;
@@ -691,7 +758,7 @@ if (rule->state.type != "iteration_statement")
 		quads[pupdj].dst = root->children[3]->place;
 	}
 	else {
-		std::cout << "iteration_statement use other rules" << '\n';
+		std::cerr << "iteration_statement use other rules" << '\n';
 	}
 }
 
@@ -701,18 +768,26 @@ void Generator::Mquad(IR* ir, const GrammarEntry* rule, Node* root) {
 	auto curTable = ir->curTable;
 	auto& quads = ir->quads;
 	auto QUAD_EMPTY = ir->QUAD_EMPTY;
-if (rule->state.type == "m_quad") {
+	if (rule->state.type == "m_quad") {
 		root->place = std::to_string(ir->nextquad());
 	}
-	if (rule->state.type == "m_quad_jz") {
+	else if (rule->state.type == "m_quad_jz") {
 		root->place = std::to_string(ir->nextquad());
-		quads.push_back({ "jz", QUAD_EMPTY, QUAD_EMPTY, ""});
+		quads.push_back({ "jz", QUAD_EMPTY, QUAD_EMPTY, "0"});
 	}
-	if (rule->state.type == "m_quad_j") {
+	else if (rule->state.type == "m_quad_j") {
 		root->place = std::to_string(ir->nextquad());
-		quads.push_back({ "j", QUAD_EMPTY, QUAD_EMPTY, ""});
+		root->truelist = {ir->nextquad()};
+		quads.push_back({ "j", QUAD_EMPTY, QUAD_EMPTY, "0"});
 	}
+	else if (rule->state.type == "m_bool") {
+		root->place = std::to_string(ir->nextquad());
+	}
+}
 
+void Generator::preprocess(IR* ir)
+{
+	ir->functionTable->insert({ "printf",{-1,"INT",{"STRING_LITERAL","INT"}}});
 }
 
 void Generator::Selection(IR* ir, const GrammarEntry* rule, Node* root) {
@@ -721,24 +796,28 @@ void Generator::Selection(IR* ir, const GrammarEntry* rule, Node* root) {
 	auto curTable = ir->curTable;
 	auto& quads = ir->quads;
 	auto QUAD_EMPTY = ir->QUAD_EMPTY;
-if (rule->state.type != "selection_statement")
+	if (rule->state.type != "selection_statement")
 		return;
-	if (rule->symbols[0].type == "IF" && rule->symbols.size() == 6) {
-		// IF ( expression ) m_quad_jz statement
-		int pjz = std::stoi(root->children[4]->place) - ir->QUAD_BEGIN;
-		quads[pjz].arg1 = root->children[2]->place;
-		quads[pjz].dst = std::to_string(ir->nextquad());
-	}
-	else if (rule->symbols[0].type == "IF" && rule->symbols.size() == 2) {
-		// IF ( expression ) m_quad_jz statement m_quad_j ELSE m_quad statement
-		int pjz = std::stoi(root->children[4]->place) - ir->QUAD_BEGIN;
-		quads[pjz].arg1 = root->children[2]->place;
-		quads[pjz].dst = root->children[8]->place;
-		int pj = std::stoi(root->children[6]->place) - ir->QUAD_BEGIN;
-		quads[pj].dst = std::to_string(ir->nextquad());
+	//if (rule->symbols[0].type == "IF" && rule->symbols.size() == 6) {
+	//	// IF ( expression ) m_quad_jz statement
+	//	int pjz = std::stoi(root->children[4]->place) - ir->QUAD_BEGIN;
+	//	quads[pjz].arg1 = root->children[2]->place;
+	//	quads[pjz].dst = std::to_string(ir->nextquad());
+	//}
+	if (rule->symbols[0].type == "IF" && rule->symbols.size() == 10) {
+		// IF ( expression ) m_quad statement m_quad_j ELSE m_quad statement
+		ir->backpatch(root->children[2]->truelist, std::stoi(root->children[4]->place));
+		ir->backpatch(root->children[2]->falselist, std::stoi(root->children[8]->place));
+		ir->backpatch(root->children[6]->truelist, ir->nextquad()); // 填 m_quad_j 
+
+		//int pjz = std::stoi(root->children[4]->place) - ir->QUAD_BEGIN;
+		//quads[pjz].arg1 = root->children[2]->place;
+		//quads[pjz].dst = root->children[8]->place;
+		//int pj = std::stoi(root->children[6]->place) - ir->QUAD_BEGIN;
+		//quads[pj].dst = std::to_string(ir->nextquad());
 	}
 	else {
-		std::cout << "selection_statement use other rules\n";
+		std::cerr << "selection_statement use other rules\n";
 	}
 }
 
